@@ -1,19 +1,22 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<script src="login.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="login.js"></script>
+    <title>Login Page</title>
 </head>
 <body>
-<h1>login page</h1>
-<div id="textResponse">
-awaiting response
-</div>
-<form onsubmit="return SendLoginRequest();">
-  <label for="username">First name:</label><br>
-  <input type="text" id="username" name="username" value="kehoed"><br>
-  <label for="password">Password</label><br>
-  <input type="password" id="password" name="password" value="12345"><br><br>
-  <input type="submit" value="Submit">
-</form> 
-
+    <h1>Login Page</h1>
+    <div id="textResponse">
+        Awaiting response
+    </div>
+    <form onsubmit="return SendLoginRequest();">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" value="kehoed"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" value="12345"><br><br>
+        <input type="submit" value="Submit">
+    </form> 
 </body>
 </html>
