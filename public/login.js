@@ -6,10 +6,13 @@ function HandleLoginResponse(response)
 	document.getElementById("textResponse").innerHTML = "response: "+text+"<p>";
 }
 
-function SendLoginRequest(username, password) {
+function SendLoginRequest() {
+    console.log("SendLoginRequest function called");
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
     var request = new XMLHttpRequest();
     request.open("POST", "../loginRequest.php", true);
-    // request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function () {
         if ((this.readyState == 4) && (this.status == 200)) {
