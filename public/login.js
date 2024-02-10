@@ -6,18 +6,18 @@ function HandleLoginResponse(response)
 	document.getElementById("textResponse").innerHTML = "response: "+text+"<p>";
 }
 
-function SendLoginRequest(username,password)
-{
-	var request = new XMLHttpRequest();
-	request.open("POST","../loginRequest.php",true);
-//	request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-	request.onreadystatechange= function ()
-	{
-		
-		if ((this.readyState == 4)&&(this.status == 200))
-		{
-			HandleLoginResponse(this.responseText);
-		}		
-	}
-	request.send("type=login&uname="+username+"&pword="+password);
+function SendLoginRequest(username, password) {
+    var request = new XMLHttpRequest();
+    request.open("POST", "../loginRequest.php", true);
+    // request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    request.onreadystatechange = function () {
+        if ((this.readyState == 4) && (this.status == 200)) {
+            HandleLoginResponse(this.responseText);
+        }
+    };
+
+    // Encoding the parameters? hopefully this weorks
+    var params = "type=Login&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password);
+    request.send(params);
 }
