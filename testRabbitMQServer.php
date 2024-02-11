@@ -24,9 +24,11 @@ function doLogin($username, $password)
 
     if ($result->num_rows > 0) {
         $mysqli->close();
+        echo "Login successful for username: $username\n";
         return array("status" => "success", "message" => "Login successful");
     } else {
         $mysqli->close();
+        echo "Login failed for username: $username\n";
         return array("status" => "error", "message" => "Login failed");
     }
 }
@@ -54,4 +56,3 @@ $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END" . PHP_EOL;
 exit();
 ?>
-
