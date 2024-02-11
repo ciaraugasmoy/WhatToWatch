@@ -21,7 +21,7 @@ function doLogin($username, $password)
     // Perform login check
     $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
     $result = $mysqli->query($query);
-
+    
     if ($result->num_rows > 0) {
         $mysqli->close();
         return array("status" => "success", "message" => "Login successful");
