@@ -24,10 +24,10 @@ function doLogin($username, $password)
 
     if ($result->num_rows > 0) {
         $mysqli->close();
-        return true;
+        return array("status" => "success", "message" => "Login successful");
     } else {
         $mysqli->close();
-        return false;
+        return array("status" => "error", "message" => "Login failed");
     }
 }
 
@@ -36,7 +36,7 @@ function requestProcessor($request)
     echo "received request" . PHP_EOL;
     var_dump($request);
     if (!isset($request['type'])) {
-        return "ERROR: unsupported message type";
+        return array("status" => "error", "message" => "Unsupported message type");
     }
     switch ($request['type']) {
         case "login":
@@ -44,7 +44,7 @@ function requestProcessor($request)
         case "validate_session":
             return doValidate($request['sessionId']);
     }
-    return array("returnCode" => '0', 'message' => "Server received request and processed");
+    return array("status" => "error", "message" => "Server received request and processed");
 }
 
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
