@@ -7,10 +7,12 @@ require_once('rabbitMQLib.inc');
 function doLogin($username, $password)
 {
     // Connect to MySQL database
+    echo "attempting to connect to db" . PHP_EOL;
     $mysqli = new mysqli("localhost", "tester", "testerpassword", "testdb");
 
     // Check connection
     if ($mysqli->connect_error) {
+        echo "failed to connect" . PHP_EOL;
         die("Connection failed: " . $mysqli->connect_error);
     }
 
@@ -23,10 +25,12 @@ function doLogin($username, $password)
     $result = $mysqli->query($query);
 
     if ($result->num_rows > 0) {
+        echo "user found" . PHP_EOL;
         $mysqli->close();
         echo "Login successful for username: $username\n";
         return array("status" => "success", "message" => "Login successful");
     } else {
+        echo "user not found" . PHP_EOL;
         $mysqli->close();
         echo "Login failed for username: $username\n";
         return array("status" => "error", "message" => "Login failed");
