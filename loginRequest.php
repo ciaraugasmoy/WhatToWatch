@@ -16,6 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($response['status'] == 'success') {
         // Redirect to a success page or do further processing
+        session_start();
+        $_SESSION['username'] = $username;
         header("Location: success.php");
         exit();
     } else {
