@@ -7,7 +7,7 @@ require_once('rabbitMQLib.inc');
 function doLogin($username, $password)
 {
     // Connect to MySQL database
-    $mysqli = new mysqli("localhost", "testuser", "12345", "testdb");
+    $mysqli = new mysqli("localhost", "tester", "testerpassword", "testdb");
 
     // Check connection
     if ($mysqli->connect_error) {
