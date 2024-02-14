@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $response = $client->send_request($request);
 
-    if ($response['status'] == 'success') {
+    if (isset($response['status'])&& $response['status'] == 'success') {
         // Redirect to a success page or do further processing
         header("Location: success.php");
         exit();
