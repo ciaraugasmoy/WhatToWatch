@@ -7,4 +7,10 @@ To populate with test data please run
 ```
 ./database_testing_setup.sh
 ```
+
+**OTHER**
+command to make .sh file executable incase it isnt
+```
+chmod +x database_testing_setup.sh
+```
 The file `create_db_users.sh` is just my working ground for later. I am still researching clustering.
