@@ -8,7 +8,7 @@ function doLogin($username, $password)
 {
     // Connect to MySQL database
     echo "attempting to connect to db" . PHP_EOL;
-    $mysqli = new mysqli("localhost", "tester", "testerpassword", "testdb");
+    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
 
     // Check connection
     if ($mysqli->connect_error) {
