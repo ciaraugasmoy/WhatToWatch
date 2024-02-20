@@ -1,7 +1,7 @@
 To set up Database
 Please run
 ```
-sudo mysql < create_database_and_user.sql
+sudo mysql < database_setup.sql
 ```
 To populate with test data please run
 ``
