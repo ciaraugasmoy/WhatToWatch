@@ -8,16 +8,7 @@ use Firebase\JWT\JWT;
 
 function doLogin($username, $password)
 {
-    // Connect to MySQL database
-    echo "attempting to connect to db" . PHP_EOL;
-    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-
-    // Check connection
-    if ($mysqli->connect_error) {
-        echo "failed to connect" . PHP_EOL;
-        die("Connection failed: " . $mysqli->connect_error);
-    }
-
+    require 'connection.php';
     // Sanitize input to prevent SQL injection
     $username = $mysqli->real_escape_string($username);
 
@@ -32,8 +23,8 @@ function doLogin($username, $password)
         // Use password_verify to check if the entered password matches the stored hashed password
         if (password_verify($password, $storedHashedPassword)) {
             $mysqli->close();
-            $jwtTokens = doGenerateTokens($username);
-            
+            //$jwtTokens = doGenerateTokens($username);
+            $jwtTokens = 'in development';
             echo "user found" . PHP_EOL;
             echo "Login successful for username: $username\n";
             return array("status" => "success", "message" => "Login successful", "tokens" => $jwtTokens);
@@ -49,16 +40,7 @@ function doLogin($username, $password)
 
 function doSignup($username, $password)
 {
-    // Connect to MySQL database
-    echo "attempting to connect to db" . PHP_EOL;
-    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-
-    // Check connection
-    if ($mysqli->connect_error) {
-        echo "failed to connect" . PHP_EOL;
-        die("Connection failed: " . $mysqli->connect_error);
-    }
-
+    require 'connection.php';
     // Sanitize input to prevent SQL injection
     $username = $mysqli->real_escape_string($username);
     $password = $mysqli->real_escape_string($password);
@@ -90,98 +72,90 @@ function doSignup($username, $password)
 }
 
 
-function doGenerateTokens($username)
-{
-    // Check if the secret key exists for the user
-    $existingSecretKey = getSecretKeyFromDatabase($username);
+// function doGenerateTokens($username)
+// {
+//     // Check if the secret key exists for the user
+//     $existingSecretKey = getSecretKeyFromDatabase($username);
 
-    // If the secret key doesn't exist, generate and store a new one
-    if (empty($existingSecretKey)) {
-        $newSecretKey = generateSecretKey($username);
-    } else {
-        $newSecretKey = $existingSecretKey;
-    }
-    // Use the secret key to generate tokens
-    $tokens = generateTokens($username, $newSecretKey);
+//     // If the secret key doesn't exist, generate and store a new one
+//     if (empty($existingSecretKey)) {
+//         $newSecretKey = generateSecretKey($username);
+//     } else {
+//         $newSecretKey = $existingSecretKey;
+//     }
+//     // Use the secret key to generate tokens
+//     $tokens = generateTokens($username, $newSecretKey);
 
-    return $tokens;
-}
-function generateTokens($username) {
-    // Retrieve your secret key from a secure location
-    $secretKey = getSecretKeyFromDatabase();
+//     return $tokens;
+// }
+// function generateTokens($username) {
+//     // Retrieve your secret key from a secure location
+//     $secretKey = getSecretKeyFromDatabase();
 
-    // Define the payload of the access token
-    $issuedAt = time();
-    $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
-    $refreshTokenExpiration = $issuedAt + (7 * 24 * 3600); // Refresh token validity (7 days)
+//     // Define the payload of the access token
+//     $issuedAt = time();
+//     $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
+//     $refreshTokenExpiration = $issuedAt + (7 * 24 * 3600); // Refresh token validity (7 days)
 
-    $accessTokenPayload = [
-        //"iss" => "https://what2watch.com",
-        "iat" => $issuedAt,
-        "exp" => $accessTokenExpiration,
-        "username" => $username
-    ];
+//     $accessTokenPayload = [
+//         //"iss" => "https://what2watch.com",
+//         "iat" => $issuedAt,
+//         "exp" => $accessTokenExpiration,
+//         "username" => $username
+//     ];
 
-    // Encode the access token payload to get the access token
-    $accessToken = JWT::encode($accessTokenPayload, $secretKey, 'HS256');
+//     // Encode the access token payload to get the access token
+//     $accessToken = JWT::encode($accessTokenPayload, $secretKey, 'HS256');
 
-    // Define the payload of the refresh token
-    $refreshTokenPayload = [
-       // "iss" => "https://what2watch.com",
-        "iat" => $issuedAt,
-        "exp" => $refreshTokenExpiration,
-        "username" => $username
-    ];
+//     // Define the payload of the refresh token
+//     $refreshTokenPayload = [
+//        // "iss" => "https://what2watch.com",
+//         "iat" => $issuedAt,
+//         "exp" => $refreshTokenExpiration,
+//         "username" => $username
+//     ];
 
-    // Encode the refresh token payload to get the refresh token
-    $refreshToken = JWT::encode($refreshTokenPayload, $secretKey, 'HS256');
+//     // Encode the refresh token payload to get the refresh token
+//     $refreshToken = JWT::encode($refreshTokenPayload, $secretKey, 'HS256');
 
-    return [
-        "access_token" => $accessToken,
-        "refresh_token" => $refreshToken,
-        "access_token_expiration" => $accessTokenExpiration
-    ];
-}
+//     return [
+//         "access_token" => $accessToken,
+//         "refresh_token" => $refreshToken,
+//         "access_token_expiration" => $accessTokenExpiration
+//     ];
+// }
 
-function getSecretKeyFromDatabase($username)
-{
-    // Connect to MySQL database
-    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-    // Check connection
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
-    $username = $mysqli->real_escape_string($username);
-    //fix
-    $query = "SELECT secret_key FROM users WHERE username = '$username'";
-    $result = $mysqli->query($query);
+// function getSecretKeyFromDatabase($username)
+// {
+//     require 'connection.php';
+//     $username = $mysqli->real_escape_string($username);
+//     //fix
+//     $query = "SELECT secret_key FROM users WHERE username = '$username'";
+//     $result = $mysqli->query($query);
     
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        return $row['secret_key'];
-    }
-    $mysqli->close();
-    return null;
-}
+//     if ($result->num_rows > 0) {
+//         $row = $result->fetch_assoc();
+//         return $row['secret_key'];
+//     }
+//     $mysqli->close();
+//     return null;
+// }
 
-function generateSecretKey($username)
-{
-    $newSecretKey = bin2hex(random_bytes(32));
-    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
+// function generateSecretKey($username)
+// {
+//     $newSecretKey = bin2hex(random_bytes(32));
+//     require 'connection.php';
 
-    // Sanitize input to prevent SQL injection
-    $username = $mysqli->real_escape_string($username);
-    $newSecretKey = $mysqli->real_escape_string($newSecretKey);
+//     // Sanitize input to prevent SQL injection
+//     $username = $mysqli->real_escape_string($username);
+//     $newSecretKey = $mysqli->real_escape_string($newSecretKey);
 
-    //fix
-    $updateQuery = "secret_key = '$newSecretKey' WHERE username = '$username'";
-    $mysqli->query($updateQuery);
-    $mysqli->close();
-    return $newSecretKey;
-}
+//     //fix
+//     $updateQuery = "secret_key = '$newSecretKey' WHERE username = '$username'";
+//     $mysqli->query($updateQuery);
+//     $mysqli->close();
+//     return $newSecretKey;
+// }
 
 // Add the new case for signup in the requestProcessor function
 function requestProcessor($request)
