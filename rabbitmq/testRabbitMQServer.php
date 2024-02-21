@@ -69,19 +69,19 @@ function doSignup($username, $password)
     }
 }
 
-function doValidate($tokens)
+function doValidate($username, $tokens)
 {
     try {
         $accessToken = $tokens['access_token'];
-        $decodedAccessToken = JWT::decode($accessToken, getSecretKey($tokens['username']), array('HS256'));
-
+        
+        // Decode the access token
+        $decodedAccessToken = JWT::decode($accessToken, getSecretKey($username), ['HS256']);
+        
         // Check if the access token is expired
         $currentTimestamp = time();
         if ($decodedAccessToken->exp < $currentTimestamp) {
             return array("status" => "error", "message" => "Access token has expired");
         }
-
-        // You can perform additional checks here if needed
 
         return array("status" => "success", "message" => "Token validation successful");
     } catch (Exception $e) {
@@ -89,6 +89,7 @@ function doValidate($tokens)
         return array("status" => "error", "message" => "Token validation failed");
     }
 }
+
 
 function doGenerateTokens($username)
 {
@@ -168,7 +169,7 @@ function requestProcessor($request)
         case "signup": // Add this case for signup
             return doSignup($request['username'], $request['password']);
         case "validate":
-            return doValidate($request['token']);
+            return doValidate($request['username'], $request['tokens']);
     }
     return array("status" => "error", "message" => "Server received request and processed but no case");
 }
