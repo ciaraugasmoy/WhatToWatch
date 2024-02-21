@@ -36,7 +36,48 @@ function doLogin($username, $password)
         return array("status" => "error", "message" => "Login failed");
     }
 }
+function doSignup($username, $password)
+{
+    // Connect to MySQL database
+    echo "attempting to connect to db" . PHP_EOL;
+    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
 
+    // Check connection
+    if ($mysqli->connect_error) {
+        echo "failed to connect" . PHP_EOL;
+        die("Connection failed: " . $mysqli->connect_error);
+    }
+
+    // Sanitize input to prevent SQL injection
+    $username = $mysqli->real_escape_string($username);
+    $password = $mysqli->real_escape_string($password);
+
+    // Check if the username or email is already registered
+    $checkQuery = "SELECT * FROM users WHERE username = '$username' ";
+    $checkResult = $mysqli->query($checkQuery);
+
+    if ($checkResult->num_rows > 0) {
+        echo "username already exists" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "error", "message" => "Username already exists");
+    }
+
+    // Perform signup
+    $signupQuery = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
+    $signupResult = $mysqli->query($signupQuery);
+
+    if ($signupResult) {
+        echo "user signed up successfully" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "success", "message" => "Signup successful");
+    } else {
+        echo "signup failed" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "error", "message" => "Signup failed");
+    }
+}
+
+// Add the new case for signup in the requestProcessor function
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
@@ -47,11 +88,14 @@ function requestProcessor($request)
     switch ($request['type']) {
         case "login":
             return doLogin($request['username'], $request['password']);
+        case "signup": // Add this case for signup
+            return doSignup($request['username'], $request['password']);
         case "validate_session":
             return doValidate($request['sessionId']);
     }
     return array("status" => "error", "message" => "Server received request and processed");
 }
+
 
 $server = new rabbitMQServer("rabbitMQDB.ini", "testServer");
 
