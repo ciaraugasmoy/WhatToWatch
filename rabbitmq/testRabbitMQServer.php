@@ -3,6 +3,7 @@
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
+use Firebase\JWT\JWT;
 
 function doLogin($username, $password)
 {
@@ -25,14 +26,19 @@ function doLogin($username, $password)
     $result = $mysqli->query($query);
 
     if ($result->num_rows > 0) {
+        $mysqli->close();
+        $jwtToken = doGenerateToken();
+        
         echo "user found" . PHP_EOL;
-        $mysqli->close();
         echo "Login successful for username: $username\n";
-        return array("status" => "success", "message" => "Login successful");
+        echo "Login successful for username: $username\n";
+        
+        return array("status" => "success", "message" => "Login successful", "token" => $jwtToken);
     } else {
-        echo "user not found" . PHP_EOL;
         $mysqli->close();
+        echo "user not found" . PHP_EOL;
         echo "Login failed for username: $username\n";
+        
         return array("status" => "error", "message" => "Login failed");
     }
 }
@@ -75,6 +81,34 @@ function doSignup($username, $password)
         $mysqli->close();
         return array("status" => "error", "message" => "Signup failed");
     }
+}
+
+function generateJwtToken($username)
+{
+    // Generate an asymmetric key pair
+    $privateKey = openssl_pkey_new(array(
+        'private_key_bits' => 2048,
+        'private_key_type' => OPENSSL_KEYTYPE_RSA,
+    ));
+
+    // Get the private key as a string
+    openssl_pkey_export($privateKey, $privateKeyString);
+
+    // Set thesecret key for encoding the token (use the private key for signing)
+    $secretKey = $privateKeyString;
+
+    // Defne the payload of the token
+    $tokenPayload = array(
+        "username" => $username,
+        "iat" => time(),         // Issued at time
+        "exp" => time() + 3600   // Token expiration time 1 hour 
+    );
+
+    // Generate the token using the private key for signing
+    $jwtToken = JWT::encode($tokenPayload, $secretKey, 'RS256');
+    $publicKey = openssl_pkey_get_details($privateKey)['key'];
+    
+    return $jwtToken);
 }
 
 // Add the new case for signup in the requestProcessor function
