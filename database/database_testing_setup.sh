@@ -8,9 +8,25 @@ DB_NAME="what2watch"
 # SQL script file
 SQL_FILE="insert_users.sql"
 
-# SQL commands to insert users
-INSERT_COMMANDS="INSERT INTO users (username, password) VALUES ('steve', '12345');\
-INSERT INTO users (username, password) VALUES ('alice', '54321');"
+# Users to be deleted
+USERS_TO_DELETE=("steve" "alice")
+
+# Delete users if they exist
+for USER in "${USERS_TO_DELETE[@]}"; do
+    mysql -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "DELETE FROM users WHERE username='$USER';"
+done
+
+# Passwords to be hashed
+PASSWORD1="12345"
+PASSWORD2="54321"
+
+# Hash passwords using PHP and bcrypt
+HASHED_PASSWORD1=$(php -r "echo password_hash('$PASSWORD1', PASSWORD_BCRYPT);")
+HASHED_PASSWORD2=$(php -r "echo password_hash('$PASSWORD2', PASSWORD_BCRYPT);")
+
+# SQL commands to insert users with hashed passwords
+INSERT_COMMANDS="INSERT INTO users (username, password) VALUES ('steve', '$HASHED_PASSWORD1');\
+INSERT INTO users (username, password) VALUES ('alice', '$HASHED_PASSWORD2');"
 
 # Create SQL script
 echo "$INSERT_COMMANDS" > "$SQL_FILE"
