@@ -101,13 +101,13 @@ function getSecretKey($username)
     $result = $mysqli->query($query);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row['secret_key'];
+        return $row['private_key'];
     }
     $mysqli->close();
     return null;
 }
 function generateTokens($username) {
-    $secretKey = getSecretKeyFromDatabase();
+    $secretKey = getSecretKey($username);
     // payload of the access token
     $issuedAt = time();
     $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
