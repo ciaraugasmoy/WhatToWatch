@@ -113,8 +113,35 @@ function doGenerateToken($username)
     // Generate the token using the private key for signing
     $jwtToken = JWT::encode($tokenPayload, $secretKey, 'RS256');
     $publicKey = openssl_pkey_get_details($privateKey)['key'];
-    
+    savePublicKeyToDatabase($username, $publicKey);
     return $jwtToken;
+}
+function savePublicKeyToDatabase($username, $publicKey)
+{
+    // Connect to the database (replace these credentials with your actual database credentials)
+    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
+    // Check connection
+    if ($mysqli->connect_error) {
+        die("Connection failed: " . $mysqli->connect_error);
+    }
+
+    // Get the user ID from the 'users' table based on the username
+    $userIdQuery = "SELECT id FROM users WHERE username = '$username'";
+    $result = $mysqli->query($userIdQuery);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $userId = $row['id'];
+
+        // Insert the public key into the 'public_keys' table
+        $insertKeyQuery = "INSERT INTO public_keys (user_id, public_key) VALUES ($userId, '$publicKey')";
+        $mysqli->query($insertKeyQuery);
+
+        echo "Public key saved to the database for user: $username" . PHP_EOL;
+    } else {
+        echo "User not found in the database: $username" . PHP_EOL;
+    }
+    $mysqli->close();
 }
 
 //TO BE USED IN doValidate which should check the database for the public key
