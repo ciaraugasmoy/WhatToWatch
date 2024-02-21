@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Set cookies to store tokens
         setcookie("access_token", $response['tokens']['access_token'], time() + 3600, "/");
         setcookie("refresh_token", $response['tokens']['refresh_token'], time() + (7 * 24 * 3600), "/");
-
+        setcookie("username", $response['username'], time() + 3600, "/");
         // Redirect to a success page or do further processing
         header("Location: success.php");
         exit();
