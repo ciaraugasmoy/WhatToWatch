@@ -23,9 +23,7 @@ function doLogin($username, $password)
         // Use password_verify to check if the entered password matches the stored hashed password
         if (password_verify($password, $storedHashedPassword)) {
             $mysqli->close();
-            //$jwtTokens = doGenerateTokens($username);
-            $jwtTokens = 'in development';
-            echo "user found" . PHP_EOL;
+            $jwtTokens = doGenerateTokens($username);
             echo "Login successful for username: $username\n";
             return array("status" => "success", "message" => "Login successful", "tokens" => $jwtTokens);
         }
@@ -72,92 +70,71 @@ function doSignup($username, $password)
 }
 
 
-// function doGenerateTokens($username)
-// {
-//     // Check if the secret key exists for the user
-//     $existingSecretKey = getSecretKeyFromDatabase($username);
-
-//     // If the secret key doesn't exist, generate and store a new one
-//     if (empty($existingSecretKey)) {
-//         $newSecretKey = generateSecretKey($username);
-//     } else {
-//         $newSecretKey = $existingSecretKey;
-//     }
-//     // Use the secret key to generate tokens
-//     $tokens = generateTokens($username, $newSecretKey);
-
-//     return $tokens;
-// }
-// function generateTokens($username) {
-//     // Retrieve your secret key from a secure location
-//     $secretKey = getSecretKeyFromDatabase();
-
-//     // Define the payload of the access token
-//     $issuedAt = time();
-//     $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
-//     $refreshTokenExpiration = $issuedAt + (7 * 24 * 3600); // Refresh token validity (7 days)
-
-//     $accessTokenPayload = [
-//         //"iss" => "https://what2watch.com",
-//         "iat" => $issuedAt,
-//         "exp" => $accessTokenExpiration,
-//         "username" => $username
-//     ];
-
-//     // Encode the access token payload to get the access token
-//     $accessToken = JWT::encode($accessTokenPayload, $secretKey, 'HS256');
-
-//     // Define the payload of the refresh token
-//     $refreshTokenPayload = [
-//        // "iss" => "https://what2watch.com",
-//         "iat" => $issuedAt,
-//         "exp" => $refreshTokenExpiration,
-//         "username" => $username
-//     ];
-
-//     // Encode the refresh token payload to get the refresh token
-//     $refreshToken = JWT::encode($refreshTokenPayload, $secretKey, 'HS256');
-
-//     return [
-//         "access_token" => $accessToken,
-//         "refresh_token" => $refreshToken,
-//         "access_token_expiration" => $accessTokenExpiration
-//     ];
-// }
-
-// function getSecretKeyFromDatabase($username)
-// {
-//     require 'connection.php';
-//     $username = $mysqli->real_escape_string($username);
-//     //fix
-//     $query = "SELECT secret_key FROM users WHERE username = '$username'";
-//     $result = $mysqli->query($query);
+function doGenerateTokens($username)
+{
+    $existingSecretKey = getSecretKey($username);
+    if (empty($existingSecretKey)) {
+        $newSecretKey = generateSecretKey($username);
+    } else {
+        $newSecretKey = $existingSecretKey;
+    }
+    $tokens = generateTokens($username, $newSecretKey);
+    return $tokens;
+}
+function generateSecretKey($username)
+{
+    $newSecretKey = bin2hex(random_bytes(32));
+    require 'connection.php';
+    $username = $mysqli->real_escape_string($username);
+    $newSecretKey = $mysqli->real_escape_string($newSecretKey);
     
-//     if ($result->num_rows > 0) {
-//         $row = $result->fetch_assoc();
-//         return $row['secret_key'];
-//     }
-//     $mysqli->close();
-//     return null;
-// }
+    $insertQuery = "INSERT INTO private_keys (user_id, private_key) VALUES ((SELECT id FROM users WHERE username = '$username'), '$newSecretKey')";
+    $mysqli->query($insertQuery);
+    $mysqli->close();
+    return $newSecretKey;
+}
+function getSecretKey($username)
+{
+    require 'connection.php';
+    $username = $mysqli->real_escape_string($username);
+    $query = "SELECT private_key FROM private_keys WHERE user_id = (SELECT id FROM users WHERE username = '$username')";
+    $result = $mysqli->query($query);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['secret_key'];
+    }
+    $mysqli->close();
+    return null;
+}
+function generateTokens($username) {
+    $secretKey = getSecretKeyFromDatabase();
+    // payload of the access token
+    $issuedAt = time();
+    $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
+    $refreshTokenExpiration = $issuedAt + (7 * 24 * 3600); // Refresh token validity (7 days)
 
-// function generateSecretKey($username)
-// {
-//     $newSecretKey = bin2hex(random_bytes(32));
-//     require 'connection.php';
+    $accessTokenPayload = [
+        //"iss" => "https://what2watch.com",
+        "iat" => $issuedAt,
+        "exp" => $accessTokenExpiration,
+        "username" => $username
+    ];
+    $accessToken = JWT::encode($accessTokenPayload, $secretKey, 'HS256');
+    
+    $refreshTokenPayload = [
+       // "iss" => "https://what2watch.com",
+        "iat" => $issuedAt,
+        "exp" => $refreshTokenExpiration,
+        "username" => $username
+    ];
+    $refreshToken = JWT::encode($refreshTokenPayload, $secretKey, 'HS256');
+    return [
+        "access_token" => $accessToken,
+        "refresh_token" => $refreshToken,
+        "access_token_expiration" => $accessTokenExpiration
+    ];
+}
 
-//     // Sanitize input to prevent SQL injection
-//     $username = $mysqli->real_escape_string($username);
-//     $newSecretKey = $mysqli->real_escape_string($newSecretKey);
-
-//     //fix
-//     $updateQuery = "secret_key = '$newSecretKey' WHERE username = '$username'";
-//     $mysqli->query($updateQuery);
-//     $mysqli->close();
-//     return $newSecretKey;
-// }
-
-// Add the new case for signup in the requestProcessor function
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
@@ -173,7 +150,7 @@ function requestProcessor($request)
         case "validate":
             return doValidate($request['token']);
     }
-    return array("status" => "error", "message" => "Server received request and processed");
+    return array("status" => "error", "message" => "Server received request and processed but no case");
 }
 
 
