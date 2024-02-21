@@ -20,27 +20,33 @@ function doLogin($username, $password)
 
     // Sanitize input to prevent SQL injection
     $username = $mysqli->real_escape_string($username);
-    $password = $mysqli->real_escape_string($password);
 
     // Perform login check
-    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $query = "SELECT * FROM users WHERE username = '$username'";
     $result = $mysqli->query($query);
 
     if ($result->num_rows > 0) {
-        $mysqli->close();
-        $jwtToken = doGenerateToken($username);
-        
-        echo "user found" . PHP_EOL;
-        echo "Login successful for username: $username\n";
-        return array("status" => "success", "message" => "Login successful", "token" => $jwtToken);
-    } else {
-        $mysqli->close();
-        echo "user not found" . PHP_EOL;
-        echo "Login failed for username: $username\n";
-        
-        return array("status" => "error", "message" => "Login failed");
+        $row = $result->fetch_assoc();
+        $storedHashedPassword = $row['password'];
+
+        // Use password_verify to check if the entered password matches the stored hashed password
+        if (password_verify($password, $storedHashedPassword)) {
+            $mysqli->close();
+            $jwtToken = doGenerateToken($username);
+            
+            echo "user found" . PHP_EOL;
+            echo "Login successful for username: $username\n";
+            return array("status" => "success", "message" => "Login successful", "token" => $jwtToken);
+        }
     }
+
+    $mysqli->close();
+    echo "user not found or incorrect password" . PHP_EOL;
+    echo "Login failed for username: $username\n";
+
+    return array("status" => "error", "message" => "Login failed");
 }
+
 function doSignup($username, $password)
 {
     // Connect to MySQL database
