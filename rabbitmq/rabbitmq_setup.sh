@@ -1,26 +1,27 @@
 #!/bin/bash
 
-RABBITMQ_HOST="" #DB IP
-RABBITMQ_PORT="15672"
+RABBITMQ_HOST="localhost"  # to be replaced with db ip
+RABBITMQ_PORT="15672"          
 RABBITMQ_USER="guest"
 RABBITMQ_PASS="guest"
+VHOST_NAME="/testHost"         
 EXCHANGE_NAME="broker_to_db_exchange"
 QUEUE_NAME="broker_to_db_queue"
 ROUTING_KEY="*"
 
-# Declare Exchange with topic type
+# Declare Exchange with topic type, currently autodelete is false and type is topic for all
 curl -i -u $RABBITMQ_USER:$RABBITMQ_PASS -H "content-type:application/json" \
     -X PUT -d "{\"type\":\"topic\",\"auto_delete\":false,\"durable\":true}" \
-    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/exchanges/%2F/$EXCHANGE_NAME
+    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/exchanges$VHOST_NAME/$EXCHANGE_NAME
 
 # Declare Queue
 curl -i -u $RABBITMQ_USER:$RABBITMQ_PASS -H "content-type:application/json" \
     -X PUT -d "{\"auto_delete\":false,\"durable\":true}" \
-    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/queues/%2F/$QUEUE_NAME
+    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/queues$VHOST_NAME/$QUEUE_NAME
 
 # Bind Queue to Exchange with Routing Key
 curl -i -u $RABBITMQ_USER:$RABBITMQ_PASS -H "content-type:application/json" \
     -X POST -d "{\"routing_key\":\"$ROUTING_KEY\"}" \
-    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/bindings/%2F/e/$EXCHANGE_NAME/q/$QUEUE_NAME
+    http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/bindings$VHOST_NAME/e/$EXCHANGE_NAME/q/$QUEUE_NAME
 
-echo "RabbitMQ setup completed. Exchange: $EXCHANGE_NAME, Queue: $QUEUE_NAME, Routing Key: $ROUTING_KEY"
+echo "RabbitMQ setup completed. Exchange: $EXCHANGE_NAME, Queue: $QUEUE_NAME, Routing Key: $ROUTING_KEY in vhost: $VHOST_NAME"
