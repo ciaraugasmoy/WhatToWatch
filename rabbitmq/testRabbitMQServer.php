@@ -110,6 +110,19 @@ function doGenerateToken($username)
     return $jwtToken;
 }
 
+//TO BE USED IN doValidate which should check the database for the public key
+function verifyToken($jwtToken, $publicKey)
+{
+    try {
+        $decoded = JWT::decode($jwtToken, $publicKey, array('RS256'));
+        // Token is valid
+        return $decoded;
+    } catch (\Exception $e) {
+        // Token is invalid
+        return false;
+    }
+}
+
 // Add the new case for signup in the requestProcessor function
 function requestProcessor($request)
 {
