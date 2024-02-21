@@ -32,11 +32,11 @@ function doLogin($username, $password)
         // Use password_verify to check if the entered password matches the stored hashed password
         if (password_verify($password, $storedHashedPassword)) {
             $mysqli->close();
-            $jwtToken = doGenerateToken($username);
+            $jwtTokens = doGenerateTokens($username);
             
             echo "user found" . PHP_EOL;
             echo "Login successful for username: $username\n";
-            return array("status" => "success", "message" => "Login successful", "token" => $jwtToken);
+            return array("status" => "success", "message" => "Login successful", "tokens" => $jwtTokens);
         }
     }
 
@@ -89,120 +89,98 @@ function doSignup($username, $password)
     }
 }
 
-function doGenerateToken($username)
+
+function doGenerateTokens($username)
 {
-    // Generate an asymmetric key pair
-    $privateKey = openssl_pkey_new(array(
-        'private_key_bits' => 2048,
-        'private_key_type' => OPENSSL_KEYTYPE_RSA,
-    ));
+    // Check if the secret key exists for the user
+    $existingSecretKey = getSecretKeyFromDatabase($username);
 
-    // Get the private key as a string
-    openssl_pkey_export($privateKey, $privateKeyString);
-
-    // Set thesecret key for encoding the token (use the private key for signing)
-    $secretKey = $privateKeyString;
-
-    // Defne the payload of the token
-    $tokenPayload = array(
-        "username" => $username,
-        "iat" => time(),         // Issued at time
-        "exp" => time() + 3600   // Token expiration time 1 hour 
-    );
-
-    // Generate the token using the private key for signing
-    $jwtToken = JWT::encode($tokenPayload, $secretKey, 'RS256');
-    $publicKey = openssl_pkey_get_details($privateKey)['key'];
-    savePublicKeyToDatabase($username, $publicKey);
-    return $jwtToken;
-}
-function savePublicKeyToDatabase($username, $publicKey)
-{
-    // Connect to the database (replace these credentials with your actual database credentials)
-    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-    // Check connection
-    if ($mysqli->connect_error) {
-        die("Connection failed: " . $mysqli->connect_error);
-    }
-
-    // Get the user ID from the 'users' table based on the username
-    $userIdQuery = "SELECT id FROM users WHERE username = '$username'";
-    $result = $mysqli->query($userIdQuery);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $userId = $row['id'];
-
-        // Insert the public key into the 'public_keys' table
-        $insertKeyQuery = "INSERT INTO public_keys (user_id, public_key) VALUES ($userId, '$publicKey')";
-        $mysqli->query($insertKeyQuery);
-
-        echo "Public key saved to the database for user: $username" . PHP_EOL;
+    // If the secret key doesn't exist, generate and store a new one
+    if (empty($existingSecretKey)) {
+        $newSecretKey = generateSecretKey($username);
     } else {
-        echo "User not found in the database: $username" . PHP_EOL;
+        $newSecretKey = $existingSecretKey;
     }
-    $mysqli->close();
+    // Use the secret key to generate tokens
+    $tokens = generateTokens($username, $newSecretKey);
+
+    return $tokens;
 }
-function doValidate($jwtToken)
+function generateTokens($username) {
+    // Retrieve your secret key from a secure location
+    $secretKey = getSecretKeyFromDatabase();
+
+    // Define the payload of the access token
+    $issuedAt = time();
+    $accessTokenExpiration = $issuedAt + 3600; // Access token validity (1 hour)
+    $refreshTokenExpiration = $issuedAt + (7 * 24 * 3600); // Refresh token validity (7 days)
+
+    $accessTokenPayload = [
+        //"iss" => "https://what2watch.com",
+        "iat" => $issuedAt,
+        "exp" => $accessTokenExpiration,
+        "username" => $username
+    ];
+
+    // Encode the access token payload to get the access token
+    $accessToken = JWT::encode($accessTokenPayload, $secretKey, 'HS256');
+
+    // Define the payload of the refresh token
+    $refreshTokenPayload = [
+       // "iss" => "https://what2watch.com",
+        "iat" => $issuedAt,
+        "exp" => $refreshTokenExpiration,
+        "username" => $username
+    ];
+
+    // Encode the refresh token payload to get the refresh token
+    $refreshToken = JWT::encode($refreshTokenPayload, $secretKey, 'HS256');
+
+    return [
+        "access_token" => $accessToken,
+        "refresh_token" => $refreshToken,
+        "access_token_expiration" => $accessTokenExpiration
+    ];
+}
+
+function getSecretKeyFromDatabase($username)
 {
     // Connect to MySQL database
-    echo "attempting to connect to db" . PHP_EOL;
     $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
-
     // Check connection
     if ($mysqli->connect_error) {
-        echo "failed to connect" . PHP_EOL;
+        die("Connection failed: " . $mysqli->connect_error);
+    }
+    $username = $mysqli->real_escape_string($username);
+    //fix
+    $query = "SELECT secret_key FROM users WHERE username = '$username'";
+    $result = $mysqli->query($query);
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['secret_key'];
+    }
+    $mysqli->close();
+    return null;
+}
+
+function generateSecretKey($username)
+{
+    $newSecretKey = bin2hex(random_bytes(32));
+    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
+    if ($mysqli->connect_error) {
         die("Connection failed: " . $mysqli->connect_error);
     }
 
-    // Extract the username from the token
-    try {
-        $decodedToken = JWT::decode($jwtToken, null, false);
-        $username = $decodedToken->username;
-    } catch (\Exception $e) {
-        // Token is invalid
-        $mysqli->close();
-        return array("status" => "error", "message" => "Invalid token");
-    }
+    // Sanitize input to prevent SQL injection
+    $username = $mysqli->real_escape_string($username);
+    $newSecretKey = $mysqli->real_escape_string($newSecretKey);
 
-    // Query the database to get the public key associated with the user
-    $publicKeyQuery = "SELECT public_key FROM public_keys WHERE user_id = (SELECT id FROM users WHERE username = '$username')";
-    $result = $mysqli->query($publicKeyQuery);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $publicKey = $row['public_key'];
-
-        // Verify the token using the public key
-        $verificationResult = verifyToken($jwtToken, $publicKey);
-
-        if ($verificationResult) {
-            // Token is valid
-            $mysqli->close();
-            return array("status" => "success", "message" => "Token is valid");
-        } else {
-            // Token is invalid
-            $mysqli->close();
-            return array("status" => "error", "message" => "Token verification failed");
-        }
-    } else {
-        // Public key not found in the database
-        $mysqli->close();
-        return array("status" => "error", "message" => "Public key not found for the user");
-    }
-}
-
-//TO BE USED IN doValidate which should check the database for the public key
-function verifyToken($jwtToken, $publicKey)
-{
-    try {
-        $decoded = JWT::decode($jwtToken, $publicKey, array('RS256'));
-        // Token is valid
-        return true;
-    } catch (\Exception $e) {
-        // Token is invalid
-        return false;
-    }
+    //fix
+    $updateQuery = "secret_key = '$newSecretKey' WHERE username = '$username'";
+    $mysqli->query($updateQuery);
+    $mysqli->close();
+    return $newSecretKey;
 }
 
 // Add the new case for signup in the requestProcessor function
