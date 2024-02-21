@@ -3,6 +3,7 @@
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
+require __DIR__ . '/vendor/autoload.php';
 use Firebase\JWT\JWT;
 
 function doLogin($username, $password)
@@ -27,12 +28,10 @@ function doLogin($username, $password)
 
     if ($result->num_rows > 0) {
         $mysqli->close();
-        $jwtToken = doGenerateToken();
+        $jwtToken = doGenerateToken($username);
         
         echo "user found" . PHP_EOL;
         echo "Login successful for username: $username\n";
-        echo "Login successful for username: $username\n";
-        
         return array("status" => "success", "message" => "Login successful", "token" => $jwtToken);
     } else {
         $mysqli->close();
@@ -83,7 +82,7 @@ function doSignup($username, $password)
     }
 }
 
-function generateJwtToken($username)
+function doGenerateToken($username)
 {
     // Generate an asymmetric key pair
     $privateKey = openssl_pkey_new(array(
@@ -108,7 +107,7 @@ function generateJwtToken($username)
     $jwtToken = JWT::encode($tokenPayload, $secretKey, 'RS256');
     $publicKey = openssl_pkey_get_details($privateKey)['key'];
     
-    return $jwtToken);
+    return $jwtToken;
 }
 
 // Add the new case for signup in the requestProcessor function

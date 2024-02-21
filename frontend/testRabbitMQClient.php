@@ -5,20 +5,18 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("rabbitMQDB.ini","testServer");
+
+$type = 'login';
+$username = 'steve';
+$password = '12345';
+
 if (isset($argv[1]))
 {
   $type = $argv[1];
 }
-else
-{
-  $type = "login";
-}
 if (isset($argv[2]))
 {
   $username=$argv[2];
-}
-else{
-  $username="steve";
 }
 if (isset($argv[3]))
 {
