@@ -143,6 +143,54 @@ function savePublicKeyToDatabase($username, $publicKey)
     }
     $mysqli->close();
 }
+function doValidate($jwtToken)
+{
+    // Connect to MySQL database
+    echo "attempting to connect to db" . PHP_EOL;
+    $mysqli = new mysqli("localhost", "what2watchadmin", "what2watchpassword", "what2watch");
+
+    // Check connection
+    if ($mysqli->connect_error) {
+        echo "failed to connect" . PHP_EOL;
+        die("Connection failed: " . $mysqli->connect_error);
+    }
+
+    // Extract the username from the token
+    try {
+        $decodedToken = JWT::decode($jwtToken, null, false);
+        $username = $decodedToken->username;
+    } catch (\Exception $e) {
+        // Token is invalid
+        $mysqli->close();
+        return array("status" => "error", "message" => "Invalid token");
+    }
+
+    // Query the database to get the public key associated with the user
+    $publicKeyQuery = "SELECT public_key FROM public_keys WHERE user_id = (SELECT id FROM users WHERE username = '$username')";
+    $result = $mysqli->query($publicKeyQuery);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $publicKey = $row['public_key'];
+
+        // Verify the token using the public key
+        $verificationResult = verifyToken($jwtToken, $publicKey);
+
+        if ($verificationResult) {
+            // Token is valid
+            $mysqli->close();
+            return array("status" => "success", "message" => "Token is valid");
+        } else {
+            // Token is invalid
+            $mysqli->close();
+            return array("status" => "error", "message" => "Token verification failed");
+        }
+    } else {
+        // Public key not found in the database
+        $mysqli->close();
+        return array("status" => "error", "message" => "Public key not found for the user");
+    }
+}
 
 //TO BE USED IN doValidate which should check the database for the public key
 function verifyToken($jwtToken, $publicKey)
@@ -150,7 +198,7 @@ function verifyToken($jwtToken, $publicKey)
     try {
         $decoded = JWT::decode($jwtToken, $publicKey, array('RS256'));
         // Token is valid
-        return $decoded;
+        return true;
     } catch (\Exception $e) {
         // Token is invalid
         return false;
@@ -170,8 +218,8 @@ function requestProcessor($request)
             return doLogin($request['username'], $request['password']);
         case "signup": // Add this case for signup
             return doSignup($request['username'], $request['password']);
-        case "validate_session":
-            return doValidate($request['sessionId']);
+        case "validate":
+            return doValidate($request['token']);
     }
     return array("status" => "error", "message" => "Server received request and processed");
 }
