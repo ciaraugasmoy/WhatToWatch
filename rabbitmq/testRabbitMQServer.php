@@ -69,6 +69,26 @@ function doSignup($username, $password)
     }
 }
 
+function doValidate($tokens)
+{
+    try {
+        $accessToken = $tokens['access_token'];
+        $decodedAccessToken = JWT::decode($accessToken, getSecretKey($tokens['username']), array('HS256'));
+
+        // Check if the access token is expired
+        $currentTimestamp = time();
+        if ($decodedAccessToken->exp < $currentTimestamp) {
+            return array("status" => "error", "message" => "Access token has expired");
+        }
+
+        // You can perform additional checks here if needed
+
+        return array("status" => "success", "message" => "Token validation successful");
+    } catch (Exception $e) {
+        // Token decoding failed, or other exception occurred
+        return array("status" => "error", "message" => "Token validation failed");
+    }
+}
 
 function doGenerateTokens($username)
 {
