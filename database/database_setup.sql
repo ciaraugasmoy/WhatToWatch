@@ -21,6 +21,6 @@ CREATE TABLE IF NOT EXISTS public_keys (
 
 -- Create a user and grant limited permissions
 CREATE USER IF NOT EXISTS 'what2watchadmin'@'localhost' IDENTIFIED BY 'what2watchpassword';
-GRANT SELECT, INSERT, UPDATE, DELETE ON what2watch.users TO 'what2watchadmin'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON what2watch.* TO 'what2watchadmin'@'localhost';
 -- Add additional GRANT statements for other tables if needed
 FLUSH PRIVILEGES;
