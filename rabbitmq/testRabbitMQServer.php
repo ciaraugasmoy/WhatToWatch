@@ -68,7 +68,8 @@ function doSignup($username, $password)
     }
 
     // Perform signup
-    $signupQuery = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $signupQuery = "INSERT INTO users (username, password) VALUES ('$username', '$hashedPassword')";
     $signupResult = $mysqli->query($signupQuery);
 
     if ($signupResult) {
