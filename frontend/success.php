@@ -8,12 +8,14 @@ $client = new rabbitMQClient("rabbitMQDB.ini", "testServer");
 // Retrieve tokens from cookies
 $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
+$username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
     $request = array();
     $request['type'] = "validate";
     $request['tokens']['access_token'] = $access_token;
     $request['tokens']['refresh_token'] = $refresh_token;
+    $request['username'] = $username;
 
     $response = $client->send_request($request);
 
