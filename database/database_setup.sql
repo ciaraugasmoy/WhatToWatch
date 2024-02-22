@@ -6,7 +6,8 @@ USE what2watch;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS private_keys (
