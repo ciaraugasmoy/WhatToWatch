@@ -24,9 +24,9 @@ PASSWORD2="54321"
 HASHED_PASSWORD1=$(php -r "echo password_hash('$PASSWORD1', PASSWORD_BCRYPT);")
 HASHED_PASSWORD2=$(php -r "echo password_hash('$PASSWORD2', PASSWORD_BCRYPT);")
 
-# SQL commands to insert users with hashed passwords
-INSERT_COMMANDS="INSERT INTO users (username, password) VALUES ('steve', '$HASHED_PASSWORD1');\
-INSERT INTO users (username, password) VALUES ('alice', '$HASHED_PASSWORD2');"
+# SQL commands to insert users with hashed passwords, email, and dob
+INSERT_COMMANDS="INSERT INTO users (username, password, email, dob) VALUES ('steve', '$HASHED_PASSWORD1', 'steve@example.com', '1990-01-15');\
+INSERT INTO users (username, password, email, dob) VALUES ('alice', '$HASHED_PASSWORD2', 'alice@example.com', '2010-07-20');"
 
 # Create SQL script
 echo "$INSERT_COMMANDS" > "$SQL_FILE"
