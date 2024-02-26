@@ -35,27 +35,28 @@ function doLogin($username, $password)
 
     return array("status" => "error", "message" => "Login failed");
 }
-
-function doSignup($username, $password)
+function doSignup($username, $password, $email, $dob)
 {
     require 'connection.php';
     // Sanitize input to prevent SQL injection
     $username = $mysqli->real_escape_string($username);
     $password = $mysqli->real_escape_string($password);
+    $email = $mysqli->real_escape_string($email); // New field
+    $dob = $mysqli->real_escape_string($dob); // New field
 
     // Check if the username or email is already registered
-    $checkQuery = "SELECT * FROM users WHERE username = '$username' ";
+    $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
     $checkResult = $mysqli->query($checkQuery);
 
     if ($checkResult->num_rows > 0) {
-        echo "username already exists" . PHP_EOL;
+        echo "username or email already exists" . PHP_EOL;
         $mysqli->close();
-        return array("status" => "error", "message" => "Username already exists");
+        return array("status" => "error", "message" => "Username or email already exists");
     }
 
     // Perform signup
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $signupQuery = "INSERT INTO users (username, password) VALUES ('$username', '$hashedPassword')";
+    $signupQuery = "INSERT INTO users (username, password, email, dob) VALUES ('$username', '$hashedPassword', '$email', '$dob')";
     $signupResult = $mysqli->query($signupQuery);
 
     if ($signupResult) {
