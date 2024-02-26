@@ -5,12 +5,13 @@ require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("rabbitMQDB.ini", "testServer");
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request = array();
     $request['type'] = "signup";
     $request['username'] = $_POST['username'];
     $request['password'] = $_POST['password'];
+    $request['email'] = $_POST['email'];
+    $request['dob'] = $_POST['dob'];
     $request['message'] = "test message";
 
     $response = $client->send_request($request);
@@ -51,6 +52,12 @@ $payload = isset($errorMessage) ? json_encode(['error' => $errorMessage]) : '';
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
 
         <input type="submit" value="Signup">
     </form>
