@@ -105,16 +105,33 @@ function doGenerateTokens($username)
 }
 function generateSecretKey($username)
 {
-    $newSecretKey = bin2hex(random_bytes(32));
     require 'connection.php';
+
+    // Check if the user already has a secret key
+    $checkQuery = "SELECT private_key FROM private_keys WHERE user_id = (SELECT id FROM users WHERE username = '$username')";
+    $result = $mysqli->query($checkQuery);
+
+    if ($result->num_rows > 0) {
+        // User already has a secret key, retrieve and return it
+        $row = $result->fetch_assoc();
+        $existingSecretKey = $row['private_key'];
+        $mysqli->close();
+        return $existingSecretKey;
+    }
+
+    // Generate a new secret key
+    $newSecretKey = bin2hex(random_bytes(32));
     $username = $mysqli->real_escape_string($username);
     $newSecretKey = $mysqli->real_escape_string($newSecretKey);
-    
+
+    // Insert the new secret key into the database
     $insertQuery = "INSERT INTO private_keys (user_id, private_key) VALUES ((SELECT id FROM users WHERE username = '$username'), '$newSecretKey')";
     $mysqli->query($insertQuery);
     $mysqli->close();
+
     return $newSecretKey;
 }
+
 function getSecretKey($username)
 {
     require 'connection.php';
