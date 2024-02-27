@@ -5,6 +5,7 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 require __DIR__ . '/vendor/autoload.php';
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 function doLogin($username, $password)
 {
@@ -74,9 +75,9 @@ function doValidate($username, $tokens)
 {
     try {
         $accessToken = $tokens['access_token'];
-        
+        $secretKey=getSecretKey($username);
         // Decode the access token
-        $decodedAccessToken = JWT::decode($accessToken, getSecretKey($username), ['HS256']);
+        $decodedAccessToken = JWT::decode($accessToken, new Key($secretKey, 'HS256'));
         
         // Check if the access token is expired
         $currentTimestamp = time();
@@ -140,6 +141,8 @@ function getSecretKey($username)
     $result = $mysqli->query($query);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+        $mysqli->close();
+        echo 'the secret key returned is'.$row['private_key'].PHP_EOL;
         return $row['private_key'];
     }
     $mysqli->close();
