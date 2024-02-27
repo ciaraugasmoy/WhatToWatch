@@ -185,7 +185,7 @@ function requestProcessor($request)
         case "login":
             return doLogin($request['username'], $request['password']);
         case "signup": // Add this case for signup
-            return doSignup($request['username'], $request['password']);
+            return doSignup($request['username'], $request['password'],$request['email'],$request['dob']);
         case "validate":
             return doValidate($request['username'], $request['tokens']);
     }
