@@ -10,6 +10,12 @@ $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
+// Redirect to index if cookies are not set
+if (empty($access_token) || empty($refresh_token) || empty($username)) {
+    header("Location: index.php"); // Change the URL to your actual index page
+    exit(); // Ensure that the script stops here
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
     $request = array();
     $request['type'] = "validate";
