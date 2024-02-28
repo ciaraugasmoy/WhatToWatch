@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="signup.js"></script>
+    <title>Sign Up</title>
+</head>
 <body>
 
     <div class="container">
@@ -25,101 +30,6 @@
 
             <input type="submit" value="Sign Up">
         </form>
-        <script>
-            /* 
-                Password Validation: Assigns values from form to the validation and checks to see if the username is between 
-                3-16 characters, the email is in proper format, the password is over 8 characters, and if the password matches
-                the confirm password. If any validation is not passed, an "alert" message is displayed with the correction tip. 
-                If validation is passed, the function returns true and the validation accepts it.
-            */
-            function validate(form) {
-                let email = form.email.value.trim();
-                let username = form.username.value.trim();
-                let password = form.password.value.trim();
-                let confirm = form.confirm.value;
-
-                if (!/^[a-z0-9_-]{3,16}$/.test(username)) {
-                    alert("Invalid username format");
-                    return false;
-                }
-
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    alert("Invalid email format");
-                    return false;
-                }
-
-                if (password.length < 8) {
-                    alert("Password must be at least 8 characters long");
-                    return false;
-                }
-
-                if (password !== confirm) {
-                    alert("Password and Confirm password must match");
-                    return false;
-                }
-
-                return true;
-            }
-        </script>
     </div>
 
 </body>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-
-</html>
