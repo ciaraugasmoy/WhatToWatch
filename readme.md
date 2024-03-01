@@ -5,7 +5,7 @@ there is a readme in each folder for each server respectively
 ## Useful
 
 ```
-curl -s https://install.zerotier.com 
+curl -s https://install.zerotier.com | sudo bash 
 sudo snap install zerotier
 sudo snap start zerotier
 sudo zerotier-cli join <network-id>
