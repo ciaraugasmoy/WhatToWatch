@@ -1,9 +1,12 @@
 <?php
-require_once('path.inc');
-require_once('get_host_info.inc');
-require_once('rabbitMQLib.inc');
 
-$client = new rabbitMQClient("rabbitMQDB.ini", "testServer");
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once '../client/client_rpc.php'; // Include the RPCClient class
+
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+
+$client = new RPCClient();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request = array();
@@ -12,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request['password'] = $_POST['password'];
     $request['message'] = "test message";
 
-    $response = $client->send_request($request);
+    $response = $client->call($request);
 
     if (isset($response['status']) && $response['status'] == 'success' && isset($response['tokens'])) {
         // Set cookies to store tokens

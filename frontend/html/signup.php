@@ -1,9 +1,11 @@
 <?php
-require_once('path.inc');
-require_once('get_host_info.inc');
-require_once('rabbitMQLib.inc');
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once '../client/client_rpc.php'; // Include the RPCClient class
 
-$client = new rabbitMQClient("rabbitMQDB.ini", "testServer");
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+
+$client = new RPCClient();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request = array();
@@ -14,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request['dob'] = $_POST['dob'];
     $request['message'] = "test message";
 
-    $response = $client->send_request($request);
+    $response = $client->call($request);
 
     if (isset($response['status']) && $response['status'] == 'success') {
         // Redirect to login page upon successful signup
