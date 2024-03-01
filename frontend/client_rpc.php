@@ -73,16 +73,4 @@ class RPCClient
     }
     
 }
-
-$client_rpc = new RPCClient();
-
-$request = array();
-$request['type'] = "login";
-$request['username'] = "steve";
-$request['password'] = "12345";
-$request['message'] = "test message";
-
-$response = $client_rpc->call($request); #ENTER WHAT U WANT (MESSAGE) INSIDE OF CALLss
-echo ' [.] Response: ', $response, "\n";
-var_dump($response);
 ?>

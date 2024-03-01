@@ -5,6 +5,8 @@
 require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 	
 $connection = new AMQPStreamConnection('localhost', 5672, 'mqadmin', 'mqadminpass','brokerHost'); #THE VALUES ARE RABBITMQ CREDs
 $channel = $connection->channel();
@@ -40,6 +42,41 @@ function doLogin($username, $password)
 
     return array("status" => "error", "message" => "Login failed");
 }
+function doSignup($username, $password, $email, $dob)
+{
+    require 'connection.php';
+    // Sanitize input to prevent SQL injection
+    $username = $mysqli->real_escape_string($username);
+    $password = $mysqli->real_escape_string($password);
+    $email = $mysqli->real_escape_string($email); // New field
+    $dob = $mysqli->real_escape_string($dob); // New field
+
+    // Check if the username or email is already registered
+    $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
+    $checkResult = $mysqli->query($checkQuery);
+
+    if ($checkResult->num_rows > 0) {
+        echo "username or email already exists" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "error", "message" => "Username or email already exists");
+    }
+
+    // Perform signup
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $signupQuery = "INSERT INTO users (username, password, email, dob) VALUES ('$username', '$hashedPassword', '$email', '$dob')";
+    $signupResult = $mysqli->query($signupQuery);
+
+    if ($signupResult) {
+        echo "user signed up successfully" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "success", "message" => "Signup successful");
+    } else {
+        echo "signup failed" . PHP_EOL;
+        $mysqli->close();
+        return array("status" => "error", "message" => "Signup failed");
+    }
+}
+
 
 function HANDLE_MESSAGE($request)
 {
@@ -51,8 +88,8 @@ function HANDLE_MESSAGE($request)
     switch ($request['type']) {
         case "login":
             return doLogin($request['username'], $request['password']);
-        // case "signup": // Add this case for signup
-        //     return doSignup($request['username'], $request['password'],$request['email'],$request['dob']);
+        case "signup":
+            return doSignup($request['username'], $request['password'],$request['email'],$request['dob']);
         // case "validate":
         //     return doValidate($request['username'], $request['tokens']);
     }
