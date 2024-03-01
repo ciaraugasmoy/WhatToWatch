@@ -13,3 +13,4 @@ Currently supported requests are:
 - `validate` needing `username` `token`
 ''' rsync -av --delete ~/WhatToWatch/frontend/html/ /var/www/html'''
 
+in html > client > config.ini adjust your credentials for access to rabbitmq server
