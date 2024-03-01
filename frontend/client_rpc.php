@@ -19,8 +19,9 @@ class RPCClient
         $this->connection = new AMQPStreamConnection(
             'localhost',
             5672,
-            'testUser',
-            'testpassword'
+            'mqadmin',
+	    'mqadminpass',
+	    'brokerHost'
         );
         $this->channel = $this->connection->channel();
         list($this->callback_queue, ,) = $this->channel->queue_declare(
@@ -47,17 +48,17 @@ class RPCClient
     public function onResponse($rep)
     {
         if ($rep->get('correlation_id') == $this->corr_id) {
-            $this->response = $rep->body;
+            $this->response = json_decode($rep->body, true); // Decode JSON string to associative array
         }
-    }
+    }    
 
-    public function call($n)
+    public function call($request)
     {
         $this->response = null;
         $this->corr_id = uniqid();
-
+    
         $msg = new AMQPMessage(
-            (string) $n,
+            json_encode($request),
             array(
                 'correlation_id' => $this->corr_id,
                 'reply_to' => $this->callback_queue
@@ -67,12 +68,21 @@ class RPCClient
         while (!$this->response) {
             $this->channel->wait();
         }
-        return intval($this->response);
+    
+        return $this->response; // Return the response as it is, already decoded as an array
     }
+    
 }
 
 $client_rpc = new RPCClient();
-$response = $client_rpc->call(); #ENTER WHAT U WANT (MESSAGE) INSIDE OF CALLss
-echo ' [.] Got ', $response, "\n";
 
+$request = array();
+$request['type'] = "login";
+$request['username'] = "steve";
+$request['password'] = "12345";
+$request['message'] = "test message";
+
+$response = $client_rpc->call($request); #ENTER WHAT U WANT (MESSAGE) INSIDE OF CALLss
+echo ' [.] Response: ', $response, "\n";
+var_dump($response);
 ?>

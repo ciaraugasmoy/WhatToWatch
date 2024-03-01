@@ -11,42 +11,63 @@ $channel = $connection->channel();
 
 $channel->queue_declare('testQueue', false, false, false, false);
 
-function HANDLE_MESSAGE($n)
+function doLogin($username, $password)
 {
-	$servername = "192.168.192.13"; #IP ADDRESS OF DB VM
-	$username = "testUser"; #USERNAME OF sQL UsER THAT IS OPEN TO THE IP OF RABBITMQ
-	$password = "testpassword";
-	$dbname = "bruh";
+    require 'connection.php';
+    // Sanitize input to prevent SQL injection
+    $username = $mysqli->real_escape_string($username);
 
-	// Create connection
-	$conn = mysqli_connect($servername, $username, $password, $dbname);
-	// Check connection
-	if (!$conn) {
-  		die("Connection failed: " . mysqli_connect_error());
-	}
+    // Perform login check
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $result = $mysqli->query($query);
 
-	$sql = "SELECT test FROM testTable";
-	$result = mysqli_query($conn, $sql);
-	
-	if (mysqli_num_rows($result) > 0) {
-  	// output data of each row
-  	while($row = mysqli_fetch_assoc($result)) {
-    		echo "test: " . $row["test"]. "<br>";
-    		return $row["test"];
-  	}
-	} else {
-  		echo "0 results";
-	}
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $storedHashedPassword = $row['password'];
+
+        // Use password_verify to check if the entered password matches the stored hashed password
+        if (password_verify($password, $storedHashedPassword)) {
+            $mysqli->close();
+            //$jwtTokens = doGenerateTokens($username);
+            echo "Login successful for username: $username\n";
+            return array("status" => "success", "message" => "Login successful", "tokens" => "placeholder");
+        }
+    }
+
+    $mysqli->close();
+    echo "user not found or incorrect password" . PHP_EOL;
+    echo "Login failed for username: $username\n";
+
+    return array("status" => "error", "message" => "Login failed");
+}
+
+function HANDLE_MESSAGE($request)
+{
+	echo "received request" . PHP_EOL;
+    var_dump($request);
+    if (!isset($request['type'])) {
+        return array("status" => "error", "message" => "Unsupported message type");
+    }
+    switch ($request['type']) {
+        case "login":
+            return doLogin($request['username'], $request['password']);
+        // case "signup": // Add this case for signup
+        //     return doSignup($request['username'], $request['password'],$request['email'],$request['dob']);
+        // case "validate":
+        //     return doValidate($request['username'], $request['tokens']);
+    }
+    return array("status" => "error", "message" => "Server received request and processed but no case");
+
 
 }
 
 echo " [x] Awaiting RPC requests\n";
 $callback = function ($req) {
     $n = $req->getBody();
-    echo ' [.] OUTPUT(', $n, ")\n";
+    $result = HANDLE_MESSAGE(json_decode($n, true)); // Decode JSON string to associative array
 
     $msg = new AMQPMessage(
-        (string) HANDLE_MESSAGE($n),
+        json_encode($result), // Encode the result array as JSON
         array('correlation_id' => $req->get('correlation_id'))
     );
 

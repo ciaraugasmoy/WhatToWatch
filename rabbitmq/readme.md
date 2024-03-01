@@ -11,6 +11,7 @@ composer install
 ```
 sudo apt install rabbitmq-server -y
 sudo apt install php-amqplib -y
+sudo apt-get install php-mysql -y
 ```
 
 setting up rabbitmq
