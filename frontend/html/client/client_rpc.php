@@ -1,3 +1,4 @@
+
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -14,12 +15,14 @@ class RPCClient
 
     public function __construct()
     {
+        $config = parse_ini_file(__DIR__ . '/config.ini', true);
+
         $this->connection = new AMQPStreamConnection(
-            'localhost',
-            5672,
-            'mqadmin',
-	    'mqadminpass',
-	    'brokerHost'
+            $config['amqp']['host'],
+            $config['amqp']['port'],
+            $config['amqp']['user'],
+            $config['amqp']['password'],
+            $config['amqp']['broker_host']
         );
         $this->channel = $this->connection->channel();
         list($this->callback_queue, ,) = $this->channel->queue_declare(
