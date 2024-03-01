@@ -11,3 +11,5 @@ Currently supported requests are:
 - `login` needing `username` `password` `email` `dob`
 - `signup` needing `username` `password`
 - `validate` needing `username` `token`
+''' rsync -av --delete ~/WhatToWatch/frontend/html/ /var/www/html'''
+
