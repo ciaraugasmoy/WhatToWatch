@@ -29,8 +29,8 @@ function HANDLE_MESSAGE($request)
             return $userHandler->doLogin($request['username'], $request['password']);
         case "signup":
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
-        // case "validate":
-        //     return $userHandler->doValidate($request['username'], $request['tokens']);
+        case "validate":
+             return $userHandler->doValidate($request['username'], $request['tokens']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
