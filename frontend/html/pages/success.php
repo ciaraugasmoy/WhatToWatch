@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once '../client/client_rpc.php'; // Include the RPCClient class
 
@@ -14,7 +15,7 @@ $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
 // Redirect to index if cookies are not set
 if (empty($access_token) || empty($refresh_token) || empty($username)) {
-    header("Location: index.php"); // Change the URL to your actual index page
+    header("Location: ../index.php"); // Change the URL to your actual index page
     exit(); // Ensure that the script stops here
 }
 
@@ -25,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
     $request['tokens']['refresh_token'] = $refresh_token;
     $request['username'] = $username;
 
-    $response = $client->send_request($request);
+    $response = $client->call($request);
 
     if (isset($response['status']) && $response['status'] == 'success') {
         $validationMessage = "Token is valid!";
