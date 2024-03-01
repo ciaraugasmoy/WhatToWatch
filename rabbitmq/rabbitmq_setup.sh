@@ -2,9 +2,9 @@
 
 RABBITMQ_HOST="localhost"  # to be replaced with db ip
 RABBITMQ_PORT="15672"          
-RABBITMQ_USER="guest"
-RABBITMQ_PASS="guest"
-VHOST_NAME="/testHost"         
+RABBITMQ_USER="mqadmin"
+RABBITMQ_PASS="mqadminpass"
+VHOST_NAME="/brokerHost"         
 EXCHANGE_NAME="broker_to_db_exchange"
 QUEUE_NAME="broker_to_db_queue"
 ROUTING_KEY="*"
@@ -25,3 +25,4 @@ curl -i -u $RABBITMQ_USER:$RABBITMQ_PASS -H "content-type:application/json" \
     http://$RABBITMQ_HOST:$RABBITMQ_PORT/api/bindings$VHOST_NAME/e/$EXCHANGE_NAME/q/$QUEUE_NAME
 
 echo "RabbitMQ setup completed. Exchange: $EXCHANGE_NAME, Queue: $QUEUE_NAME, Routing Key: $ROUTING_KEY in vhost: $VHOST_NAME"
+
