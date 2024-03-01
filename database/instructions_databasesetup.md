@@ -1,6 +1,8 @@
 To set up Database
 Please run
 ```
+sudo apt install mysql-server
+
 sudo mysql < database_setup.sql
 ```
 To populate with test data please run
