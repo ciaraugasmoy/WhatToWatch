@@ -66,7 +66,7 @@ $payload = isset($errorMessage) ? json_encode(['error' => $errorMessage]) : '';
         <input type="submit" value="Signup">
     </form>
 
-    <p>Already have an account? <a href="login.php">Login here</a></p>
+    <p>Already have an account? <a href="../login.php">Login here</a></p>
 
 </body>
 </html>
