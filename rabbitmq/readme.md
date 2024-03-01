@@ -21,5 +21,4 @@ sudo rabbitmqctl add_user mqadmin mqadminpass
 sudo rabbitmqctl set_user_tags mqadmin administrator
 sudo rabbitmqctl set_permissions -p brokerHost mqadmin ".*" ".*" ".*"
 sudo rabbitmqctl delete_user guest
-sudo rabbitmqctl add_vhost brokervhost
 ```
