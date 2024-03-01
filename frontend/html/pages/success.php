@@ -15,10 +15,20 @@ $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
 // Redirect to index if cookies are not set
 if (empty($access_token) || empty($refresh_token) || empty($username)) {
-    header("Location: ../index.php"); // Change the URL to your actual index page
+    header("Location: ../index.html"); // Change the URL to your actual index page
     exit(); // Ensure that the script stops here
 }
+// Logout logic
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
+    // Destroy cookies
+    setcookie('access_token', '', time() - 3600, '/');
+    setcookie('refresh_token', '', time() - 3600, '/');
+    setcookie('username', '', time() - 3600, '/');
 
+    // Redirect to index page
+    header("Location: ../index.html");
+    exit();
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
     $request = array();
     $request['type'] = "validate";
@@ -55,6 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
 
     <form action="" method="post">
         <input type="submit" name="ismytokenvalid" value="Check Token Validity">
+    </form>
+    <form action="" method="post">
+        <input type="submit" name="logout" value="Logout">
     </form>
 
 </body>
