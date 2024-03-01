@@ -2,11 +2,12 @@
 
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once 'client_rpc.php'; // Include the RPCClient class
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once '../client/client_rpc.php'; // Include the RPCClient class
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+
 
 $client_rpc = new RPCClient();
 
