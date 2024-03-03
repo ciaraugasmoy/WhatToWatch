@@ -1,11 +1,10 @@
 # Setup
-
+- php, -curl to improve composer, -mysql to make connection to db
+- composer to install php reqs
 ```
-sudo apt install php -y
-sudo apt-get install php-curl
+sudo apt install php php-curl php-mysql -y
 sudo apt install composer -y
 composer install
-
 ```
 
 ```
