@@ -27,3 +27,12 @@ Please adjust the credentials in `credentials.ini` to YOUR DATABASE credentials.
 # Files Summary
 rpc_server.php is an executable which runs the server class, accepting json messages from the client and returning a response also in json format.
 UserHandler.php connects to the database and provides `login`, `validation`, and `signup` functions.
+
+# Firewalls Setup
+Please use the ip for the webserver in your specific network
+```
+sudo ufw reset -y
+sudo ufw default deny incoming
+sudo ufw allow from WEBSERVERIP to any port 5672
+sudo ufw enable
+```
