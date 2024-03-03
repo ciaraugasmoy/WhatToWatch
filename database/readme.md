@@ -9,6 +9,7 @@ or
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 And replace 127.0.0.1's with the your ip TO the following fields: bind-address and mysqlx-bind-address.
+
 -------------------------------------------------------------------------------------------------------
 
 To set up Database, currently two users are hardcoded in there
