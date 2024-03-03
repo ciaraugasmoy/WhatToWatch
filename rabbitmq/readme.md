@@ -2,13 +2,13 @@
 - php, -curl to improve composer, -mysql to make connection to db
 - composer to install php reqs
 ```
+sudo apt install rabbitmq-server -y
 sudo apt install php php-curl php-mysql -y
 sudo apt install composer -y
 composer install
 ```
 
 ```
-sudo apt install rabbitmq-server -y
 sudo apt install php-amqplib -y
 sudo apt-get install php-mysql -y
 ```
