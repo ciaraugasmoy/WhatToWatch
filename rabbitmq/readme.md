@@ -22,3 +22,6 @@ sudo rabbitmqctl set_user_tags mqadmin administrator
 sudo rabbitmqctl set_permissions -p brokerHost mqadmin ".*" ".*" ".*"
 sudo rabbitmqctl delete_user guest
 ```
+# Important
+## Configuration
+Please adjust the credentials in `credentials.ini` to YOUR DATABASE credentials. In particular please update the IP to be the DB ip for the group network.
