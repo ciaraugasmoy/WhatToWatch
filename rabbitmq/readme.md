@@ -7,10 +7,9 @@ sudo apt install php php-curl php-mysql -y
 sudo apt install composer -y
 composer install
 ```
-
+this should be installed by composer but if it doesnt work do
 ```
 sudo apt install php-amqplib -y
-sudo apt-get install php-mysql -y
 ```
 
 setting up rabbitmq
