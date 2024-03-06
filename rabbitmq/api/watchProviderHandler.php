@@ -59,13 +59,21 @@ if (isset($data['results']) && is_array($data['results'])) {
         $sql = "INSERT INTO watch_providers(provider_id, provider_name, logo_path, display_priority) 
                 VALUES ('$providerId', '$providerName', '$logoPath', '$displayPriority')";
 
-        if ($conn->query($sql) === TRUE) {
-            echo "Record inserted successfully.\n";
-        } else {
-            echo "Error inserting record: " . $conn->error . "\n";
+        try {
+            if ($conn->query($sql) === TRUE) {
+                echo "Record inserted successfully.\n";
+            } else {
+                echo "Error inserting record: " . $conn->error . "\n";
+            }
+        } catch (mysqli_sql_exception $e) {
+            if ($e->getCode() == 1062) {
+                echo "Duplicate entry for provider_id $providerId. Skipping...\n";
+            } else {
+                echo "Error: " . $e->getMessage() . "\n";
+            }
         }
     }
-    
+
 
     // Close the database connection
     $conn->close();
