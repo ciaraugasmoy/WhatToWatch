@@ -24,7 +24,6 @@ function HANDLE_MESSAGE($request)
     }
 
     $userHandler = new UserHandler();
-
     switch ($request['type']) {
         case "login":
             return $userHandler->doLogin($request['username'], $request['password']);
@@ -35,7 +34,9 @@ function HANDLE_MESSAGE($request)
         case "get_providers":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->getWatchProviders($request['username']);
-        //case "update_providers":
+        case "set_providers":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->setWatchProviders($request['username'], $request['watch_provider_id']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

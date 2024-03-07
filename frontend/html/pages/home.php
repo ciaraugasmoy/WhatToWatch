@@ -34,6 +34,13 @@ $response = $client->call($request);
 <body>
 
     <h2>Home</h2>
-    <p><?php var_dump($response);?></p>
+    <p><?php
+    var_dump($response);
+    $response= json_decode($response);
+
+    foreach($response as $key => $value) {
+    echo $key . " => " . $value . "<br>";
+    }
+    ?></p>
 </body>
 </html>
