@@ -4,6 +4,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'UserHandler.php';
+require_once 'UserDataHandler.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -30,7 +31,11 @@ function HANDLE_MESSAGE($request)
         case "signup":
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
         case "validate":
-             return $userHandler->doValidate($request['username'], $request['tokens']);
+            return $userHandler->doValidate($request['username'], $request['tokens']);
+        case "get_providers":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getWatchProviders($request['username']);
+        //case "update_providers":
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
