@@ -6,6 +6,7 @@
     background-color: var(--color-theme-main);
     align-content: center;
     justify-content: center;
+    max-height: 20vh;
 }
 #header h1{
     font-family: var(--font-family-logo);

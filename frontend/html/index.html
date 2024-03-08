@@ -3,14 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/global.css">
     <title>What2Watch</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="javascript/template.js"></script>
+    <style scoped>
+        section:has(.herobox){
+            padding: 30px;
+            display: grid;
+            gap: 30px;
+        }
+        .herobox{
+            display: grid;
+            background-color: var(--color-theme-accent);
+            border-radius: 5px;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            align-content: center;
+            justify-content: center;
+            row-gap: 10px;
+        }
+        .herobox h2{
+            font-family: var(--font-family-dramatic);
+            font-weight: 600;
+            color: white;
+        }
+        .herobox *{
+            text-align: center;
+        }
+
+        .herobox nav{
+            align-self: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap:5px;
+        }
+        .herobox nav a{
+            padding: 5px 10px;
+            border-radius:5px;
+            color: white;
+            text-decoration: none;
+            background-color: rgb(8, 1, 26);
+        }
+        @media (min-width: 1025px){
+            section:has(.herobox){
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header id="header">
-        <img src="/images/logo.png">
-        <h1>What2Watch</h1>
-    </header>
     <main>
         <section>
             <div class="herobox" style="background-image:url('https://img.freepik.com/premium-photo/annoyed-couple-watching-boring-film-dark-hall-frustrated-girl-yawning-cinema-tired-woman-putting-head-boyfriend-shoulder-movie-theater-sleepy-girl-relaxing-cinema_723208-18584.jpg');background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)),url('https://img.freepik.com/premium-photo/annoyed-couple-watching-boring-film-dark-hall-frustrated-girl-yawning-cinema-tired-woman-putting-head-boyfriend-shoulder-movie-theater-sleepy-girl-relaxing-cinema_723208-18584.jpg');background-size:cover;">
@@ -25,7 +66,5 @@
             </div>
         </section>
     </main>
-    <footer>
-    </footer>
 </body>
 </html>
