@@ -51,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../javascript/globalscript.js"></script>
     <title>Token Validation</title>
 </head>
 <body>
@@ -69,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ismytokenvalid'])) {
     <form action="" method="post">
         <input type="submit" name="logout" value="Logout">
     </form>
+    <button id="logoutButton">Logout BUTTON</button>
 
 </body>
 </html>
