@@ -1,39 +1,3 @@
-<?php
-
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once '../client/client_rpc.php'; 
-
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
-
-$client = new RPCClient();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $request = array();
-    $request['type'] = "login";
-    $request['username'] = $_POST['username'];
-    $request['password'] = $_POST['password'];
-    $request['message'] = "test message";
-
-    $response = $client->call($request);
-
-    if (isset($response['status']) && $response['status'] == 'success' && isset($response['tokens'])) {
-        // Set cookies to store tokens
-        setcookie("access_token", $response['tokens']['access_token'], time() + 3600, "/");
-        setcookie("refresh_token", $response['tokens']['refresh_token'], time() + (7 * 24 * 3600), "/");
-        setcookie("username",  $_POST['username'] , time() + 3600, "/");
-        // Redirect to a success page or do further processing
-        header("Location: home.php");
-        exit();
-    } else {
-        // Display an error message on the same page
-        $errorMessage = "Login failed. Please check your username and password.";
-    }
-}
-
-$payload = isset($errorMessage) ? json_encode(['error' => $errorMessage]) : '';
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,13 +9,9 @@ $payload = isset($errorMessage) ? json_encode(['error' => $errorMessage]) : '';
 
     <h2>Login</h2>
 
-    <?php
-    if (isset($errorMessage)) {
-        echo '<p style="color: red;">' . $errorMessage . '</p>';
-    }
-    ?>
+    <p id="error-message" style="color: red;"></p>
 
-    <form action="" method="post">
+    <form id="login-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
 
@@ -60,6 +20,33 @@ $payload = isset($errorMessage) ? json_encode(['error' => $errorMessage]) : '';
 
         <input type="submit" value="Login">
     </form>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Get form data
+            const formData = new FormData(event.target);
+
+            // Perform a fetch request to login.php
+            fetch('login.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Redirect to the success page
+                    window.location.href = data.redirect;
+                } else {
+                    // Display error message
+                    document.getElementById('error-message').textContent = data.message;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+     
+    </script>
 
 </body>
 </html>
