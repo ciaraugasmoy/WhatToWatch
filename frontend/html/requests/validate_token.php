@@ -13,6 +13,7 @@ $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
+header('Content-Type: application/json');
 // Check if tokens are not set
 if (empty($access_token) || empty($refresh_token) || empty($username)) {
     echo json_encode(['success' => false]);
