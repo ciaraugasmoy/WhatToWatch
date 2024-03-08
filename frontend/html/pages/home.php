@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once '../client/client_rpc.php'; // Include the RPCClient class
+require_once '../client/client_rpc.php'; 
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -44,7 +44,7 @@ $response = $client->call($request);
 
     <h2>Home</h2>
     <section>
-    <h3>WatchList</h3>
+    <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>
     <div class="providers">
     <?php
         foreach ($response['watch_provider_info'] as $key => $value) {
