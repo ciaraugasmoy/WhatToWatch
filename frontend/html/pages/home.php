@@ -34,11 +34,10 @@ $response = $client->call($request);
 <body>
 
     <h2>Home</h2>
-    <p>
     <?php
         foreach ($response['watch_provider_info'] as $key => $value) {
-            echo $key . " => " . $value['provider_name'] . "<br>";
+            echo " <img src= 'https://image.tmdb.org/t/p/w500/" . $value['logo_path']. "'><h3>". $value['provider_name'] . "</h3>";
         }
-    ?></p>
+    ?>
 </body>
 </html>
