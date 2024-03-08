@@ -41,7 +41,8 @@ function HANDLE_MESSAGE($request)
         case "unset_provider":
             return array("status"=>"success", "message" => "deleting ur provider");
         case "get_curated_providers":
-            return array("status"=>"success", "message" => "getting your curated list in progress");
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getCuratedWatchProviders();
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

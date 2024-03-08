@@ -19,7 +19,7 @@ if (empty($access_token) || empty($refresh_token) || empty($username)) {
     exit();
 }
 $request=array();
-$request['type'] = "get_providers";
+$request['type'] = "get_curated_providers";
 $request['username'] = $username;
 $response = $client->call($request);
 ?>
@@ -34,13 +34,11 @@ $response = $client->call($request);
 <body>
 
     <h2>Home</h2>
-    <p><?php
-    var_dump($response);
-    $response= json_decode($response);
-
-    foreach($response as $key => $value) {
-    echo $key . " => " . $value . "<br>";
-    }
+    <p>
+    <?php
+        foreach ($response['watch_provider_info'] as $key => $value) {
+            echo $key . " => " . $value['provider_name'] . "<br>";
+        }
     ?></p>
 </body>
 </html>

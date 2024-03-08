@@ -63,5 +63,25 @@ class UserDataHandler
             return array("status" => "error", "message" => "query failed: ".var_dump($e));
         }  
     }
+    public function getCuratedWatchProviders(){
+        $query = "
+        SELECT * FROM curated_watch_providers;
+        ";
+        try{
+            $result = $this->mysqli->query($query);
+            if ($result->num_rows > 0) {
+                $watch_provider_info = array();
+                while ($row = $result->fetch_assoc()) {
+                    $watch_provider_info[] = $row;
+                }
+                $this->mysqli->close();
+                return array("status" => "success", "message" => "curated watch providers", "watch_provider_info" => $watch_provider_info);
+            }
+        }
+        catch (Exception $e) {
+        $this->mysqli->close();
+        return array("status" => "error", "message" => "query failed: ".var_dump($e));
+        }  
+    }
 
 }

@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         setcookie("refresh_token", $response['tokens']['refresh_token'], time() + (7 * 24 * 3600), "/");
         setcookie("username",  $_POST['username'] , time() + 3600, "/");
         // Redirect to a success page or do further processing
-        header("Location: success.php");
+        header("Location: home.php");
         exit();
     } else {
         // Display an error message on the same page
