@@ -22,21 +22,26 @@ function HANDLE_MESSAGE($request)
     if (!isset($request['type'])) {
         return array("status" => "error", "message" => "Unsupported message type");
     }
-
-    $userHandler = new UserHandler();
     switch ($request['type']) {
         case "login":
+            $userHandler = new UserHandler();
             return $userHandler->doLogin($request['username'], $request['password']);
         case "signup":
+            $userHandler = new UserHandler();
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
         case "validate":
+            $userHandler = new UserHandler();
             return $userHandler->doValidate($request['username'], $request['tokens']);
         case "get_providers":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->getWatchProviders($request['username']);
-        case "set_providers":
+        case "set_provider":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->setWatchProviders($request['username'], $request['watch_provider_id']);
+        case "unset_provider":
+            return array("status"=>"success", "message" => "deleting ur provider");
+        case "get_curated_providers":
+            return array("status"=>"success", "message" => "getting your curated list in progress");
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
