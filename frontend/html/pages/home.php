@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../javascript/globalscript.js"></script>
     <title> Home</title>
     <style scoped>
         .providers{
@@ -16,7 +15,7 @@
     </style>
 </head>
 <body>
-
+<?php include '../partials/header.php';?>
     <h2>Home</h2>
     <section>
     <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>

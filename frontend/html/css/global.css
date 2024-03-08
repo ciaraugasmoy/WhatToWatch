@@ -13,7 +13,7 @@
     padding: 0px;
     box-sizing: border-box;
 }
-#header{
+/* #header{
     padding: var(--padding-min);
     display: grid;
     color: white;
@@ -82,4 +82,4 @@ footer{
     min-height: 20vh;
     background-color: var(--color-theme-main-tone-down);
     align-self: end;
-}
+} */
