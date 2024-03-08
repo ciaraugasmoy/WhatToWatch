@@ -26,7 +26,7 @@
         <input type="submit" value="signup">
     </form>
 
-    <p>Already have an account? <a href="../login.php">Login here</a></p>
+    <p>Already have an account? <a href="login.php">Login here</a></p>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

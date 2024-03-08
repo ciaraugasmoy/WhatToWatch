@@ -20,7 +20,7 @@
 
         <input type="submit" value="Login">
     </form>
-
+    <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
         document.getElementById('login-form').addEventListener('submit', function (event) {
             event.preventDefault();
