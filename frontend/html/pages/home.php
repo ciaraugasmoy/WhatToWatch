@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Home</title>
+    <script src="../javascript/template.js"></script>
     <style scoped>
         .providers{
             display: flex;
@@ -15,7 +16,6 @@
     </style>
 </head>
 <body>
-<?php include '../partials/header.php';?>
     <h2>Home</h2>
     <section>
     <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>

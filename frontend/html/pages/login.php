@@ -5,15 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/global.css">
+    <script src="../javascript/template.js"></script>
     <title>Login Form</title>
 </head>
 <body>
-<?php include '../partials/header.php';?>
-
     <h2>Login</h2>
-
     <p id="error-message" style="color: red;"></p>
-
     <form id="login-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
@@ -50,6 +47,5 @@
         });
      
     </script>
-
 </body>
 </html>
