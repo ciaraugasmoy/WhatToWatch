@@ -10,16 +10,7 @@
 </head>
 <body>
     <h2>Login</h2>
-    <p id="error-message" style="color: red;"></p>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <input type="submit" value="Login">
-    </form>
+    <?php include '../partials/loginform.php';?>
     <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
         document.getElementById('login-form').addEventListener('submit', function (event) {
