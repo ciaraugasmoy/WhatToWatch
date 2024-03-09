@@ -10,18 +10,22 @@
     <style>
         .providers{
             display: flex;
+            gap: 10px;
         }
         .providers img{
             max-width: 30px;
             border-radius: 5px;
+        }
+        .providers img:hover{
+            border: 10px solid cyan;
         }
     </style>
 </head>
 <body>
     <h2>Home</h2>
     <section>
-    <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>
-    <div class="providers" id="providerList">
+    <h3>Popular Streaming Services</h3>
+    <div class="providers" id="curatedProviderList">
     </div>
     </section>
     <button id="logoutButton">Logout BUTTON</button>
@@ -40,7 +44,7 @@
                     var imageElement = document.createElement("img");
                     imageElement.src = baseURL + logo_path;
                     imageElement.alt = element['provider_name'];
-                    var container = document.getElementById("providerList");
+                    var container = document.getElementById("curatedProviderList");
                     container.appendChild(imageElement);
                 }
             } else {
@@ -49,6 +53,14 @@
             }
         })
     });
+    document.getElementById('curatedProviderList').addEventListener('click', function(event) {
+    // Check if the clicked element is an image
+    if (event.target.tagName === 'IMG') {
+        var altText = event.target.alt;
+        console.log('Clicked on image with alt: ' + altText);
+    }
+});
+
 </script>
 </body>
 </html>
