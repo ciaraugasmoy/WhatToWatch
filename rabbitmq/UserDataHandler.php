@@ -31,13 +31,16 @@ class UserDataHandler
         try{
             $result = $this->mysqli->query($query);
             if ($result->num_rows > 0) {
-                $watch_provider_info = $result->fetch_assoc();
+                $watch_provider_info = array();
+                while ($row = $result->fetch_assoc()) {
+                    $watch_provider_info[] = $row;
+                }
                 $this->mysqli->close();
-                return array("status" => "success", "message" => "user watch providers", "watch_provider_info" =>$watch_provider_info);
+                return array("status" => "success", "message" => "user watch providers", "watch_provider_info" => $watch_provider_info);
             }
             else{
                 $this->mysqli->close();
-                return array("status" => "success", "message" => "user doesnt have wp");
+                return array("status" => "error", "message" => "user doesnt have wp");
             }
         }
         catch (Exception $e) {
