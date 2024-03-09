@@ -3,21 +3,21 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('../partials/header.php')
         .then(response => response.text())
         .then(headerHtml => {
-            // Update the body with the fetched header content
-            document.body.innerHTML = headerHtml + document.body.innerHTML;
+            // Append the fetched header content to the beginning of the body
+            document.body.insertAdjacentHTML('afterbegin', headerHtml);
         })
         .catch(error => {
             console.error('Error fetching header.php:', error);
         });
-});
-document.addEventListener('DOMContentLoaded', function () {
+
+    // Fetch footer.php content
     fetch('../partials/footer.php')
         .then(response => response.text())
         .then(footerHtml => {
-            // Update the body with the fetched footer content
-            document.body.innerHTML += footerHtml;
+            // Append the fetched footer content to the end of the body
+            document.body.insertAdjacentHTML('beforeend', footerHtml);
         })
         .catch(error => {
-            console.error('Error fetching content:', error);
+            console.error('Error fetching footer.php:', error);
         });
 });
