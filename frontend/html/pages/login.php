@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/global.css">
-    <script src="../javascript/template.js"></script>
+    <!-- <script src="../javascript/template.js"></script> -->
     <title>Login Form</title>
 </head>
 <body>
@@ -36,10 +36,9 @@
                         window.location.href = data.redirect;
                     } else {
                         // Display error message
-                        document.getElementById('error-message').textContent = data.message;
+                        console.log(data.message);
                     }
                 })
-                .catch(error => console.error('Error:', error));
             });
         });
     </script>
