@@ -32,7 +32,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                console.log(data);
+                for (const element of data.watch_provider_info) {
+                    console.log(element['logo_path']);
+                }
             } else {
                 // Display error message
                 console.log('oh');
