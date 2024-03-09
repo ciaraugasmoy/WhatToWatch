@@ -20,7 +20,7 @@
     <h2>Home</h2>
     <section>
     <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>
-    <div class="providers">
+    <div class="providers" id="providerList">
     </div>
     </section>
     <button id="logoutButton">Logout BUTTON</button>
@@ -34,6 +34,13 @@
             if (data.status === 'success') {
                 for (const element of data.watch_provider_info) {
                     console.log(element['logo_path']);
+                    var logo_path = element['logo_path'];
+                    var baseURL = "https://image.tmdb.org/t/p/w500/";
+                    var imageElement = document.createElement("img");
+                    imageElement.src = baseURL + logo_path;
+                    imageElement.alt = element['provider_name'];
+                    var container = document.getElementById("providerList");
+                    container.appendChild(imageElement);
                 }
             } else {
                 // Display error message
