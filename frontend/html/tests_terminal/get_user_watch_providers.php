@@ -18,5 +18,6 @@ $request['type'] = "get_providers";
 $request['username'] = $username;
 $request['watch_provider_id'] = $watchproviderid;
 $response = $client->call($request);
-var_dump($response)
+echo ' [.] Response: '.PHP_EOL;
+var_dump($response);
 ?>
