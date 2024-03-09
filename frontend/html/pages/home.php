@@ -29,16 +29,61 @@
         .providers img:hover{
             border: 1px solid cyan;
         }
+        .suggestions .providers:hover::after {
+            content: '+';
+            position:relative;
+            top: 15px;
+            right: -15px;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #3498db; /* Change the background color as needed */
+            color: #fff; /* Change the text color as needed */
+            font-size: 20px; /* Adjust the font size as needed */
+            text-align: center;
+            line-height: 30px;
+        }
+        #suggestions .providers:hover::after {
+            content: '+';
+            position:relative;
+            top: 15px;
+            right: -15px;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #3498db; /* Change the background color as needed */
+            color: #fff; /* Change the text color as needed */
+            font-size: 20px; /* Adjust the font size as needed */
+            text-align: center;
+            line-height: 30px;
+        }
+        #user-services .providers:hover::after {
+            content: '-';
+            position:relative;
+            top: 15px;
+            right: -15px;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: red;
+            color: #fff;
+            font-size: 30px; 
+            text-align: center;
+            line-height: 30px;
+        }
     </style>
 </head>
 <body>
 <main>
     <h2>Home</h2>
-    <section>
+    <section id='user-services'>
         <h3>Your Streaming Services</h3>
         <div class="providers" id="userProviderList"></div>
     </section>
-    <section>
+    <section id='suggestions'>
         <h3>Popular Streaming Services</h3>
         <div class="providers" id="curatedProviderList"></div>
     </section>
