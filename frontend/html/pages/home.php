@@ -136,7 +136,7 @@
             console.error('Error:', error);
         });
     }
-});
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
         // Perform a fetch request to login.php
@@ -153,6 +153,7 @@
                     var imageElement = document.createElement("img");
                     imageElement.src = baseURL + logo_path;
                     imageElement.alt = element['provider_name'];
+                    imageElement.setAttribute('data-provider-id', element['provider_id']); 
                     var container = document.getElementById("userProviderList");
                     container.appendChild(imageElement);
                 }
@@ -161,6 +162,28 @@
                 console.log('oh');
             }
         })
+    });
+    document.getElementById('userProviderList').addEventListener('click', function(event) {
+    // Check if the clicked element has the 'provider-id' attribute
+    if (event.target.hasAttribute('data-provider-id')) {
+        var providerId = event.target.getAttribute('data-provider-id');
+        console.log('Clicked on element with provider-id: ' + providerId);
+        var formData = new FormData();
+        formData.append('watch_provider_id', providerId);
+        // Make a Fetch request to addProvider.php
+        fetch('../requests/unset_watch_provider.php', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Handle the response from addProvider.php if needed
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
     });
 
 </script>
