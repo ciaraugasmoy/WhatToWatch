@@ -1,39 +1,54 @@
-<?php
-
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once '../client/client_rpc.php'; // Include the RPCClient class
-
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
-
-$client = new RPCClient();
-
-// Retrieve tokens from cookies
-$access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
-$refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
-$username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
-
-// Redirect to index if cookies are not set
-if (empty($access_token) || empty($refresh_token) || empty($username)) {
-    header("Location: ../index.html"); // Change the URL to your actual index page
-    exit();
-}
-$request=array();
-$request['type'] = "get_providers";
-$request['username'] = $username;
-$response = $client->call($request);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> <?php echo $username; ?> Home</title>
+    <title> Home</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <script src="../javascript/template.js"></script>
+    <script src="../javascript/globalscript.js"></script>
+    <style>
+        .providers{
+            display: flex;
+        }
+        .providers img{
+            max-width: 30px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-
     <h2>Home</h2>
-    <p><?php var_dump($response);?></p>
+    <section>
+    <h3>MAKE EACH ICON AN ADD TO MY PROVIDERS BUTTON</h3>
+    <div class="providers" id="providerList">
+    </div>
+    </section>
+    <button id="logoutButton">Logout BUTTON</button>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Perform a fetch request to login.php
+        fetch('../requests/get_curated_watch_providers.php', {   
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                for (const element of data.watch_provider_info) {
+                    console.log(element['logo_path']);
+                    var logo_path = element['logo_path'];
+                    var baseURL = "https://image.tmdb.org/t/p/w500/";
+                    var imageElement = document.createElement("img");
+                    imageElement.src = baseURL + logo_path;
+                    imageElement.alt = element['provider_name'];
+                    var container = document.getElementById("providerList");
+                    container.appendChild(imageElement);
+                }
+            } else {
+                // Display error message
+                console.log('oh');
+            }
+        })
+    });
+</script>
 </body>
 </html>
