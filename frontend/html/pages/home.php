@@ -12,12 +12,18 @@
             background-color: beige;
             margin: 10px 20px;
         }
+        section{
+            padding: 10px;
+            background-color: cyan;
+        }
         .providers{
             display: flex;
             gap: 10px;
+            padding: 20px;
+            align-items: center;
         }
         .providers img{
-            max-width: 30px;
+            max-width: 60px;
             border-radius: 5px;
         }
         .providers img:hover{
@@ -54,6 +60,7 @@
                     var imageElement = document.createElement("img");
                     imageElement.src = baseURL + logo_path;
                     imageElement.alt = element['provider_name'];
+                    imageElement.setAttribute('data-provider-id', element['provider_id']); 
                     var container = document.getElementById("curatedProviderList");
                     container.appendChild(imageElement);
                 }
@@ -64,12 +71,28 @@
         })
     });
     document.getElementById('curatedProviderList').addEventListener('click', function(event) {
-    // Check if the clicked element is an image
-    if (event.target.tagName === 'IMG') {
-        var altText = event.target.alt;
-        console.log('Clicked on image with alt: ' + altText);
+    // Check if the clicked element has the 'provider-id' attribute
+    if (event.target.hasAttribute('data-provider-id')) {
+        var providerId = event.target.getAttribute('data-provider-id');
+        console.log('Clicked on element with provider-id: ' + providerId);
+        var formData = new FormData();
+        formData.append('watch_provider_id', providerId);
+        // Make a Fetch request to addProvider.php
+        fetch('../requests/set_watch_provider.php', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Handle the response from addProvider.php if needed
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
-    });
+});
+
     document.addEventListener('DOMContentLoaded', function () {
         // Perform a fetch request to login.php
         fetch('../requests/get_user_watch_providers.php', {  
@@ -94,7 +117,6 @@
             }
         })
     });
-
 
 </script>
 </body>
