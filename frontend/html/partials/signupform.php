@@ -1,12 +1,13 @@
 <style scoped>
     form{
         display: grid;
-        width:100%;
+        max-width:500px;
         padding: 10px;
         background-color: var(--color-theme-accent);
         justify-content: center;
         align-content: center;
         margin: 10px;
+        justify-self: center;
     }
     input[type=text],input[type=password]{
         max-width: 500px;
@@ -21,9 +22,8 @@
         justify-self: right;
     }
 </style>
-
-<p id="error-message" style="color: red;"></p>
 <form id="signup-form">
+    <h3>Signup</h3>
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required><br><br>
 
@@ -37,6 +37,6 @@
     <input type="date" id="dob" name="dob" required><br><br>
 
     <input type="submit" value="signup">
-</form>
+    <p>Already have an account? <a href="login.php">Login here</a></p>
 
-<p>Already have an account? <a href="login.php">Login here</a></p>
+</form>

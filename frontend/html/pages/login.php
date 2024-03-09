@@ -8,9 +8,7 @@
     <title>Login Form</title>
 </head>
 <body>
-    <h2>Login</h2>
     <?php include '../partials/loginform.php';?>
-    <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var loginForm = document.getElementById('login-form');
