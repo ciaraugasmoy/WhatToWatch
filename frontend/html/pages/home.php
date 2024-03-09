@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Home</title>
     <script src="../javascript/template.js"></script>
-    <style scoped>
+    <script src="../javascript/globalscript.js"></script>
+    <style>
         .providers{
             display: flex;
         }

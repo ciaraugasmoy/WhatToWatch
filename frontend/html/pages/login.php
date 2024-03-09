@@ -9,11 +9,7 @@
 </head>
 <body>
     <h2>Login</h2>
-    <form id="signup-form">
-        <input type="text" id="username" name="username" placeholder="Username" required><br><br>
-        <input type="password" id="password" name="password" placeholder="Password" required><br><br>
-        <input type="submit" value="login" id="loginButton">
-    </form>
+    <?php include '../partials/loginform.php';?>
     <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
