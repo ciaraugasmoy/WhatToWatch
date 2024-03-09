@@ -56,11 +56,15 @@ class UserDataHandler
         try{
             $this->mysqli->query($query);
             $this->mysqli->close();
-            return array("status" => "success", "message" => "watch inserted");
+            return array("status" => "success", "message" => "watch provider id".$watch_provider_id."inserted");
         }
         catch (Exception $e) {
             $this->mysqli->close();
-            return array("status" => "error", "message" => "query failed: ".var_dump($e));
+            if ($e->getCode() === 1062) { // MySQL error code for duplicate entry
+                return array("status" => "error", "message" => "Duplicate entry: Watch provider id " . $watch_provider_id);
+            } else {
+                return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+            }
         }  
     }
     public function getCuratedWatchProviders(){
