@@ -24,5 +24,21 @@
     </div>
     </section>
     <button id="logoutButton">Logout BUTTON</button>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Perform a fetch request to login.php
+        fetch('../requests/get_curated_watch_providers.php', {   
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log(data);
+            } else {
+                // Display error message
+                console.log('oh');
+            }
+        })
+    });
+</script>
 </body>
 </html>

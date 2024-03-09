@@ -13,7 +13,7 @@
     <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var loginForm = document.getElementById('signup-form');
+            var loginForm = document.getElementById('login-form');
             loginForm.addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent default form submission
 

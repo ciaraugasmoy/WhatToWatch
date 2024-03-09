@@ -14,6 +14,6 @@ $response = $client->call($request);
 
 header('Content-Type: application/json');
 if ($response['status']=='success'){
-    echo json_encode($response['watch_provider_info']);
+    echo json_encode($response);
 }
 ?>
