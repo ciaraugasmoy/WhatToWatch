@@ -67,6 +67,35 @@ class UserDataHandler
             }
         }  
     }
+    public function unsetWatchProviders($username, $provider_id)
+    {
+        $username = $this->mysqli->real_escape_string($username);
+        $query = "    
+                DELETE FROM user_watch_providers WHERE user_id = (SELECT id FROM users WHERE username = '$username') AND provider_id = '$provider_id'
+            ";
+        try {
+            $result = $this->mysqli->query($query);
+    
+            if ($result === false) {
+                throw new Exception("Query failed: " . $this->mysqli->error);
+            }
+    
+            $rowsAffected = $this->mysqli->affected_rows;
+    
+            $this->mysqli->close();
+    
+            if ($rowsAffected > 0) {
+                return array("status" => "success", "message" => "Watch provider id " . $provider_id . " deleted");
+            } else {
+                return array("status" => "error", "message" => "Record not found for Watch provider id " . $provider_id);
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => $e->getMessage());
+        }
+    }
+    
+
     public function getCuratedWatchProviders(){
         $query = "
         SELECT * FROM curated_watch_providers;

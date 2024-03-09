@@ -39,7 +39,8 @@ function HANDLE_MESSAGE($request)
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->setWatchProviders($request['username'], $request['watch_provider_id']);
         case "unset_provider":
-            return array("status"=>"success", "message" => "deleting ur provider");
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->unsetWatchProviders($request['username'], $request['watch_provider_id']);
         case "get_curated_providers":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->getCuratedWatchProviders();
