@@ -36,3 +36,4 @@ document.addEventListener('DOMContentLoaded', function () {
     // Call the function on page load
     validateToken();
 });
+

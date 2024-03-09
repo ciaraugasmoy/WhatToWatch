@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch header.php content
     fetch('../partials/footer.php')
         .then(response => response.text())
         .then(footerHtml => {

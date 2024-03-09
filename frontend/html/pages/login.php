@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,33 +9,39 @@
 </head>
 <body>
     <h2>Login</h2>
-    <?php include '../partials/loginform.php';?>
+    <form id="signup-form">
+        <input type="text" id="username" name="username" placeholder="Username" required><br><br>
+        <input type="password" id="password" name="password" placeholder="Password" required><br><br>
+        <input type="submit" value="login" id="loginButton">
+    </form>
     <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
     <script>
-        document.getElementById('login-form').addEventListener('submit', function (event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function () {
+            var loginForm = document.getElementById('signup-form');
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
 
-            // Get form data
-            const formData = new FormData(event.target);
+                // Get form data
+                const formData = new FormData(event.target);
 
-            // Perform a fetch request to login.php
-            fetch('login.php', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Redirect to the success page
-                    window.location.href = data.redirect;
-                } else {
-                    // Display error message
-                    document.getElementById('error-message').textContent = data.message;
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                // Perform a fetch request to login.php
+                fetch('../requests/login.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Redirect to the success page
+                        window.location.href = data.redirect;
+                    } else {
+                        // Display error message
+                        document.getElementById('error-message').textContent = data.message;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
-     
     </script>
 </body>
 </html>
