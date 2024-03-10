@@ -1,3 +1,7 @@
 .env
 /vendor
 **/vendor/
+*.ini
+**/*.ini
+!*.ini.sample
+!**/*.ini.sample

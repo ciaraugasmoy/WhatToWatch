@@ -1,0 +1,2 @@
+; config.ini
+api_token = "INSERT API TOKEN HERE, BEARER TOKEN";
