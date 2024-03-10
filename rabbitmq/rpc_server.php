@@ -44,6 +44,9 @@ function HANDLE_MESSAGE($request)
         case "get_curated_providers":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->getCuratedWatchProviders($request['username']);
+        case "get_friend_list":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getFriendList($request['username']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
