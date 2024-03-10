@@ -47,6 +47,9 @@ function HANDLE_MESSAGE($request)
         case "get_friend_list":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->getFriendList($request['username']);
+        case "send_friend_request":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->sendFriendRequest($request['username'],$request['friend_username']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

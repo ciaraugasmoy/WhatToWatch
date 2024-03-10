@@ -1,4 +1,5 @@
 USE what2watch;
+DROP TABLE friends;
 CREATE TABLE IF NOT EXISTS friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
@@ -6,6 +7,5 @@ CREATE TABLE IF NOT EXISTS friends (
     status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (receiver_id) REFERENCES users(id),
-    CHECK (sender_id != receiver_id) -- Ensuring sender and receiver are different
+    UNIQUE KEY unique_friendship (sender_id, receiver_id)
 );
-

@@ -161,4 +161,61 @@ class UserDataHandler
         }
     }
 
+    public function sendFriendRequest($senderUsername, $receiverUsername)
+    {
+        $senderUsername = $this->mysqli->real_escape_string($senderUsername);
+        $receiverUsername = $this->mysqli->real_escape_string($receiverUsername);
+    
+        // Get sender and receiver IDs
+        $senderIdQuery = "SELECT id FROM users WHERE username = '$senderUsername'";
+        $receiverIdQuery = "SELECT id FROM users WHERE username = '$receiverUsername'";
+    
+        try {
+            $senderResult = $this->mysqli->query($senderIdQuery);
+            $receiverResult = $this->mysqli->query($receiverIdQuery);
+    
+            if ($senderResult->num_rows == 1 && $receiverResult->num_rows == 1) {
+                $senderId = $senderResult->fetch_assoc()['id'];
+                $receiverId = $receiverResult->fetch_assoc()['id'];
+    
+                // Check if sender and receiver are the same user
+                if ($senderId != $receiverId) {
+                    // Check if the friendship already exists
+                    $existingFriendshipQuery = "
+                        SELECT id FROM friends
+                        WHERE (sender_id = $senderId AND receiver_id = $receiverId)
+                        OR (sender_id = $receiverId AND receiver_id = $senderId)
+                    ";
+    
+                    $existingFriendshipResult = $this->mysqli->query($existingFriendshipQuery);
+    
+                    if ($existingFriendshipResult->num_rows == 0) {
+                        // Create friend request
+                        $insertQuery = "
+                            INSERT INTO friends (sender_id, receiver_id, status)
+                            VALUES ($senderId, $receiverId, 'pending')
+                        ";
+    
+                        $this->mysqli->query($insertQuery);
+                        $this->mysqli->close();
+    
+                        return array("status" => "success", "message" => "Friend request sent successfully");
+                    } else {
+                        $this->mysqli->close();
+                        return array("status" => "error", "message" => "Friend request already exists");
+                    }
+                } else {
+                    $this->mysqli->close();
+                    return array("status" => "error", "message" => "Cannot send friend request to yourself");
+                }
+            } else {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Invalid sender or receiver username");
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+        }
+    }
+    
 }
