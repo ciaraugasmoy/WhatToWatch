@@ -50,6 +50,12 @@ function HANDLE_MESSAGE($request)
         case "send_friend_request":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->sendFriendRequest($request['username'],$request['friend_username']);
+        case "accept_friend_request":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->acceptFriendRequest($request['username'],$request['friend_username']);
+        case "delete_friend":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->deleteFriend($request['username'],$request['friend_username']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

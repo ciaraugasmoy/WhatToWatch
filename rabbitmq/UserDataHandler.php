@@ -98,7 +98,6 @@ class UserDataHandler
         }
     }
     
-
     public function getCuratedWatchProviders($username){
         $query = "
         SELECT cwp.*
@@ -218,5 +217,81 @@ class UserDataHandler
             return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
         }
     }
-    
+
+    public function acceptFriendRequest($receiverUsername, $senderUsername)
+    {
+        $receiverUsername = $this->mysqli->real_escape_string($receiverUsername);
+        $senderUsername = $this->mysqli->real_escape_string($senderUsername);
+
+        // Get sender and receiver IDs
+        $receiverIdQuery = "SELECT id FROM users WHERE username = '$receiverUsername'";
+        $senderIdQuery = "SELECT id FROM users WHERE username = '$senderUsername'";
+
+        try {
+            $receiverResult = $this->mysqli->query($receiverIdQuery);
+            $senderResult = $this->mysqli->query($senderIdQuery);
+
+            if ($receiverResult->num_rows == 1 && $senderResult->num_rows == 1) {
+                $receiverId = $receiverResult->fetch_assoc()['id'];
+                $senderId = $senderResult->fetch_assoc()['id'];
+
+                // Update the friendship status to 'accepted'
+                $updateQuery = "
+                    UPDATE friends
+                    SET status = 'accepted'
+                    WHERE (sender_id = $senderId AND receiver_id = $receiverId)
+                    AND status = 'pending';
+                ";
+
+                $this->mysqli->query($updateQuery);
+
+                $this->mysqli->close();
+                return array("status" => "success", "message" => "Friend request accepted successfully");
+            } else {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Invalid sender or receiver username");
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+        }
+    }
+    public function deleteFriend($user1, $user2)
+    {
+        $user1 = $this->mysqli->real_escape_string($user1);
+        $user2 = $this->mysqli->real_escape_string($user2);
+
+        // Get user IDs
+        $user1IdQuery = "SELECT id FROM users WHERE username = '$user1'";
+        $user2IdQuery = "SELECT id FROM users WHERE username = '$user2'";
+
+        try {
+            $user1Result = $this->mysqli->query($user1IdQuery);
+            $user2Result = $this->mysqli->query($user2IdQuery);
+
+            if ($user1Result->num_rows == 1 && $user2Result->num_rows == 1) {
+                $user1Id = $user1Result->fetch_assoc()['id'];
+                $user2Id = $user2Result->fetch_assoc()['id'];
+
+                // Delete the friendship record
+                $deleteQuery = "
+                    DELETE FROM friends
+                    WHERE (sender_id = $user1Id AND receiver_id = $user2Id)
+                    OR (sender_id = $user2Id AND receiver_id = $user1Id);
+                ";
+
+                $this->mysqli->query($deleteQuery);
+
+                $this->mysqli->close();
+                return array("status" => "success", "message" => "Friendship deleted successfully");
+            } else {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Invalid user1 or user2 username");
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+        }
+    }
+
 }
