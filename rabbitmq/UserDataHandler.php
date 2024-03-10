@@ -31,13 +31,16 @@ class UserDataHandler
         try{
             $result = $this->mysqli->query($query);
             if ($result->num_rows > 0) {
-                $watch_provider_info = $result->fetch_assoc();
+                $watch_provider_info = array();
+                while ($row = $result->fetch_assoc()) {
+                    $watch_provider_info[] = $row;
+                }
                 $this->mysqli->close();
-                return array("status" => "success", "message" => "user watch providers", "watch_provider_info" =>$watch_provider_info);
+                return array("status" => "success", "message" => "user watch providers", "watch_provider_info" => $watch_provider_info);
             }
             else{
                 $this->mysqli->close();
-                return array("status" => "success", "message" => "user doesnt have wp");
+                return array("status" => "error", "message" => "user doesnt have wp");
             }
         }
         catch (Exception $e) {
@@ -56,16 +59,56 @@ class UserDataHandler
         try{
             $this->mysqli->query($query);
             $this->mysqli->close();
-            return array("status" => "success", "message" => "watch inserted");
+            return array("status" => "success", "message" => "watch provider id".$watch_provider_id."inserted");
         }
         catch (Exception $e) {
             $this->mysqli->close();
-            return array("status" => "error", "message" => "query failed: ".var_dump($e));
+            if ($e->getCode() === 1062) { // MySQL error code for duplicate entry
+                return array("status" => "error", "message" => "Duplicate entry: Watch provider id " . $watch_provider_id);
+            } else {
+                return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+            }
         }  
     }
-    public function getCuratedWatchProviders(){
+    public function unsetWatchProviders($username, $provider_id)
+    {
+        $username = $this->mysqli->real_escape_string($username);
+        $query = "    
+                DELETE FROM user_watch_providers WHERE user_id = (SELECT id FROM users WHERE username = '$username') AND provider_id = '$provider_id'
+            ";
+        try {
+            $result = $this->mysqli->query($query);
+    
+            if ($result === false) {
+                throw new Exception("Query failed: " . $this->mysqli->error);
+            }
+    
+            $rowsAffected = $this->mysqli->affected_rows;
+    
+            $this->mysqli->close();
+    
+            if ($rowsAffected > 0) {
+                return array("status" => "success", "message" => "Watch provider id " . $provider_id . " deleted");
+            } else {
+                return array("status" => "error", "message" => "Record not found for Watch provider id " . $provider_id);
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => $e->getMessage());
+        }
+    }
+    
+
+    public function getCuratedWatchProviders($username){
         $query = "
-        SELECT * FROM curated_watch_providers;
+        SELECT cwp.*
+        FROM curated_watch_providers cwp
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM user_watch_providers uwp
+        WHERE uwp.provider_id = cwp.provider_id
+        AND uwp.user_id = (SELECT id FROM users WHERE username = '$username')
+        );
         ";
         try{
             $result = $this->mysqli->query($query);

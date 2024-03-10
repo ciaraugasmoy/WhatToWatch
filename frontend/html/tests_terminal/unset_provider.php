@@ -10,16 +10,13 @@ use PhpAmqpLib\Message\AMQPMessage;
 $client = new RPCClient();
 
 $username='ciara';
-$watchproviderid=8;
+$watchproviderid=7;
 
 
 $request=array();
-$request['type'] = "get_providers";
+$request['type'] = "unset_provider";
 $request['username'] = $username;
 $request['watch_provider_id'] = $watchproviderid;
 $response = $client->call($request);
-
-foreach( $response['watch_provider_info'] as $key => $value) {
-    var_dump($value);
-}
+var_dump($response)
 ?>
