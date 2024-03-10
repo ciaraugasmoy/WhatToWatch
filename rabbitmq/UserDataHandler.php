@@ -132,12 +132,13 @@ class UserDataHandler
     {
         $username = $this->mysqli->real_escape_string($username);
         $query = "
-            SELECT u.id AS friend_id, u.username AS friend_name, f.status
-            FROM users u
-            INNER JOIN friends f ON (u.id = f.sender_id OR u.id = f.receiver_id)
-            WHERE f.sender_id = (SELECT id FROM users WHERE username = '$username')
-            OR f.receiver_id = (SELECT id FROM users WHERE username = '$username');
-        ";
+        SELECT u.id AS friend_id, u.username AS friend_name, f.status
+        FROM users u
+        INNER JOIN friends f ON (u.id = f.sender_id OR u.id = f.receiver_id)
+        WHERE (f.sender_id = (SELECT id FROM users WHERE username = '$username')
+            OR f.receiver_id = (SELECT id FROM users WHERE username = '$username'))
+            AND u.id != (SELECT id FROM users WHERE username = '$username');
+    ";
 
         try {
             $result = $this->mysqli->query($query);
