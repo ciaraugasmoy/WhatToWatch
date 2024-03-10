@@ -99,9 +99,16 @@ class UserDataHandler
     }
     
 
-    public function getCuratedWatchProviders(){
+    public function getCuratedWatchProviders($username){
         $query = "
-        SELECT * FROM curated_watch_providers;
+        SELECT cwp.*
+        FROM curated_watch_providers cwp
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM user_watch_providers uwp
+        WHERE uwp.provider_id = cwp.provider_id
+        AND uwp.user_id = (SELECT id FROM users WHERE username = '$username')
+        );
         ";
         try{
             $result = $this->mysqli->query($query);

@@ -127,10 +127,16 @@
             method: 'POST',
             body: formData,
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            // Handle the response from addProvider.php if needed
             console.log(data);
+            if (data.status === "success") {
+                var parentElement = document.getElementById('userProviderList');
+                var clickedImage = event.target;
+                var clickedImageClone = clickedImage.cloneNode(true);
+                clickedImage.parentNode.removeChild(clickedImage); 
+                parentElement.appendChild(clickedImageClone);
+            }
         })
         .catch(error => {
             console.error('Error:', error);
@@ -175,13 +181,20 @@
             method: 'POST',
             body: formData,
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            // Handle the response from addProvider.php if needed
             console.log(data);
+            if (data.status === "success") {
+                var parentElement = document.getElementById('curatedProviderList');
+                var clickedImage = event.target;
+                var clickedImageClone = clickedImage.cloneNode(true);
+                clickedImage.parentNode.removeChild(clickedImage); 
+                parentElement.appendChild(clickedImageClone);
+            }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error:', error);         
+            
         });
     }
     });

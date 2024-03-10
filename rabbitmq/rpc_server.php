@@ -43,7 +43,7 @@ function HANDLE_MESSAGE($request)
             return $userDataHandler->unsetWatchProviders($request['username'], $request['watch_provider_id']);
         case "get_curated_providers":
             $userDataHandler= new UserDataHandler();
-            return $userDataHandler->getCuratedWatchProviders();
+            return $userDataHandler->getCuratedWatchProviders($request['username']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

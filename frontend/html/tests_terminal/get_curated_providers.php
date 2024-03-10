@@ -12,6 +12,7 @@ $client_rpc = new RPCClient();
 
 $request = array();
 $request['type'] = "get_curated_providers";
+$request['username'] = 'ciara';
 $response = $client_rpc->call($request);
 echo ' [.] Response: '.PHP_EOL;
 var_dump($response);

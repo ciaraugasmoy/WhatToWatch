@@ -6,9 +6,10 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 $client = new RPCClient();
-
+$username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 $request = array();
 $request['type'] = "get_curated_providers";
+$request['username'] = $username;
 $response = $client->call($request);
 
 header('Content-Type: application/json');
