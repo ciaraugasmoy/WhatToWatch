@@ -17,6 +17,7 @@ Please open database_setup.sql and change the user created to use the IP of your
 ```
 sudo apt install mysql-server
 sudo mysql < database_setup.sql
+sudo mysql < api_cache.sql
 ```
 To populate with test data please run
 ```

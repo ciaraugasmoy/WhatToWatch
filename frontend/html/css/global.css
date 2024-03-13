@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Vollkorn+SC:wght@400;600;700;900&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap');
+:root{
+    --color-theme-main: #A60303;
+    --color-theme-main-tone-down:#590C05;
+    --color-theme-accent:#001E38;
+    --color-background-dark:#0E0E0E;
+    --font-family-logo: "Rubik Mono One", monospace;
+    --font-family-dramatic: "Vollkorn SC", serif;
+    --padding-min: 10px 10px;
+}
+*{
+    margin:0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+:root{
+    background-color: var(--color-background-dark);
+}
+:root body{
+    display: grid;
+    min-height: 100vh;
+}

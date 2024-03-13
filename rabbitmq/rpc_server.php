@@ -4,6 +4,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'UserHandler.php';
+require_once 'UserDataHandler.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -21,16 +22,40 @@ function HANDLE_MESSAGE($request)
     if (!isset($request['type'])) {
         return array("status" => "error", "message" => "Unsupported message type");
     }
-
-    $userHandler = new UserHandler();
-
     switch ($request['type']) {
         case "login":
+            $userHandler = new UserHandler();
             return $userHandler->doLogin($request['username'], $request['password']);
         case "signup":
+            $userHandler = new UserHandler();
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
         case "validate":
-             return $userHandler->doValidate($request['username'], $request['tokens']);
+            $userHandler = new UserHandler();
+            return $userHandler->doValidate($request['username'], $request['tokens']);
+        case "get_providers":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getWatchProviders($request['username']);
+        case "set_provider":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->setWatchProviders($request['username'], $request['watch_provider_id']);
+        case "unset_provider":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->unsetWatchProviders($request['username'], $request['watch_provider_id']);
+        case "get_curated_providers":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getCuratedWatchProviders($request['username']);
+        case "get_friend_list":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getFriendList($request['username']);
+        case "send_friend_request":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->sendFriendRequest($request['username'],$request['friend_username']);
+        case "accept_friend_request":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->acceptFriendRequest($request['username'],$request['friend_username']);
+        case "delete_friend":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->deleteFriend($request['username'],$request['friend_username']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
