@@ -57,7 +57,7 @@
     background-color: var(--color-theme-main-tone-down);
     font-size: 18px;
 }
-nav a:last-child{
+#nav a:last-child{
   border-radius: 0 0 10px 10px;
 }
 
