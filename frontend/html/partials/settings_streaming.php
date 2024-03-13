@@ -1,9 +1,18 @@
 <style scoped>
         .providers{
+            width:300px;
+            overflow-y: scroll;
             display: flex;
             gap: 10px;
             padding: 20px;
             align-items: center;
+            transition: 300ms;
+        }
+        .providers:empty{
+            background-color: #000;
+            border-radius: 10px;
+            height: 50px;
+            transition: 300ms;
         }
         .providers img{
             max-width: 60px;

@@ -9,7 +9,7 @@
     <script src="../javascript/globalscript.js"></script>
 </head>
 <body>
-<main>
+<main style='margin: 10px 0;'>
     <h2>Home</h2>
     <?php include '../partials/settings_streaming.php'; ?>
     <?php include '../partials/friends.php'; ?>
