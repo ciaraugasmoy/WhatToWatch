@@ -62,83 +62,91 @@ input[type=submit]{
 </style>
 <h3>Friends</h3>
 <section>
- <form>
-    <input type="text" id="username" name="username" placeholder="Add friend by Username" required>
-   <input type='submit' value='Send Request'>
+ <form id="friend-form">
+    <input type="text" id="friend_username" name="friend_username" placeholder="Add friend by Username" required>
+    <input type='submit' value='Send Request'>
  </form>
-<div id='friends'>
-  <div class='friend' data-status='pending'>
-    <a href='#'> @friend</a>
-    <div class='options'>
-    <button>accept</button><button>reject</button>
-    </div>
-  </div>
-    <div class='friend' data-status='pending'>
-    <a href='#'> @friend</a>
-    <div class='options'>
-    <button>cancel</button>
-    </div>
-  </div>
-  <div class='friend'>
-    <a href='#'> @friend</a>
-    <button>remove</button>
-  </div>
-   <div class='friend'>
-    <a href='#'> @friend</a>
-    <button>remove</button>
-  </div>
-     <div class='friend'>
-    <a href='#'> @friend</a>
-    <button>remove</button>
-  </div>
-</div>
+<div id='friends'></div>
 </section>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
+    // Perform a fetch request to login.php
+    fetch('../requests/get_friends.php', {   
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            for (const element of data.friend_list) {
+                var friendElement = document.createElement("div");
+                friendElement.setAttribute('data-friend-id', element['friend_id']); 
+                friendElement.setAttribute('data-status', element['status']); 
+                friendElement.classList.add('friend');
+
+                var nameLink = document.createElement('a');
+                nameLink.textContent=element['friend_name'];
+                friendElement.appendChild(nameLink);
+
+                switch (element['status']) {
+                case 'requested':
+                    var cancelButton = document.createElement("button");
+                    cancelButton.textContent='cancel';
+                    friendElement.appendChild(cancelButton);
+                    break;
+                case 'pending':
+                    var optionGroup = document.createElement("div");
+                    optionGroup.classList.add('options');
+                    var acceptButton = document.createElement("button");
+                    var rejectButton = document.createElement("button");
+                    acceptButton.textContent='accept';
+                    rejectButton.textContent='reject';
+                    optionGroup.appendChild(rejectButton);
+                    optionGroup.appendChild(acceptButton);
+                    friendElement.appendChild(optionGroup)
+                    break;
+                default:
+                    var removeButton = document.createElement("button");
+                    removeButton.textContent='remove';
+                    friendElement.appendChild(removeButton);
+                }
+                
+
+                var container = document.getElementById("friends");
+                container.appendChild(friendElement);
+            }
+        } else {
+            // Display error message
+            console.log('error getting friendlist');
+        }
+    })
+});
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('friend-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
         // Perform a fetch request to login.php
-        fetch('../requests/get_friends.php', {   
+        fetch('../requests/send_friend_request.php', {
+            method: 'POST',
+            body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
-                for (const element of data.friend_list) {
-                    var friendElement = document.createElement("div");
-                    friendElement.setAttribute('data-friend-id', element['friend_id']); 
-                    friendElement.setAttribute('data-status', element['status']); 
-                    friendElement.classList.add('friend');
-
-                    var nameLink = document.createElement('a');
-                    nameLink.textContent=element['friend_name'];
-                    friendElement.appendChild(nameLink);
-
-                    switch (element['status']) {
-                    case 'requested':
-                        var cancelButton = document.createElement("button");
-                        cancelButton.textContent='cancel';
-                        friendElement.appendChild(cancelButton);
-                        break;
-                    case 'pending':
-                        var acceptButton = document.createElement("button");
-                        var rejectButton = document.createElement("button");
-                        acceptButton.textContent='accept';
-                        rejectButton.textContent='reject';
-                        friendElement.appendChild(acceptButton);
-                        friendElement.appendChild(rejectButton);
-                        break;
-                    default:
-                        var removeButton = document.createElement("button");
-                        removeButton.textContent='remove';
-                        friendElement.appendChild(removeButton);
-                    }
-                    
-
-                    var container = document.getElementById("friends");
-                    container.appendChild(friendElement);
-                }
+                console.log('sent request');
             } else {
                 // Display error message
-                console.log('error getting friendlist');
+                console.log(data.message);
             }
         })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
+});
+
 </script>
