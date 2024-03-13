@@ -22,11 +22,13 @@ section{
   display:inline-block;
 }
 .friend .options{
+    margin-left: auto;
   display:flex;
   flex-direction:column;
   gap: 5px;
 }
 .friend button{
+    margin-left: auto;
   border: none;
   border-radius:5px;
   width:60px;
@@ -138,6 +140,21 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.status === 'success') {
                 console.log('sent request');
+                var friendElement = document.createElement("div");
+                friendElement.setAttribute('data-status', 'pending'); 
+                friendElement.classList.add('friend');
+
+                var nameLink = document.createElement('a');
+                nameLink.textContent= formData.get('friend_username');
+                friendElement.appendChild(nameLink);
+
+                var cancelButton = document.createElement("button");
+                cancelButton.textContent='cancel';
+                friendElement.appendChild(cancelButton);
+
+                var container = document.getElementById("friends");
+                container.prepend(friendElement);
+
             } else {
                 // Display error message
                 console.log(data.message);
