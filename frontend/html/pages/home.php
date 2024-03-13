@@ -12,6 +12,7 @@
 <main>
     <h2>Home</h2>
     <?php include '../partials/settings_streaming.php'; ?>
+    <?php include '../partials/friends.php'; ?>
 </main>
 </body>
 </html>

@@ -15,8 +15,12 @@
 }
 :root{
     background-color: var(--color-background-dark);
+    color:white;
 }
 :root body{
     display: grid;
     min-height: 100vh;
+}
+:root body main{
+    justify-self: center;
 }

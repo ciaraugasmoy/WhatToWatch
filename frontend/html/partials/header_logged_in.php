@@ -1,13 +1,12 @@
 <style scoped>
 #header{
-    max-height: min-content;
+    height: min-content;
     padding: var(--padding-min);
     display: grid;
     color: white;
     background-color: var(--color-theme-main);
     align-items: center;
     justify-items: center;
-    grid-template-columns: 8fr 2fr;
 }
 #header h1{
     font-family: var(--font-family-logo);
@@ -99,5 +98,5 @@
   <a href="#">Home</a>
   <a href="#">Discover</a>
   <a href="#">Profile</a>
-  <a href="#">Contact</a>
+  <a href="#" id="logoutLink" onclick="logoutHandler(event)">Logout</a>
 </nav>

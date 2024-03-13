@@ -1,12 +1,4 @@
 <style scoped>
-        main{
-            background-color: beige;
-            margin: 10px 20px;
-        }
-        section{
-            padding: 10px;
-            background-color: cyan;
-        }
         .providers{
             display: flex;
             gap: 10px;
@@ -75,10 +67,6 @@
     <h3>Popular Streaming Services</h3>
     <div class="providers" id="curatedProviderList"></div>
 </section>
-
-<button id="logoutButton">Logout BUTTON</button>
-
-
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Perform a fetch request to login.php

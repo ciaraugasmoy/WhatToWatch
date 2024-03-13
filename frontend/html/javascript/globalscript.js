@@ -1,22 +1,23 @@
-//LOGUT FUNCTION
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('logoutButton').addEventListener('click', function () {
-        fetch('../requests/logout.php', {
-            method: 'GET',
-            credentials: 'same-origin' // Include cookies in the request
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // If the logout was successful, redirect to index.html
-                window.location.href = '../index.html';
-            } else {
-                // Handle unsuccessful logout
-                console.error('Logout failed.');
-            }
-        })
+function logoutHandler(event) {
+    event.preventDefault(); // Prevent the default behavior of the link
+
+    // Perform the logout functionality
+    fetch('../requests/logout.php', {
+        method: 'GET',
+        credentials: 'same-origin' // Include cookies in the request
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If the logout was successful, redirect to index.html
+            window.location.href = '../index.html';
+        } else {
+            // Handle unsuccessful logout
+            console.error('Logout failed.');
+        }
     });
-});
+}
+
 
 //VALIDATION FUNCTION
 document.addEventListener('DOMContentLoaded', function () {
