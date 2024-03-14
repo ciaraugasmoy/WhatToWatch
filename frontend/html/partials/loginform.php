@@ -24,8 +24,8 @@
 </style>
 <form id="login-form">
     <h3>Login</h3>
-    <input type="text" id="username" name="username" placeholder="Username" required><br><br>
-    <input type="password" id="password" name="password" placeholder="Password" required><br><br>
+    <input type="text" id="username" name="username" placeholder="Username" required>
+    <input type="password" id="password" name="password" placeholder="Password" required>
     <input type="submit" value="Login">
     <p>Don't have an account? <a href="signup.php">Sign Up Here</a></p>
 </form>

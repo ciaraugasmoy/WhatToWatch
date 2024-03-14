@@ -127,39 +127,44 @@ class UserDataHandler
     }
 // FRIEND LIST MANIPULATION
 
-    public function getFriendList($username)
-    {
-        $username = $this->mysqli->real_escape_string($username);
-        $query = "
-        SELECT u.id AS friend_id, u.username AS friend_name, f.status
-        FROM users u
-        INNER JOIN friends f ON (u.id = f.sender_id OR u.id = f.receiver_id)
-        WHERE (f.sender_id = (SELECT id FROM users WHERE username = '$username')
-            OR f.receiver_id = (SELECT id FROM users WHERE username = '$username'))
-            AND u.id != (SELECT id FROM users WHERE username = '$username');
+public function getFriendList($username)
+{
+    $username = $this->mysqli->real_escape_string($username);
+    $query = "
+    SELECT u.id AS friend_id, u.username AS friend_name, 
+           CASE
+               WHEN f.receiver_id = (SELECT id FROM users WHERE username = '$username') THEN 'pending'
+               WHEN f.sender_id = (SELECT id FROM users WHERE username = '$username') THEN 'requested'
+           END AS status
+    FROM users u
+    INNER JOIN friends f ON (u.id = f.sender_id OR u.id = f.receiver_id)
+    WHERE (f.sender_id = (SELECT id FROM users WHERE username = '$username')
+        OR f.receiver_id = (SELECT id FROM users WHERE username = '$username'))
+        AND u.id != (SELECT id FROM users WHERE username = '$username');
     ";
 
-        try {
-            $result = $this->mysqli->query($query);
+    try {
+        $result = $this->mysqli->query($query);
 
-            if ($result->num_rows > 0) {
-                $friend_list = array();
+        if ($result->num_rows > 0) {
+            $friend_list = array();
 
-                while ($row = $result->fetch_assoc()) {
-                    $friend_list[] = $row;
-                }
-
-                $this->mysqli->close();
-                return array("status" => "success", "message" => "Friend list fetched successfully", "friend_list" => $friend_list);
-            } else {
-                $this->mysqli->close();
-                return array("status" => "error", "message" => "No friends found for the user");
+            while ($row = $result->fetch_assoc()) {
+                $friend_list[] = $row;
             }
-        } catch (Exception $e) {
+
             $this->mysqli->close();
-            return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+            return array("status" => "success", "message" => "Friend list fetched successfully", "friend_list" => $friend_list);
+        } else {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => "No friends found for the user");
         }
+    } catch (Exception $e) {
+        $this->mysqli->close();
+        return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
     }
+}
+
 
     public function sendFriendRequest($senderUsername, $receiverUsername)
     {

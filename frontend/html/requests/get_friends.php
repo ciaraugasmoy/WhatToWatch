@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../client/client_rpc.php';
@@ -28,12 +29,11 @@ if (empty($access_token) || empty($refresh_token) || empty($username)) {
 
     $response = $client->call($request);
     if ($response['status']!='success'){
-        echo json_encode(['status' => false]);
+        echo json_encode(['status' => 'error']);
     }
     $request = [
-        'type' => 'get_providers',
+        'type' => 'get_friend_list',
         'username' => $username,
-        'watch_provider_id' =>$watchproviderid,
     ];
     $response = $client->call($request);
     if ($response['status']=='success'){
