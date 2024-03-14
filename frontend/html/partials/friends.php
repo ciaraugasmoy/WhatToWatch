@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 switch (element['status']) {
                 case 'requested':
                     var cancelButton = document.createElement("button");
+                    cancelButton.setAttribute('onclick', 'deleteFriendRequest(this)');
+                    cancelButton.setAttribute('data-friend-name', element['friend_name']);
                     cancelButton.textContent='cancel';
                     friendElement.appendChild(cancelButton);
                     break;
@@ -101,6 +103,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     var rejectButton = document.createElement("button");
                     acceptButton.textContent='accept';
                     rejectButton.textContent='reject';
+                    acceptButton.setAttribute('data-friend-name', element['friend_name']);
+                    rejectButton.setAttribute('data-friend-name', element['friend_name']);
+                    rejectButton.setAttribute('onclick', 'deleteFriendRequest(this)');
                     optionGroup.appendChild(rejectButton);
                     optionGroup.appendChild(acceptButton);
                     friendElement.appendChild(optionGroup)
@@ -108,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 default:
                     var removeButton = document.createElement("button");
                     removeButton.textContent='remove';
+                    removeButton.setAttribute('data-friend-name', element['friend_name']);
                     friendElement.appendChild(removeButton);
                 }
                 
@@ -165,5 +171,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+function deleteFriendRequest(button) {
+    const friendName = button.getAttribute('data-friend-name');
+    const formData = new FormData();
+    formData.append('friend_username', friendName);
+    fetch('../requests/delete_friend_request.php', {
+        method: 'POST',
+        body: formData // Sending data as FormData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Friend request deleted');
+            if (button.parentNode.classList.contains('options')) {
+                button.parentNode.parentNode.remove();
+            } else {
+                button.parentNode.remove();
+            }
+        } else {
+            console.log(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 </script>
