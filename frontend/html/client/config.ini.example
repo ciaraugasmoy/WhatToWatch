@@ -1,0 +1,7 @@
+; config.ini
+[amqp]
+host = localhost OR YOUR RABBITMQ SERVER IP
+port = 5672
+user = mqadmin
+password = mqadminpass
+broker_host = brokerHost
