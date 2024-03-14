@@ -1,5 +1,4 @@
 USE what2watch;
-DROP TABLE friends;
 CREATE TABLE IF NOT EXISTS friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,

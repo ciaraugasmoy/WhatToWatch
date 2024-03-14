@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 friendElement.classList.add('friend');
 
                 var nameLink = document.createElement('a');
+                nameLink.setAttribute("href", "profile.php?username=" + element['friend_name']);
                 nameLink.textContent=element['friend_name'];
                 friendElement.appendChild(nameLink);
 
