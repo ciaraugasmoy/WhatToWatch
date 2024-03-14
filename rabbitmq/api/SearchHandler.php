@@ -58,7 +58,8 @@ class SearchHandler {
             // Prepare and bind SQL statement
             $stmt = $conn->prepare("INSERT INTO movies (movie_id, title, overview, release_date, poster_path, backdrop_path, adult) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = VALUES(title), overview = VALUES(overview), release_date = VALUES(release_date), poster_path = VALUES(poster_path), backdrop_path = VALUES(backdrop_path), adult = VALUES(adult)");
             $stmt->bind_param("ssssssi", $id, $title, $overview, $release_date, $poster_path, $backdrop_path, $adult);
-
+            
+            $movies = array();
             // Insert or update each movie record into the database
             foreach ($data['results'] as $movie) {
                 $id = $movie['id'];
@@ -70,6 +71,16 @@ class SearchHandler {
                 $adult = $movie['adult'] ? 1 : 0;
                 // Execute the SQL statement
                 $stmt->execute();
+
+                $movies[] = array(
+                    'id' => $id,
+                    'title' => $title,
+                    'overview' => $overview,
+                    'release_date' => $release_date,
+                    'poster_path' => $poster_path,
+                    'backdrop_path' => $backdrop_path,
+                    'adult' => $adult
+                );
             }
 
             echo "Records inserted or updated successfully";
@@ -77,7 +88,7 @@ class SearchHandler {
             // Close statement and database connection
             $stmt->close();
             $conn->close();
-            return array("status" => "success", "message" => "search performed successfully");
+            return array("status" => "success", "message" => "search performed successfully", "movies"=>$movies);
         }
     }
 }

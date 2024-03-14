@@ -55,8 +55,8 @@ class UserHandler
         // Sanitize input to prevent SQL injection
         $username = $this->mysqli->real_escape_string($username);
         $password = $this->mysqli->real_escape_string($password);
-        $email = $this->mysqli->real_escape_string($email); // New field
-        $dob = $this->mysqli->real_escape_string($dob); // New field
+        $email = $this->mysqli->real_escape_string($email); 
+        $dob = $this->mysqli->real_escape_string($dob); 
 
         // Check if the username or email is already registered
         $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";

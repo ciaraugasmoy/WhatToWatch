@@ -15,7 +15,9 @@ $watchproviderid=7;
 
 $request=array();
 $request['type'] = "discover_movie";
-$request['username'] = $username;
+$request['query'] = 'scary';
+$request['page'] = '1';
+$request['adult_bool'] = 'false';
 $response = $client->call($request);
 var_dump($response)
 ?>
