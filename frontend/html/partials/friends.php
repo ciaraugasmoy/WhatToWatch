@@ -10,6 +10,9 @@ section{
    max-height:300px;
    overflow:scroll;
 }
+#friends:empty{
+    display: none;
+}
 .friend{
   display: flex;
   width:300px;
@@ -17,6 +20,7 @@ section{
   justify-content:space-around;
   box-sizing:border-box;
   border: 1px #0075DE20 solid;
+  transition: 300ms;
 }
 .friend>*{
   display:inline-block;
@@ -99,13 +103,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 'pending':
                     var optionGroup = document.createElement("div");
                     optionGroup.classList.add('options');
+
                     var acceptButton = document.createElement("button");
-                    var rejectButton = document.createElement("button");
                     acceptButton.textContent='accept';
-                    rejectButton.textContent='reject';
                     acceptButton.setAttribute('data-friend-name', element['friend_name']);
+                    acceptButton.setAttribute('onclick', 'acceptFriendRequest(this)');
+
+                    var rejectButton = document.createElement("button");
+                    rejectButton.textContent='reject';
                     rejectButton.setAttribute('data-friend-name', element['friend_name']);
                     rejectButton.setAttribute('onclick', 'deleteFriendRequest(this)');
+
                     optionGroup.appendChild(rejectButton);
                     optionGroup.appendChild(acceptButton);
                     friendElement.appendChild(optionGroup)
@@ -192,6 +200,42 @@ function deleteFriendRequest(button) {
                 button.parentNode.parentNode.remove();
             } else {
                 button.parentNode.remove();
+            }
+        } else {
+            console.log(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+function acceptFriendRequest(button) {
+    const friendName = button.getAttribute('data-friend-name');
+    const formData = new FormData();
+    formData.append('friend_username', friendName);
+    fetch('../requests/accept_friend_request.php', {
+        method: 'POST',
+        body: formData // Sending data as FormData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Friend request accepted');
+            if (button.parentNode.classList.contains('options')) {
+                button.parentNode.parentNode.setAttribute('data-status', 'accepted');
+                
+                var removeButton = document.createElement("button");
+                removeButton.textContent='remove';
+                removeButton.setAttribute('data-friend-name', friendName);
+                button.parentNode.parentNode.append(removeButton);
+                button.parentNode.remove();
+            } else {
+                button.parentNode.setAttribute('data-status', 'accepted');
             }
         } else {
             console.log(data.message);
