@@ -59,7 +59,7 @@ function HANDLE_MESSAGE($request)
             return $userDataHandler->deleteFriend($request['username'],$request['friend_username']);
         case "discover_movie":
             $searchHandler = new SearchHandler();
-            return $searchHandler->performSearch('big', '1', 'false');
+            return $searchHandler->performSearch($request['query'], $request['page'], $request['adult_bool']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

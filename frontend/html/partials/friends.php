@@ -51,7 +51,7 @@ form{
   align-content: center;
   margin-bottom:10px;
 }
-input[type=text],input[type=password]{
+input[type=text]{
   border-radius: 20px;
   border: 2px #0075DE solid;
   padding: 8px;
