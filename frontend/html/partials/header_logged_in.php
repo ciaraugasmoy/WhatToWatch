@@ -95,8 +95,8 @@
     </div>
 </header>
 <nav id="nav" class="none">
-  <a href="#">Home</a>
-  <a href="#">Discover</a>
-  <a href="#">Profile</a>
+  <a href="home.php">Home</a>
+  <a href="explore.php">Explore</a>
+  <a href="settings.php">Setting</a>
   <a href="#" id="logoutLink" onclick="logoutHandler(event)">Logout</a>
 </nav>
