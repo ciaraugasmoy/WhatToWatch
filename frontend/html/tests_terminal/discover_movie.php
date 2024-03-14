@@ -11,7 +11,7 @@ $client = new RPCClient();
 
 $request=array();
 $request['type'] = "discover_movie";
-$request['query'] = 'scary';
+$request['query'] = 'space';
 $request['page'] = '1';
 $request['adult_bool'] = 'false';
 $response = $client->call($request);
