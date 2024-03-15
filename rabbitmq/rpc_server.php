@@ -6,6 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once 'UserHandler.php';
 require_once 'UserDataHandler.php';
 require_once 'api/SearchHandler.php';
+require_once 'api/RatingHandler.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -60,6 +61,9 @@ function HANDLE_MESSAGE($request)
         case "discover_movie":
             $searchHandler = new SearchHandler();
             return $searchHandler->performSearch($request['query'], $request['page'], $request['adult_bool']);
+        case "movie_ratings":
+      	    $ratingHandler = new RatingHandler();
+      	    return $ratingHandler->performRatingSearch($request["sort_order"]);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
