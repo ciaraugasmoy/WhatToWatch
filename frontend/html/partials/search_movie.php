@@ -1,17 +1,18 @@
 <style scoped>
-form{
+#search-form{
   display: flex;
   max-width:100%;
   gap:10px;
   align-content: center;
   margin-bottom:10px;
+  justify-self: center;
 }
-input[type=text],input[type=password]{
+#search-form input[type=text]{
   border-radius: 20px;
   border: 2px #0075DE solid;
   padding: 8px;
 }
-input[type=submit]{
+#search-form input[type=submit]{
   border-radius: 20px;
   border: 2px #0075DE solid;
   background-color:#0075DE;

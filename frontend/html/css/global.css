@@ -24,3 +24,6 @@
 :root body main{
     justify-self: center;
 }
+:root body main>*{
+    margin-bottom:15px;
+}

@@ -67,6 +67,7 @@ form button:hover{
 }
 </style>
 <h1>Movie Results</h1>
+<?php include '../partials/search_movie.php'; ?>
 <section id='results'>
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
