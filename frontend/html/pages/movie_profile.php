@@ -67,10 +67,39 @@ use PhpAmqpLib\Message\AMQPMessage;
 $client = new RPCClient();
 
 $movie_id = isset($_GET['id']) ? $_GET['id'] : '';
-
 $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
+
+
+
+$request2 = array();
+$request2['type'] = "get_movie_providers";
+$request2['username'] = $username;
+$request2['movie_id'] = $movie_id;
+$response2 = $client->call($request2);
+$user_providers_list = '';
+$general_providers_list = '';
+if (isset($response2['providers']) && is_array($response2['providers'])) {
+    $providers = $response2['providers'];
+    $url_path = 'https://image.tmdb.org/t/p/w500';
+    foreach ($providers as $provider) {
+        if ($provider['user_has']) {
+            $user_providers_list .= '<img'
+                                .' data-provider-pricing="'.$provider['pricing']
+                                .'" data-provider-name="'.$provider['provider_name']
+                                .'" src="'.$url_path.$provider['logo_path']
+                                .'">';
+        } else {
+            $general_providers_list .= '<img'
+                                        .' data-provider-pricing="'.$provider['pricing']
+                                        .'" data-provider-name="'.$provider['provider_name']
+                                        .'" src="'.$url_path.$provider['logo_path']
+                                        .'">';
+        }
+    }
+}
+
 $request =[
     'type' => 'get_movie_details',
     'movie_id'   => $movie_id,
@@ -86,8 +115,10 @@ $movie = $response['movie'];
     .'<p class="releasedate">'.$movie['release_date'].'</p>'
     .'<p>'.$movie['overview'].'</p>'
     .'<img class="poster" src="'.$poster_url.'">'
-    .'<h3>'.'Streaming On'.'</h3>'
-    .'<div class="providers">'.'</div>'
+    .'<h3>'.'Your Providers'.'</h3>'
+    .'<div class="providers">'.$user_providers_list.'</div>'
+    .'<h3>'.'Other Providers'.'</h3>'
+    .'<div class="providers">'.$general_providers_list.'</div>'
     .'</section>';
 
 ?>

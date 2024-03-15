@@ -43,16 +43,16 @@ class MovieWatchProvider {
 
         if (isset($response['results'])) {
             $results = $response['results'];
+            $providers=array();
             foreach ($results as $country => $countrydata) {
                 if ($country === 'US') {
-                    $providers=array();
                     if (isset($countrydata['buy'])) {
                         foreach ($countrydata['buy'] as $provider) {
                             $providerId = $provider['provider_id'];
                             $providerName = $provider['provider_name'];
                             $logoPath = $provider['logo_path'];
                             $displayPriority = $provider['display_priority'];
-                            $pricing='rent';
+                            $pricing='buy';
                             $userHas=$this->hasWatchProvider($username, $providerId);
                             $providers[] = array(
                                 'provider_id' => $providerId,
@@ -70,7 +70,7 @@ class MovieWatchProvider {
                             $providerName = $provider['provider_name'];
                             $logoPath = $provider['logo_path'];
                             $displayPriority = $provider['display_priority'];
-                            $pricing='rent';
+                            $pricing='flatrate';
                             $userHas=$this->hasWatchProvider($username, $providerId);
                             $providers[] = array(
                                 'provider_id' => $providerId,
