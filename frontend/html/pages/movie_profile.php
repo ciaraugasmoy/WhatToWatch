@@ -32,6 +32,32 @@
     width: 300px;
     border-radius: 20px;
 }
+.providers{
+    width:300px;
+    overflow-y: scroll;
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    align-items: center;
+    transition: 300ms;
+}
+.providers:empty{ 
+    background-color: #000;
+    border-radius: 10px;
+    height: 60px;
+    transition: 300ms;
+    overflow: hidden;
+}
+.providers:empty:after{
+    content: 'no providers found';
+}
+.providers img{
+    max-width: 60px;
+    border-radius: 5px;
+}
+.providers img:hover{
+    border: 1px solid cyan;
+}
 </style>
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -60,7 +86,8 @@ $movie = $response['movie'];
     .'<p class="releasedate">'.$movie['release_date'].'</p>'
     .'<p>'.$movie['overview'].'</p>'
     .'<img class="poster" src="'.$poster_url.'">'
-    .'<p>'.'remember the wp'.'</p>'
+    .'<h3>'.'Streaming On'.'</h3>'
+    .'<div class="providers">'.'</div>'
     .'</section>';
 
 ?>
