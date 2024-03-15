@@ -97,6 +97,6 @@
 <nav id="nav" class="none">
   <a href="home.php">Home</a>
   <a href="explore.php">Explore</a>
-  <a href="settings.php">Setting</a>
+  <a href="settings.php">Settings</a>
   <a href="#" id="logoutLink" onclick="logoutHandler(event)">Logout</a>
 </nav>
