@@ -64,6 +64,12 @@ function HANDLE_MESSAGE($request)
         case "get_movie_details":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getMovieDetails($request['movie_id']);
+        case "get_user_review":
+            $movieDataHandler = new MovieDataHandler();
+            return $movieDataHandler->getUserReview($request['username'],$request['movie_id']);
+        case "post_user_review":
+            $movieDataHandler = new MovieDataHandler();
+            return $movieDataHandler->postUserReview($request['username'],$request['movie_id'],$request['rating'],$request['review']);
     }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
