@@ -56,11 +56,11 @@ class SearchHandler {
             }
 
             // Prepare and bind SQL statement
-            $stmt = $conn->prepare("INSERT INTO movies (movie_id, title, overview, release_date, poster_path, backdrop_path, adult) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = VALUES(title), overview = VALUES(overview), release_date = VALUES(release_date), poster_path = VALUES(poster_path), backdrop_path = VALUES(backdrop_path), adult = VALUES(adult)");
-            $stmt->bind_param("ssssssi", $id, $title, $overview, $release_date, $poster_path, $backdrop_path, $adult);
+            $stmt = $conn->prepare("INSERT INTO movies (movie_id, title, overview, release_date, poster_path, backdrop_path, adult, vote_average) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = VALUES(title), overview = VALUES(overview), release_date = VALUES(release_date), poster_path = VALUES(poster_path), backdrop_path = VALUES(backdrop_path), adult = VALUES(adult), vote_average = VALUES(vote_average)");
+            $stmt->bind_param("ssssssid", $id, $title, $overview, $release_date, $poster_path, $backdrop_path, $adult, $vote_average);
             
             $movies = array();
-            // Insert or update each movie record into the database
+            // Insert or update each movie record into the databases
             foreach ($data['results'] as $movie) {
                 $id = $movie['id'];
                 $title = $movie['title'];
@@ -69,6 +69,7 @@ class SearchHandler {
                 $poster_path = $movie['poster_path'];
                 $backdrop_path = $movie['backdrop_path'];
                 $adult = $movie['adult'] ? 1 : 0;
+                $vote_average = $movie['vote_average'];
                 // Execute the SQL statement
                 $stmt->execute();
 
@@ -79,7 +80,8 @@ class SearchHandler {
                     'release_date' => $release_date,
                     'poster_path' => $poster_path,
                     'backdrop_path' => $backdrop_path,
-                    'adult' => $adult
+                    'adult' => $adult,
+                    'vote_average' => $vote_average
                 );
             }
 
