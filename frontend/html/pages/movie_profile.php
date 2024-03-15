@@ -11,6 +11,8 @@
 <body>
 <style scoped>
 
+
+
 .backdrop{
     position: fixed;
     z-index: -1;
@@ -53,10 +55,25 @@
 }
 .providers img{
     max-width: 60px;
-    border-radius: 5px;
+    border-radius: 10px 10px 0 0;
 }
-.providers img:hover{
+.providers .imgbox{
+    border-radius:10px;
+    border: 1px solid #00000000;
+    transition:900ms;
+}
+.providers .imgbox:hover{
     border: 1px solid cyan;
+    transition:900ms;
+}
+.imglabel{
+    background: green;
+    margin-top:-4px;
+    width: 100%;
+    padding:2px;
+    text-align: center;
+    border-radius: 0 0 10px 10px;
+    
 }
 </style>
 <?php
@@ -85,17 +102,17 @@ if (isset($response2['providers']) && is_array($response2['providers'])) {
     $url_path = 'https://image.tmdb.org/t/p/w500';
     foreach ($providers as $provider) {
         if ($provider['user_has']) {
-            $user_providers_list .= '<img'
-                                .' data-provider-pricing="'.$provider['pricing']
-                                .'" data-provider-name="'.$provider['provider_name']
-                                .'" src="'.$url_path.$provider['logo_path']
-                                .'">';
+            $user_providers_list .= '<div class="imgbox"'
+                                .' title="'.$provider['provider_name'].'" >'
+                                .'<img src="'.$url_path.$provider['logo_path'].'">'
+                                .'<div class="imglabel">'.$provider['pricing'].'</div>'
+                                .'</div>';
         } else {
-            $general_providers_list .= '<img'
-                                        .' data-provider-pricing="'.$provider['pricing']
-                                        .'" data-provider-name="'.$provider['provider_name']
-                                        .'" src="'.$url_path.$provider['logo_path']
-                                        .'">';
+            $general_providers_list .= '<div class="imgbox"'
+                                .' title="'.$provider['provider_name'].'" >'
+                                .'<img src="'.$url_path.$provider['logo_path'].'">'
+                                .'<div class="imglabel">'.$provider['pricing'].'</div>'
+                                .'</div>';
         }
     }
 }
