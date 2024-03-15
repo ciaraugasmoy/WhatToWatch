@@ -6,6 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once 'UserHandler.php';
 require_once 'UserDataHandler.php';
 require_once 'api/SearchHandler.php';
+require_once 'api/MovieWatchProvider.php';
 require_once 'MovieDataHandler.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -70,7 +71,10 @@ function HANDLE_MESSAGE($request)
         case "post_user_review":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->postUserReview($request['username'],$request['movie_id'],$request['rating'],$request['review']);
-    }
+        case "get_movie_providers":
+            $movieWatchProvider = new MovieWatchProvider();
+            return $movieWatchProvider->getProviders($request['username'],$request['movie_id']);
+        }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
 }

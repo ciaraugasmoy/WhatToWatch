@@ -101,11 +101,12 @@ class MovieWatchProvider {
                             
                         }
                     }
-                    return true;
+                    return array("status" => "success", "message" => "got wp for movie in US", "providers"=>$providers);
                 }
             }
+            return array("status" => "error", "message" => "no us results or err other");
         } else {
-            echo "Results not found.";
+            return array("status" => "error", "message" => "no results set");
         }
     }
     private function hasWatchProvider($username, $providerId) {
@@ -125,10 +126,5 @@ class MovieWatchProvider {
     }
     
 }
-
-// Example usage:
-$movieWatchProvider = new MovieWatchProvider();
-$result = $movieWatchProvider->getProviders('steve',27205);
-echo $result;
 
 ?>
