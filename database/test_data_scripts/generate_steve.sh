@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # MySQL credentials
 DB_USER="what2watchadmin"
 DB_PASSWORD="what2watchpassword"
@@ -16,16 +15,17 @@ for USER in "${USERS_TO_DELETE[@]}"; do
     mysql -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "DELETE FROM users WHERE username='$USER';"
 done
 
-# SQL commands to insert users with hashed passwords, email, and dob
-INSERT_COMMANDS=""
+# Passwords to be hashed
+PASSWORD1="12345"
+PASSWORD2="54321"
 
-# Generate 30 users with generic names and emails
-for ((i=1; i<=30; i++)); do
-    USERNAME="user$i"
-    EMAIL="user$i@example.com"
-    HASHED_PASSWORD=$(php -r "echo password_hash('12345', PASSWORD_BCRYPT);")
-    INSERT_COMMANDS+="INSERT INTO users (username, password, email, dob) VALUES ('$USERNAME', '$HASHED_PASSWORD', '$EMAIL', '1990-01-01');"
-done
+# Hash passwords using PHP and bcrypt
+HASHED_PASSWORD1=$(php -r "echo password_hash('$PASSWORD1', PASSWORD_BCRYPT);")
+HASHED_PASSWORD2=$(php -r "echo password_hash('$PASSWORD2', PASSWORD_BCRYPT);")
+
+# SQL commands to insert users with hashed passwords, email, and dob
+INSERT_COMMANDS="INSERT INTO users (username, password, email, dob) VALUES ('steve', '$HASHED_PASSWORD1', 'steve@example.com', '1990-01-15');\
+INSERT INTO users (username, password, email, dob) VALUES ('alice', '$HASHED_PASSWORD2', 'alice@example.com', '2010-07-20');"
 
 # Create SQL script
 echo "$INSERT_COMMANDS" > "$SQL_FILE"

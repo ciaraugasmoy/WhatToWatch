@@ -87,7 +87,6 @@ class SearchHandler {
 
             // Close statement and database connection
             $stmt->close();
-            $conn->close();
             return array("status" => "success", "message" => "search performed successfully", "movies"=>$movies);
         }
     }

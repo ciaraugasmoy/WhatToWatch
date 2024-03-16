@@ -41,8 +41,13 @@ section{
 .friend>a{
   color:white;
 }
-.friend[data-status='pending'],.friend[data-status='requested']{
-  background:#0075DE80 
+.friend[data-status='pending']{
+  background:#0075DE80; 
+  transition: 300ms;
+}
+.friend[data-status='requested']{
+  background:#0075DE50; 
+  transition: 300ms;
 }
 form{
   display: flex;
@@ -83,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
         if (data.status === 'success') {
             for (const element of data.friend_list) {
+                console.log(element);
                 var friendElement = document.createElement("div");
                 friendElement.setAttribute('data-friend-id', element['friend_id']); 
                 friendElement.setAttribute('data-status', element['status']); 
@@ -92,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 nameLink.setAttribute("href", "profile.php?username=" + element['friend_name']);
                 nameLink.textContent=element['friend_name'];
                 friendElement.appendChild(nameLink);
-
+                
                 switch (element['status']) {
                 case 'requested':
                     var cancelButton = document.createElement("button");
@@ -123,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     var removeButton = document.createElement("button");
                     removeButton.textContent='remove';
                     removeButton.setAttribute('data-friend-name', element['friend_name']);
+                    removeButton.setAttribute('onclick', 'deleteFriendRequest(this)');
                     friendElement.appendChild(removeButton);
                 }
                 
@@ -165,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 var cancelButton = document.createElement("button");
                 cancelButton.textContent='cancel';
+                cancelButton.setAttribute('onclick', 'deleteFriendRequest(this)');
                 friendElement.appendChild(cancelButton);
 
                 var container = document.getElementById("friends");
@@ -233,6 +241,7 @@ function acceptFriendRequest(button) {
                 var removeButton = document.createElement("button");
                 removeButton.textContent='remove';
                 removeButton.setAttribute('data-friend-name', friendName);
+                removeButton.setAttribute('onclick', 'deleteFriendRequest(this)');
                 button.parentNode.parentNode.append(removeButton);
                 button.parentNode.remove();
             } else {

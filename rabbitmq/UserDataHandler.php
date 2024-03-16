@@ -133,6 +133,7 @@ public function getFriendList($username)
     $query = "
     SELECT u.id AS friend_id, u.username AS friend_name, 
            CASE
+               WHEN f.status = 'accepted' THEN 'accepted'
                WHEN f.receiver_id = (SELECT id FROM users WHERE username = '$username') THEN 'pending'
                WHEN f.sender_id = (SELECT id FROM users WHERE username = '$username') THEN 'requested'
            END AS status
@@ -140,8 +141,18 @@ public function getFriendList($username)
     INNER JOIN friends f ON (u.id = f.sender_id OR u.id = f.receiver_id)
     WHERE (f.sender_id = (SELECT id FROM users WHERE username = '$username')
         OR f.receiver_id = (SELECT id FROM users WHERE username = '$username'))
-        AND u.id != (SELECT id FROM users WHERE username = '$username');
+        AND u.id != (SELECT id FROM users WHERE username = '$username')
+    ORDER BY 
+        CASE 
+            WHEN status = 'pending' THEN 0 -- Set pending status as first priority
+            WHEN status = 'requested' THEN 1
+            WHEN status = 'accepted' THEN 2
+        END,
+        status,
+        friend_name; -- Then sort alphabetically by friend's name
     ";
+    
+    
 
     try {
         $result = $this->mysqli->query($query);
