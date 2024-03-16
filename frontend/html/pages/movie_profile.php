@@ -191,7 +191,7 @@ $movie = $response['movie'];
             $stars .= '★';
         }
         echo
-        '<section class="reviews">'
+        '<section class="review">'
         .'<h3>'.$username.'</h3>'
         .'<p>'.$my_review.'</p>'
         .'<span>'.$stars.'</span>'
