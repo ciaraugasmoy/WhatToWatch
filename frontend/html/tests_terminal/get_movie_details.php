@@ -56,6 +56,20 @@ $request['movie_id'] = '27205';
 $request['limit'] = 5;
 $request['offset'] = 0;
 $response = $client->call($request);
-
 var_dump($response);
+
+$request5 = array();
+$request5['type'] = "get_user_reviews";
+$request5['username'] = 'ciara';
+$request5['friend_name'] = 'steve';
+$response5 = $client->call($request5);
+var_dump($response5);
+
+$request5 = array();
+$request5['type'] = "get_user_reviews";
+$request5['username'] = 'ciara';
+$request5['friend_name'] = 'ciara';
+$response5 = $client->call($request5);
+var_dump($response5);
+
 ?>
