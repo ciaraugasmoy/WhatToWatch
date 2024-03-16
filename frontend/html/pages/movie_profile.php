@@ -10,16 +10,18 @@
 </head>
 <body>
 <style scoped>
+
 .backdrop{
     position: fixed;
     z-index: -1;
     width: 100vw;   
 }
 .movieinfo{
-    margin:100px 10px 20px;
+    margin:100px 0px 20px;
     border-radius: 20px;
     background: linear-gradient(#000000 5px,#000000DD);
-    max-width:500px;
+    width:500px;
+    max-width: 100vw;
     padding: 20px;
     justify-self: center;
     justify-content: center;
@@ -135,6 +137,10 @@ $movie = $response['movie'];
     .'<div class="providers">'.$general_providers_list.'</div>'
     .'</section>';
 
+    include '../partials/reviewform.php';
 ?>
+
+
+
 </body>
 </html>
