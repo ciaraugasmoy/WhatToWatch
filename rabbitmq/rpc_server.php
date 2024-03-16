@@ -68,6 +68,9 @@ function HANDLE_MESSAGE($request)
         case "get_user_review":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getUserReview($request['username'],$request['movie_id']);
+        case "get_user_reviews": //ensures user is themself or is friended before return
+            $movieDataHandler = new MovieDataHandler();
+            return $movieDataHandler->getFriendReviews($request['username'],$request['friend_name']);
         case "post_user_review":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->postUserReview($request['username'],$request['movie_id'],$request['rating'],$request['review']);
