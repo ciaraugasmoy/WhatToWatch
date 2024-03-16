@@ -87,7 +87,13 @@ $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
 
-
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Assuming the form has input fields with names 'stars' and 'review'
+    $numstars = $_POST['stars'];
+    $review = $_POST['review'];
+    echo "Stars: $numstars<br>";
+    echo "Review: $review<br>";
+}
 
 $request2 = array();
 $request2['type'] = "get_movie_providers";
@@ -138,9 +144,48 @@ $movie = $response['movie'];
     .'</section>';
 
     include '../partials/reviewform.php';
+   
 ?>
-
-
-
+<section class='review-box'>
+<h3>Leave a Review</h3>
+<form method="post" action="movie_profile.php?id=<?php echo $movie_id; ?>">
+<label for='stars'>Rate</label>
+<div class="rating">
+  <label>
+    <input type="radio" name="stars" value="1" />
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="2" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="3" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>   
+  </label>
+  <label>
+    <input type="radio" name="stars" value="4" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="5" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+</div>
+  <label for='review'>Review</label>
+    <textarea name="review"></textarea>
+    <input type="submit" value="Submit">
+ </form>
+</section>
 </body>
 </html>
