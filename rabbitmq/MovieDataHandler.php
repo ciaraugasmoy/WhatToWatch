@@ -50,7 +50,7 @@ class MovieDataHandler
             return ['status' => 'error', 'message' => $this->mysqli->error];
         }
         if ($result->num_rows == 0) {
-            return ['status' => 'success', 'message' => 'Movie not reviewed by user'];
+            return ['status' => 'error', 'message' => 'Movie not reviewed by user'];
         }
         $reviewData = $result->fetch_assoc();
         return ['status' => 'success', 'user_review_data' => $reviewData];

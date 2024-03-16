@@ -116,3 +116,44 @@ input[type='submit']:hover{
   text-shadow: 0 0 5px #09f;
 }
 </style>
+<section class='review-box'>
+<h3>Leave a Review</h3>
+<form method="post" action="movie_profile.php?id=<?php echo $movie_id; ?>">
+<label for='stars'>Rate</label>
+<div class="rating">
+  <label>
+    <input type="radio" name="stars" value="1" />
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="2" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="3" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>   
+  </label>
+  <label>
+    <input type="radio" name="stars" value="4" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+  <label>
+    <input type="radio" name="stars" value="5" />
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+    <span class="icon">★</span>
+  </label>
+</div>
+  <label for='review'>Review</label>
+    <textarea name="review"></textarea>
+    <input type="submit" value="Submit">
+ </form>
+</section>

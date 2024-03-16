@@ -53,10 +53,11 @@
     content: 'no providers found';
 }
 .providers img{
-    max-width: 60px;
+    width: 100%;
     border-radius: 10px 10px 0 0;
 }
 .providers .imgbox{
+    min-width: 60px;
     border-radius:10px;
     border: 1px solid #00000000;
     transition:900ms;
@@ -86,6 +87,22 @@ $movie_id = isset($_GET['id']) ? $_GET['id'] : '';
 $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
+$reviewed= false;
+
+
+$requestreview['type'] = "get_user_review";
+$requestreview['movie_id'] = $movie_id;
+$requestreview['username'] = $username;
+$reviewresponse = $client->call($requestreview);
+$my_rating;
+$my_review;
+if ($reviewresponse['status']==='success'){
+    $reviewed=true;
+    $review_data = $reviewresponse['user_review_data'];
+    $my_rating=$review_data['rating'];
+    $my_review=$review_data['review'];
+    //rating,review,created_at
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assuming the form has input fields with names 'stars' and 'review'
@@ -99,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $request3['review'] = $review;
     $response3 = $client->call($request3);
     if($response3['status']==='success'){
-        echo 'REVIEW POSTED';
+        $reviewed=true;
     }
 }
 
@@ -151,49 +168,24 @@ $movie = $response['movie'];
     .'<div class="providers">'.$general_providers_list.'</div>'
     .'</section>';
 
-    include '../partials/reviewform.php';
+    if($reviewed){
+        $stars='';
+        for ($x = 0; $x <= $my_rating; $x++) {
+            $stars .= '★';
+        }
+        echo
+        '<section class="movieinfo">'
+        .'<h3>'.$username.'</h3>'
+        .'<p>'.$my_review.'</p>'
+        .'<span>'.$stars.'</span>'
+        .'</section>';
+    }
+    else{
+        include '../partials/reviewform.php';
+    }
+    
    
 ?>
-<section class='review-box'>
-<h3>Leave a Review</h3>
-<form method="post" action="movie_profile.php?id=<?php echo $movie_id; ?>">
-<label for='stars'>Rate</label>
-<div class="rating">
-  <label>
-    <input type="radio" name="stars" value="1" />
-    <span class="icon">★</span>
-  </label>
-  <label>
-    <input type="radio" name="stars" value="2" />
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-  </label>
-  <label>
-    <input type="radio" name="stars" value="3" />
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>   
-  </label>
-  <label>
-    <input type="radio" name="stars" value="4" />
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-  </label>
-  <label>
-    <input type="radio" name="stars" value="5" />
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-    <span class="icon">★</span>
-  </label>
-</div>
-  <label for='review'>Review</label>
-    <textarea name="review"></textarea>
-    <input type="submit" value="Submit">
- </form>
-</section>
+
 </body>
 </html>
