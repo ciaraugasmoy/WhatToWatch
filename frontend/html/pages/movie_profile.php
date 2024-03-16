@@ -10,9 +10,6 @@
 </head>
 <body>
 <style scoped>
-
-
-
 .backdrop{
     position: fixed;
     z-index: -1;
