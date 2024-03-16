@@ -17,12 +17,9 @@ Please open database_setup.sql and change the user created to use the IP of your
 ```
 sudo apt install mysql-server
 sudo mysql < database_setup.sql
-sudo mysql < api_cache.sql
+sudo mysql < user_setup.sql
 ```
-To populate with test data please run
-```
-./database_testing_setup.sh
-```
+To populate with test data please run the test_data_scripts
 # Firewalls
 Please use your RABBITMQ SERVER ip
 ```

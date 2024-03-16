@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # MySQL credentials
 DB_USER="what2watchadmin"
 DB_PASSWORD="what2watchpassword"

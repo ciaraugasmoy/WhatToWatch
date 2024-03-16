@@ -11,24 +11,27 @@
 <body>
 <style scoped>
 
-
-
 .backdrop{
     position: fixed;
     z-index: -1;
     width: 100vw;   
 }
-.movieinfo{
-    margin:100px 10px 20px;
+
+.movieinfo,.reviews{
+    margin:10px 0px 20px;
     border-radius: 20px;
     background: linear-gradient(#000000 5px,#000000DD);
-    max-width:500px;
+    width:500px;
+    max-width: 100vw;
     padding: 20px;
     justify-self: center;
     justify-content: center;
     justify-items: center;
     gap:10px;
     display: grid;
+}
+.movieinfo{
+    margin:100px 0px 20px;
 }
 .movieinfo .poster{
     width: 300px;
@@ -54,10 +57,11 @@
     content: 'no providers found';
 }
 .providers img{
-    max-width: 60px;
+    width: 100%;
     border-radius: 10px 10px 0 0;
 }
 .providers .imgbox{
+    min-width: 60px;
     border-radius:10px;
     border: 1px solid #00000000;
     transition:900ms;
@@ -87,8 +91,38 @@ $movie_id = isset($_GET['id']) ? $_GET['id'] : '';
 $access_token = isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : '';
 $refresh_token = isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : '';
 $username = isset($_COOKIE['username']) ? $_COOKIE['username'] : '';
+$reviewed= false;
 
 
+$requestreview['type'] = "get_user_review";
+$requestreview['movie_id'] = $movie_id;
+$requestreview['username'] = $username;
+$reviewresponse = $client->call($requestreview);
+$my_rating;
+$my_review;
+if ($reviewresponse['status']==='success'){
+    $reviewed=true;
+    $review_data = $reviewresponse['user_review_data'];
+    $my_rating=$review_data['rating'];
+    $my_review=$review_data['review'];
+    //rating,review,created_at
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Assuming the form has input fields with names 'stars' and 'review'
+    $numstars = $_POST['stars'];
+    $review = $_POST['review'];
+    $request3 = array();
+    $request3['type'] = "post_user_review";
+    $request3['username'] = $username;
+    $request3['movie_id'] = $movie_id;
+    $request3['rating'] = $numstars;
+    $request3['review'] = $review;
+    $response3 = $client->call($request3);
+    if($response3['status']==='success'){
+        $reviewed=true;
+    }
+}
 
 $request2 = array();
 $request2['type'] = "get_movie_providers";
@@ -138,6 +172,24 @@ $movie = $response['movie'];
     .'<div class="providers">'.$general_providers_list.'</div>'
     .'</section>';
 
+    if($reviewed){
+        $stars='';
+        for ($x = 0; $x <= $my_rating; $x++) {
+            $stars .= '★';
+        }
+        echo
+        '<section class="reviews">'
+        .'<h3>'.$username.'</h3>'
+        .'<p>'.$my_review.'</p>'
+        .'<span>'.$stars.'</span>'
+        .'</section>';
+    }
+    else{
+        include '../partials/reviewform.php';
+    }
+    
+   
 ?>
+
 </body>
 </html>
