@@ -19,12 +19,22 @@ CREATE TABLE IF NOT EXISTS private_keys (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- watch providers
 CREATE TABLE IF NOT EXISTS watch_providers (
     provider_id INT PRIMARY KEY,
     provider_name VARCHAR(255) NOT NULL,
     logo_path VARCHAR(255),
     display_priority INT,
     UNIQUE(provider_id)
+);
+
+-- subset of watch_providers
+CREATE TABLE IF NOT EXISTS curated_watch_providers (
+    provider_id INT PRIMARY KEY,
+    provider_name VARCHAR(255) NOT NULL,
+    logo_path VARCHAR(255),
+    display_priority INT,
+    FOREIGN KEY (provider_id) REFERENCES watch_providers(provider_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_watch_providers (
@@ -34,3 +44,37 @@ CREATE TABLE IF NOT EXISTS user_watch_providers (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (provider_id) REFERENCES watch_providers(provider_id) ON DELETE CASCADE
 );
+-- friends
+CREATE TABLE IF NOT EXISTS friends (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id),
+    UNIQUE KEY unique_friendship (sender_id, receiver_id)
+);
+-- movies
+CREATE TABLE IF NOT EXISTS movies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    overview TEXT,
+    release_date DATE,
+    poster_path VARCHAR(255),
+    backdrop_path VARCHAR(255),
+    adult BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS movie_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL,
+    review TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user_movie (movie_id, user_id), -- Unique constraint for user and movie combination
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
