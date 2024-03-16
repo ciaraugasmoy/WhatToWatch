@@ -65,20 +65,19 @@ form button{
 form button:hover{
     background:darkred;
 }
-
-
 </style>
 <h1>Movie Results</h1>
+<?php include '../partials/search_movie.php'; ?>
 <section id='results'>
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../client/client_rpc.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+$client = new RPCClient();
 
 $query = isset($_GET['query']) ? $_GET['query'] : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
-$client = new RPCClient();
 
 $request=array();
 $request['type'] = "discover_movie";
@@ -91,10 +90,12 @@ foreach ($response['movies'] as $movie){
     $title = $movie['title'];
     $overview = $movie['overview'];
     $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
+    $id = $movie['id'];
+    $url= 'movie_profile.php?id='.$id;
 
     echo 
     '<div class ="movie">'
-    .'<h4>'.$title.'</h4>'
+    .'<h4>'.'<a href="'.$url.'">'.$title.'</a>'.'</h4>'
     .'<div>'
     .'<img class="movieimg" src="'.$src.'">'
     .'<p>'.$overview.'</p>'

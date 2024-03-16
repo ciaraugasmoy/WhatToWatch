@@ -11,6 +11,8 @@
 <body>
 <main style='margin: 10px 0;'>
     <h2>Home</h2>
+    <a href='#'>Get Recommendations</a>
+    
     <?php include '../partials/search_movie.php'; ?>
 </main>
 </body>
