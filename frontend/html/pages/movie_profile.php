@@ -91,8 +91,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assuming the form has input fields with names 'stars' and 'review'
     $numstars = $_POST['stars'];
     $review = $_POST['review'];
-    echo "Stars: $numstars<br>";
-    echo "Review: $review<br>";
+    $request3 = array();
+    $request3['type'] = "post_user_review";
+    $request3['username'] = $username;
+    $request3['movie_id'] = $movie_id;
+    $request3['rating'] = $numstars;
+    $request3['review'] = $review;
+    $response3 = $client->call($request3);
+    if($response3['status']==='success'){
+        echo 'REVIEW POSTED';
+    }
 }
 
 $request2 = array();
