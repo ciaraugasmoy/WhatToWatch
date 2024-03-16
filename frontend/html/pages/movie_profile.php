@@ -187,7 +187,7 @@ $movie = $response['movie'];
     else{
         include '../partials/reviewform.php';
     }
-    
+    include '../partials/movie_reviews.php';
    
 ?>
 
