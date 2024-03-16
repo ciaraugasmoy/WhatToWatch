@@ -8,6 +8,7 @@ require_once 'UserDataHandler.php';
 require_once 'api/SearchHandler.php';
 require_once 'api/MovieWatchProvider.php';
 require_once 'MovieDataHandler.php';
+require_once 'ThreadHandler.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -80,6 +81,20 @@ function HANDLE_MESSAGE($request)
         case "get_movie_providers":
             $movieWatchProvider = new MovieWatchProvider();
             return $movieWatchProvider->getProviders($request['username'],$request['movie_id']);
+        //Thread Handler
+        case "post_comment":
+            $commentHandler = new ThreadHandler();
+            return $commentHandler->postComment($request['username'], $request['thread_id'], $request['body']);
+        case "get_comments":
+            $commentHandler = new ThreadHandler();
+            return $commentHandler->getComments($request['thread_id']);
+        case "get_recent_threads":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->getRecentThreads($request['offset'], $request['limit'], $request['query']);
+        case "post_thread":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->postThread($request['username'], $request['title'], $request['body'], $request['movie_id']);
+        
         }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
