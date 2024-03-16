@@ -16,8 +16,10 @@
     z-index: -1;
     width: 100vw;   
 }
-
-.movieinfo,.reviews{
+#review-box{
+    justify-self: center;
+}
+.movieinfo,.review{
     margin:10px 0px 20px;
     border-radius: 20px;
     background: linear-gradient(#000000 5px,#000000DD);
@@ -29,6 +31,17 @@
     justify-items: center;
     gap:10px;
     display: grid;
+}
+#get-reviews{
+    padding: 10px;
+    background-color: #000;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+}
+#get-reviews:hover{
+    background-color: #01404a;
+    transition:300ms;
 }
 .movieinfo{
     margin:100px 0px 20px;
@@ -187,7 +200,7 @@ $movie = $response['movie'];
     else{
         include '../partials/reviewform.php';
     }
-    
+    include '../partials/movie_reviews.php';
    
 ?>
 

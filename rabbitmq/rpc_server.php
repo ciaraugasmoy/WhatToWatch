@@ -71,6 +71,9 @@ function HANDLE_MESSAGE($request)
         case "post_user_review":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->postUserReview($request['username'],$request['movie_id'],$request['rating'],$request['review']);
+        case "get_recent_reviews":
+            $movieDataHandler = new MovieDataHandler();
+            return $movieDataHandler->getRecentReviews($request['username'], $request['movie_id'], $request['limit'], $request['offset']);
         case "get_movie_providers":
             $movieWatchProvider = new MovieWatchProvider();
             return $movieWatchProvider->getProviders($request['username'],$request['movie_id']);
