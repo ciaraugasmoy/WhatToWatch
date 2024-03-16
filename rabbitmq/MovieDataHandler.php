@@ -86,6 +86,55 @@ class MovieDataHandler
             }
         }
     }
+    public function getRecentReviews($username, $movie_id, $limit, $offset)
+    {
+    try {
+        $username = $this->mysqli->real_escape_string($username);
+        $movie_id = $this->mysqli->real_escape_string($movie_id);
+        $limit = (int)$limit; // Cast to integer for security
+        $offset = (int)$offset; // Cast to integer for security
+
+        // Subquery to get user_id for the given username
+        $userQuery = "SELECT id FROM users WHERE username = '$username'";
+        $userResult = $this->mysqli->query($userQuery);
+
+        if (!$userResult || $userResult->num_rows === 0) {
+            throw new Exception("User '$username' not found");
+        }
+
+        $userData = $userResult->fetch_assoc();
+        $user_id = $userData['id'];
+
+        // Query to fetch recent reviews excluding the given user's review if they have one
+        $query = "SELECT movie_reviews.*, users.username 
+                  FROM movie_reviews 
+                  INNER JOIN users ON movie_reviews.user_id = users.id
+                  WHERE movie_reviews.movie_id = $movie_id 
+                  AND movie_reviews.user_id != $user_id
+                  ORDER BY movie_reviews.created_at DESC
+                  LIMIT $limit OFFSET $offset";
+
+        $result = $this->mysqli->query($query);
+
+        if (!$result) {
+            throw new Exception($this->mysqli->error);
+        }
+
+        $reviews = [];
+        while ($row = $result->fetch_assoc()) {
+            $reviews[] = $row;
+        }
+
+        if (empty($reviews)) {
+            return ['status' => 'error', 'message' => 'No reviews'];
+        }
+
+        return ['status' => 'success', 'reviews' => $reviews];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()];
+    }
+}
+
     
 }
 
