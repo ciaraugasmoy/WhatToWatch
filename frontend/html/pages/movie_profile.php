@@ -16,8 +16,9 @@
     z-index: -1;
     width: 100vw;   
 }
-.movieinfo{
-    margin:100px 0px 20px;
+
+.movieinfo,.reviews{
+    margin:10px 0px 20px;
     border-radius: 20px;
     background: linear-gradient(#000000 5px,#000000DD);
     width:500px;
@@ -28,6 +29,9 @@
     justify-items: center;
     gap:10px;
     display: grid;
+}
+.movieinfo{
+    margin:100px 0px 20px;
 }
 .movieinfo .poster{
     width: 300px;
@@ -174,7 +178,7 @@ $movie = $response['movie'];
             $stars .= '★';
         }
         echo
-        '<section class="movieinfo">'
+        '<section class="reviews">'
         .'<h3>'.$username.'</h3>'
         .'<p>'.$my_review.'</p>'
         .'<span>'.$stars.'</span>'
