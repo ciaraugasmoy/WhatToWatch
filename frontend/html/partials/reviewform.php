@@ -34,6 +34,7 @@ textarea{
   max-width:98vw;
   resize: none;
   transition:300ms;
+  padding:12px;
 }
 input[type='submit']{
   margin-top:10px;

@@ -38,6 +38,68 @@
         }
     </script>
 </head>
+<style scoped>
+h2,h3{
+  text-align: center;
+  margin:10px 0 10px;
+}
+#threads-container{
+  justify-self: center;
+}
+.thread{
+    justify-self: center;
+    margin:10px 0px 20px;
+    border-radius: 20px;
+    background: linear-gradient(#000000 5px,#000000DD);
+    width:500px;
+    max-width: 100vw;
+    padding: 20px;
+    justify-self: center;
+    justify-content: center;
+    justify-items: center;
+    gap:10px;
+    display: grid;
+}
+.title-bar{
+  width:100%;
+  background:#01404a99;
+  padding: 10px 30px;
+  border-radius: 40px;
+}
+.thread .title-bar h4{
+  color:aquamarine;
+  float:left;
+}
+.thread .title-bar p{
+  color:grey;
+  float: right;
+}
+.thread a{
+  justify-self: end;
+    padding: 10px;
+    background-color:  #01404a99;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+  text-decoration: none;
+  border-radius:5px;
+}
+.thread a:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+button{
+    padding: 10px;
+    background-color: #000;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+}
+button:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+</style>
 <body>
     <h2>Explore</h2>
     <h3>Latest Discussions</h3>

@@ -138,6 +138,103 @@ function postComment() {
     </script>
 </head>
 <body>
+<style scoped>
+.thread>*:first-child{
+  color:gold;
+  font-weight:bold;
+}
+.thread>p:nth-last-child(2){
+  color:grey;
+  justify-self: right;
+}
+.thread>p:nth-last-child(1){
+  color:orange;
+  justify-self: right;
+  font-weight:600;
+}
+.comment-box>*:first-child{
+  color: #0df;
+  font-weight:600;
+}
+#thread-container, #comments-container,#comment-box{
+  justify-self: center;
+  width: min-content;
+}
+.thread, .comment-box, form{
+    justify-self: center;
+    background: linear-gradient(#000000 5px,#000000DD);
+    width:500px;
+    max-width: 100vw;
+    padding: 20px;
+    justify-self: center;
+    gap:10px;
+    display: grid;
+    border-bottom: 3px #01404a99 solid;
+}
+.title-bar{
+  width:100%;
+  background:#01404a99;
+  padding: 10px 30px;
+  border-radius: 40px;
+}
+.thread .title-bar h4{
+  color:aquamarine;
+  float:left;
+}
+.thread .title-bar p{
+  color:grey;
+  float: right;
+}
+.thread a{
+  justify-self: end;
+    padding: 10px;
+    background-color:  #01404a99;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+  text-decoration: none;
+  border-radius:5px;
+}
+.thread a:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+button{
+    padding: 10px;
+    background-color: #01404a90;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+  border-radius:30px;
+}
+button:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+form{
+  width:500px;
+  max-width:100vw;
+  padding:10px;
+  display:grid;
+  justify-content:center;
+  color:white;
+  gap:5px;
+}
+form>*{
+  justify-self:center;
+}
+textarea{
+  box-sizing:border-box;
+  border: 2px solid #0df;
+  border-radius:10px;
+  height:100px;
+  width:500px;
+  max-width:98vw;
+  resize: none;
+  transition:300ms;
+  padding:12px;
+}
+</style>
 <div id="thread-container"></div>
 <div id="comment-box">
     <form onsubmit="event.preventDefault(); postComment();">
