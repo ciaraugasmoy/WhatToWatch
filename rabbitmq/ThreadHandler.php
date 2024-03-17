@@ -37,11 +37,14 @@ class ThreadHandler
         // Insert thread data
         $insertQuery = "INSERT INTO threads (user_id, movie_id, title, body) VALUES ('$user_id', $movie_id, '$title', '$body')";
         if ($this->mysqli->query($insertQuery) === TRUE) {
-            return ['status' => 'success', 'message' => 'Thread posted'];
+            // Retrieve the ID of the inserted thread
+            $thread_id = $this->mysqli->insert_id;
+            return ['status' => 'success', 'message' => 'Thread posted', 'thread_id' => $thread_id];
         } else {
             return ['status' => 'error', 'message' => 'Failed to post thread: ' . $this->mysqli->error];
         }
     }
+    
 
     public function getRecentThreads($offset, $limit, $query)
     {
