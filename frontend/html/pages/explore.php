@@ -3,40 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Home</title>
+    <title>Home</title>
     <link rel="stylesheet" href="../css/global.css">
     <script src="../javascript/template.js"></script>
     <script src="../javascript/globalscript.js"></script>
+    <script>
+        // Function to load more posts via AJAX
+        function loadMorePosts() {
+            var offset = document.getElementsByClassName('thread').length; // Calculate offset based on already loaded posts
+            var limit = 5; // Number of posts to load
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '../requests/load_posts.php?offset=' + offset + '&limit=' + limit, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        var threadsContainer = document.getElementById('threads-container');
+                        response.threads.forEach(function (thread) {
+                            var threadDiv = document.createElement('div');
+                            threadDiv.classList.add('thread');
+                            threadDiv.innerHTML = '<h4>' + thread.title + '</h4>' +
+                                '<p>' + thread.body + '</p>' +
+                                '<button value="' + thread.id + '">' + 'See More' + '</button>';
+                            threadsContainer.appendChild(threadDiv);
+                        });
+                    }
+                }
+            };
+            xhr.send();
+        }
+    </script>
 </head>
 <body>
-<h2>Explore</h2>
-<h3>Latest Discussions</h3>
-<?php
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../client/client_rpc.php'; // Include the RPCClient class
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
-$client = new RPCClient();
-
-$offset=0;
-$limit=5;
-
-$request = array();
-$request['type'] = "get_recent_threads";
-$request['offset'] = $offset;
-$request['limit'] = $limit;
-$request['query'] = '';
-$response = $client->call($request);
-if ($response['status'] === 'success') {
-    foreach ($response['threads'] as $thread){
-        echo '<div class="thread">'
-        .'<h4>'.$thread['title'].'</h4>'
-        .'<p>'.$thread['body'].'</p>'
-        .'<button value="'.$thread['id'].'">'.'See More'.'</button>'
-        ;
-    }
-}
-
-?>
+    <h2>Explore</h2>
+    <h3>Latest Discussions</h3>
+    <div id="threads-container">
+    </div>
+    <!-- Button to load more posts -->
+    <button onclick="loadMorePosts()">See More</button>
+    <script>
+        loadMorePosts();
+    </script>
 </body>
 </html>
