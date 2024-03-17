@@ -92,8 +92,9 @@ class MovieDataHandler
         try {
             $username = $this->mysqli->real_escape_string($username);
             $movie_id = $this->mysqli->real_escape_string($movie_id);
-            $limit = (int)$limit; // Cast to integer for security
-            $offset = (int)$offset; // Cast to integer for security
+            $limit = $this->mysqli->real_escape_string($limit);
+            $offset = $this->mysqli->real_escape_string($offset);
+
 
             // Subquery to get user_id for the given username
             $userQuery = "SELECT id FROM users WHERE username = '$username'";
