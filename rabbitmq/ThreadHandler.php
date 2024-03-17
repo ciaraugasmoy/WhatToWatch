@@ -45,6 +45,51 @@ class ThreadHandler
         }
     }
     
+    public function getThread($thread_id)
+    {
+        try {
+            // Construct the SQL query to get thread information with username
+            $sql = "SELECT threads.*, users.username 
+                    FROM threads 
+                    LEFT JOIN users ON threads.user_id = users.id
+                    WHERE threads.id = ?";
+        
+            // Prepare the statement
+            $stmt = $this->mysqli->prepare($sql);
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare statement: ' . $this->mysqli->error);
+            }
+        
+            // Bind parameter and execute the statement
+            $stmt->bind_param('i', $thread_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute statement: ' . $stmt->error);
+            }
+        
+            // Get the result
+            $result = $stmt->get_result();
+            if (!$result) {
+                throw new Exception('Failed to get result set: ' . $this->mysqli->error);
+            }
+        
+            // Fetch the row
+            $thread = $result->fetch_assoc();
+        
+            // Close statement
+            $stmt->close();
+        
+            // Check if no row returned
+            if (!$thread) {
+                return ['status' => 'error', 'message' => 'Thread not found'];
+            }
+        
+            return ['status' => 'success', 'thread' => $thread];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+    
+
 
     public function getRecentThreads($offset, $limit, $query)
     {

@@ -94,6 +94,9 @@ function HANDLE_MESSAGE($request)
         case "post_thread":
             $threadHandler = new ThreadHandler();
             return $threadHandler->postThread($request['username'], $request['title'], $request['body'], $request['movie_id']);
+        case "get_thread":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->getThread($request['thread_id']);
         
         }
 
