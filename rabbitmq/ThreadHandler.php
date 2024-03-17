@@ -57,8 +57,12 @@ class ThreadHandler
             }
     
             // Construct the SQL query to get recent threads with optional search condition
-            $sql = "SELECT * FROM threads WHERE 1=1 $queryCondition ORDER BY posted_date DESC LIMIT ?, ?";
-            
+            $sql = "SELECT threads.*, users.username 
+                    FROM threads 
+                    LEFT JOIN users ON threads.user_id = users.id
+                    WHERE 1=1 $queryCondition 
+                    ORDER BY posted_date DESC LIMIT ?, ?";
+    
             // Prepare the statement
             $stmt = $this->mysqli->prepare($sql);
             if ($stmt === false) {
@@ -94,11 +98,16 @@ class ThreadHandler
         }
     }
     
+    
     public function getComments($thread_id)
     {
         try {
-            // Prepare SQL query to retrieve comments for the given thread_id
-            $sql = "SELECT * FROM comments WHERE thread_id = ? ORDER BY posted_date DESC";
+            // Prepare SQL query to retrieve comments for the given thread_id along with usernames
+            $sql = "SELECT comments.*, users.username 
+                    FROM comments 
+                    JOIN users ON comments.user_id = users.id
+                    WHERE thread_id = ? 
+                    ORDER BY posted_date DESC";
             
             // Prepare the statement
             $stmt = $this->mysqli->prepare($sql);
@@ -134,6 +143,7 @@ class ThreadHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    
     
     public function postComment($username, $thread_id, $body)
     {

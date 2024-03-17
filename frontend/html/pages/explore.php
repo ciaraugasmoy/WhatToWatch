@@ -22,9 +22,13 @@
                         response.threads.forEach(function (thread) {
                             var threadDiv = document.createElement('div');
                             threadDiv.classList.add('thread');
-                            threadDiv.innerHTML = '<h4>' + thread.title + '</h4>' +
-                                '<p>' + thread.body + '</p>' +
-                                '<button value="' + thread.id + '">' + 'See More' + '</button>';
+                            threadDiv.innerHTML = 
+                             '<div class="title-bar">'
+                                +'<h4>' + thread.title + '</h4>' 
+                                +'<p>'+thread.username+ '</p>'
+                                +'</div>'
+                                +'<p>' + thread.body + '</p>'
+                                +'<a class="see-more-link" href="thread.php?thread_id=' + thread.id + '">' + 'See More' + '</a>';
                             threadsContainer.appendChild(threadDiv);
                         });
                     }
