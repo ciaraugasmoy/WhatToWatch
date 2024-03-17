@@ -63,6 +63,9 @@ function HANDLE_MESSAGE($request)
         case "discover_movie":
             $searchHandler = new SearchHandler();
             return $searchHandler->performSearch($request['query'], $request['page'], $request['adult_bool']);
+        case "get_top_rated":
+            $searchHandler = new SearchHandler();
+            return $searchHandler->topRatedSearch($request['page']);
         case "get_movie_details":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getMovieDetails($request['movie_id']);
