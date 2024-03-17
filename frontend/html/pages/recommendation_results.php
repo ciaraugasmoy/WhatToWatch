@@ -48,6 +48,14 @@ h1{
     text-align: center;
     padding: 10px;
 }
+.movie a{
+    text-decoration: none;
+    color: white;
+}
+.movie a:hover{
+    text-decoration: none;
+    color: #0df;
+}
 .formgroup{
    justify-self: center;
     padding: 30px;
@@ -65,17 +73,8 @@ form button{
 form button:hover{
     background:darkred;
 }
-.movie a{
-    text-decoration: none;
-    color: white;
-}
-.movie a:hover{
-    text-decoration: none;
-    color: #0df;
-}
 </style>
-<h1>Movie Results</h1>
-<?php include '../partials/search_movie.php'; ?>
+<h1>Recommendations</h1>
 <section id='results'>
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -84,14 +83,11 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 $client = new RPCClient();
 
-$query = isset($_GET['query']) ? $_GET['query'] : '';
 $page = isset($_GET['page']) ? $_GET['page'] : '';
 
 $request=array();
-$request['type'] = "discover_movie";
-$request['query'] = $query;
+$request['type'] = "get_top_rated";
 $request['page'] = $page;
-$request['adult_bool'] = 'false';
 $response = $client->call($request);
 
 foreach ($response['movies'] as $movie){
