@@ -12,7 +12,26 @@ sudo zerotier-cli join <network-id>
 sudo zerotier-cli info
 sudo zerotier-cli listnetworks <network-id>
 ```
+## Setting Up Apache
+```
+sudo apt install apache2
+./sync_apache.sh
+sudo apt install composer
+```
+### Firewalls
+```
+sudo ufw default deny
+sudo ufw allow "Apache Full"
+sudo ufw enable
+```
 
+## Setting up RabbitMQ
+```
+sudo apt install rabbitmq-server
+sudo apt install php
+sudo apt install composer
+sudo apt install php-curl
+```
 ## Setting up testing data
 in database
 ```
