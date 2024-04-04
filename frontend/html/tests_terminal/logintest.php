@@ -17,5 +17,5 @@ $request['password'] = "12345";
 $request['message'] = "test message";
 
 $response = $client_rpc->call($request); #ENTER WHAT U WANT (MESSAGE) INSIDE OF CALLss
-echo ' [.] Response: ', $response, "\n";
+echo ' [.] Response: ';
 var_dump($response);
