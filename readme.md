@@ -54,10 +54,14 @@ sudo ufw enable
 
 ## Setting Up Database
 ```
+cd database
+sudo mysql < database_setup.sql
+sudo mysql < user_setup.sql
 ```
 ## Setting up testing data
 in database
 ```
+sudo apt install mysql-server
 sudo mysql< database_setup.sql
 sudo mysql <user_setup.sql
 cd test_data_scripts

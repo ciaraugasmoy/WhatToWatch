@@ -100,6 +100,10 @@ function HANDLE_MESSAGE($request)
         case "get_thread":
             $threadHandler = new ThreadHandler();
             return $threadHandler->getThread($request['thread_id']);
+        case "ai_recommendation":
+            $message=$request['message'];
+            $output = shell_exec("python3 chat_api/tmdb_chat.py '$message'");
+            return array("status" => "success", "message" => $output);
         
         }
 
