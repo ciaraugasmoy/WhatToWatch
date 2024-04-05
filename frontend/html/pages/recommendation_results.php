@@ -81,7 +81,7 @@ form button:hover{
     <button type="submit">Submit</button>
 </form>
 
-<section id='results'>
+
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../client/client_rpc.php';
@@ -101,27 +101,28 @@ if ($message !== null) {
     $request['message'] = $message;
     $request['page'] = $page;
     $response = $client->call($request);
-    var_dump($response);
+
+    echo "<section id='results'>";
+    foreach ($response['movies'] as $movie){
+        $title = $movie['title'];
+        $overview = $movie['overview'];
+        $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
+        $id = $movie['id'];
+        $url= 'movie_profile.php?id='.$id;
+    
+        echo 
+        '<div class ="movie">'
+        .'<h4>'.'<a href="'.$url.'">'.$title.'</a>'.'</h4>'
+        .'<div>'
+        .'<img class="movieimg" src="'.$src.'">'
+        .'<p>'.$overview.'</p>'
+        .'</div>'
+        .'</div>';
+    }
+    echo "</section>";
 }
-
-// foreach ($response['movies'] as $movie){
-//     $title = $movie['title'];
-//     $overview = $movie['overview'];
-//     $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
-//     $id = $movie['id'];
-//     $url= 'movie_profile.php?id='.$id;
-
-//     echo 
-//     '<div class ="movie">'
-//     .'<h4>'.'<a href="'.$url.'">'.$title.'</a>'.'</h4>'
-//     .'<div>'
-//     .'<img class="movieimg" src="'.$src.'">'
-//     .'<p>'.$overview.'</p>'
-//     .'</div>'
-//     .'</div>';
-// }
 ?>
-</section>
+
 
 <!-- Form to navigate to the previous or next page -->
 <div class="formgroup">

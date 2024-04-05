@@ -12,11 +12,9 @@ class MovieTMDB():
     def __init__(self):
         self.name = "movies_tmdb"
         self.description = "Interact with a Movie Expert AI to explore movie preferences."
-        print('works here')
         load_dotenv()
         API_KEY = os.getenv('OPEN_AI_KEY')
         self.llm = ChatOpenAI(openai_api_key=API_KEY)  # Initialize once and reuse
-        print('logging works')
 
     def calculate_tokens(self, text):
         return len(text) + text.count(' ')
@@ -42,7 +40,7 @@ class MovieTMDB():
             id = str(result['results'][0]['id'])
             return id
         except Exception as e:
-            print("Sorry, there was an error processing your request. Please try again.")
+            logging.error("Sorry, there was an error processing your request. Please try again.")
             logging.error(f"Error during interaction or no response: {e}")
             return None
 
@@ -82,7 +80,6 @@ class MovieTMDB():
             return None,0
 
     def process_message(self, user_input):
-        print('message processing')
         DISCOVER_URL = os.getenv('DISCOVER_URL')
         params = []
         total_tokens_used = 0
@@ -101,6 +98,7 @@ class MovieTMDB():
         
         params = '&'.join(params)
         url=DISCOVER_URL+params
+        url = url.strip()
         return url, total_tokens_used
 
     def callAPI(self,url):
@@ -114,10 +112,7 @@ class MovieTMDB():
         return response.json()
     
     def execute(self, user_input):
-        print('execute works')
         response, total_tokens_used = self.process_message(user_input)
-        logging.info("{response}")
-        logging.info(f"(This interaction used {total_tokens_used} tokens.)")
         return response
 
 if __name__ == "__main__":
@@ -125,6 +120,7 @@ if __name__ == "__main__":
         print("Usage: python tmdb_chat.py \"input_text\"")
     else:
         input_text = sys.argv[1]
-        print(f'else works {input_text}')
         movie_tmdb = MovieTMDB()
-        # print(movie_tmdb.execute(input_text))
+        myurl=movie_tmdb.execute(input_text)
+        print(myurl)
+        #print('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=28')
