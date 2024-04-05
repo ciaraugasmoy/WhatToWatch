@@ -75,6 +75,12 @@ form button:hover{
 }
 </style>
 <h1>Recommendations</h1>
+<form action="recommendation_results.php" method="GET">
+    <label for="message">Enter your message:</label>
+    <input type="text" id="message" name="message">
+    <button type="submit">Submit</button>
+</form>
+
 <section id='results'>
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -83,29 +89,37 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 $client = new RPCClient();
 
-$page = isset($_GET['page']) ? $_GET['page'] : '';
+$page = isset($_GET['page']) ? $_GET['page'] : '1';
 
-$request=array();
-$request['type'] = "get_top_rated";
-$request['page'] = $page;
-$response = $client->call($request);
+$message = isset($_GET['message']) ? $_GET['message'] : null;
+if ($message !== null) {
+    echo '<p>' . htmlspecialchars($message) . '</p>';
 
-foreach ($response['movies'] as $movie){
-    $title = $movie['title'];
-    $overview = $movie['overview'];
-    $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
-    $id = $movie['id'];
-    $url= 'movie_profile.php?id='.$id;
-
-    echo 
-    '<div class ="movie">'
-    .'<h4>'.'<a href="'.$url.'">'.$title.'</a>'.'</h4>'
-    .'<div>'
-    .'<img class="movieimg" src="'.$src.'">'
-    .'<p>'.$overview.'</p>'
-    .'</div>'
-    .'</div>';
+    // Make request only if message is set
+    $request=array();
+    $request['type'] = "ai_recommendation";
+    $request['message'] = $message;
+    $request['page'] = $page;
+    $response = $client->call($request);
+    var_dump($response);
 }
+
+// foreach ($response['movies'] as $movie){
+//     $title = $movie['title'];
+//     $overview = $movie['overview'];
+//     $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
+//     $id = $movie['id'];
+//     $url= 'movie_profile.php?id='.$id;
+
+//     echo 
+//     '<div class ="movie">'
+//     .'<h4>'.'<a href="'.$url.'">'.$title.'</a>'.'</h4>'
+//     .'<div>'
+//     .'<img class="movieimg" src="'.$src.'">'
+//     .'<p>'.$overview.'</p>'
+//     .'</div>'
+//     .'</div>';
+// }
 ?>
 </section>
 
