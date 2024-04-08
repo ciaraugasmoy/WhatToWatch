@@ -3,7 +3,7 @@
 # Run sudo chmod +x ssl_apache.sh
 
 # Generate a self-signed SSL certificate
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/server.localhost.key -out /etc/ssl/certs/server.localhost.crt
 
 # Update web server configuration file for HTTPS
 echo "
