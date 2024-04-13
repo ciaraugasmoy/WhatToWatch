@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Home</title>
     <link rel="stylesheet" href="../css/global.css">
-    <script src="../javascript/template.js"></script>
-    <script src="../javascript/globalscript.js"></script>
+    <script src="../js/template.js"></script>
+    <script src="../js/globalscript.js"></script>
 </head>
 <body>
 <main style='margin: 10px 0;'>
