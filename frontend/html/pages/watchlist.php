@@ -94,6 +94,7 @@ $request['username'] = $username;
 $response = $client->call($request);
 
 foreach ($response['movies'] as $movie){
+    $wlbutton='../partials/remove_from_watchlist_button.php';
     $title = $movie['title'];
     $overview = $movie['overview'];
     $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
@@ -106,12 +107,47 @@ foreach ($response['movies'] as $movie){
     .'<div>'
     .'<img class="movieimg" src="'.$src.'">'
     .'<p>'.$overview.'</p>'
+    .'<button class="removeFromWatchlistBtn" data-movie-id="'.$id.'">Remove from Watchlist</button>'
     .'</div>'
     .'</div>';
 }
 ?>
-</section>
 
+
+</section>
+<script>
+// Select all elements with the class 'removeFromWatchlistBtn'
+const buttons = document.querySelectorAll('.removeFromWatchlistBtn');
+
+// Loop through each button to attach the click event listener
+buttons.forEach(button => {
+    button.addEventListener('click', function() {
+        const movieId = this.getAttribute('data-movie-id');
+        const url = `../requests/remove_from_watchlist.php?movie_id=${encodeURIComponent(movieId)}`;
+
+        fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); 
+        })
+        .then(data => {
+            console.log(data); 
+            if (data.status === 'success') {
+                alert('Item removed from watchlist!');
+                window.location.reload();
+            } else {
+                alert('Failed to remove item from watchlist.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+    });
+});
+
+</script>
 <!-- Form to navigate to the previous or next page -->
 <div class="formgroup">
 <form action="movie_results.php" method="GET">
