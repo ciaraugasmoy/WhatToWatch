@@ -345,33 +345,34 @@ class UserDataHandler
 
     public function addToWatchlist($username, $movie_id)
     {
-        $username = $this->mysqli->real_escape_string($username);
-        $movie_id = $movie_id; 
-        $userQuery = "SELECT id FROM users WHERE username = '$username';";
-        $movieQuery = "SELECT movie_id FROM movies WHERE movie_id = $movie_id;";
-
-        $userResult = $this->mysqli->query($userQuery);
-        $movieResult = $this->mysqli->query($movieQuery);
-
-        if ($userResult->num_rows === 0) {
-            $this->mysqli->close();
-            return array("status" => "error", "message" => "User not found");
-        }
-
-        if ($movieResult->num_rows === 0) {
-            $this->mysqli->close();
-            return array("status" => "error", "message" => "Movie not found");
-        }
-
-        // Insert into watchlist
-        $insertQuery = "
-            INSERT INTO watchlist (user_id, movie_id)
-            SELECT id, $movie_id
-            FROM users
-            WHERE username = '$username';
-        ";
-
         try {
+            $username = $this->mysqli->real_escape_string($username);
+            $movie_id = $movie_id; 
+            $userQuery = "SELECT id FROM users WHERE username = '$username';";
+            $movieQuery = "SELECT movie_id FROM movies WHERE movie_id = $movie_id;";
+
+            $userResult = $this->mysqli->query($userQuery);
+            $movieResult = $this->mysqli->query($movieQuery);
+
+            if ($userResult->num_rows === 0) {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "User not found");
+            }
+
+            if ($movieResult->num_rows === 0) {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Movie not found");
+            }
+
+            // Insert into watchlist
+            $insertQuery = "
+                INSERT INTO watchlist (user_id, movie_id)
+                SELECT id, $movie_id
+                FROM users
+                WHERE username = '$username';
+            ";
+
+        
             $this->mysqli->query($insertQuery);
 
             if ($this->mysqli->affected_rows > 0) {
@@ -386,6 +387,52 @@ class UserDataHandler
             return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
         }
     }
-
+    public function removeFromWatchlist($username, $movie_id)
+    {
+        try {
+            $username = $this->mysqli->real_escape_string($username);
+            $movie_id = $movie_id; 
+            $userQuery = "SELECT id FROM users WHERE username = '$username';";
+            $movieQuery = "SELECT movie_id FROM movies WHERE movie_id = $movie_id;";
+    
+            $userResult = $this->mysqli->query($userQuery);
+            $movieResult = $this->mysqli->query($movieQuery);
+    
+            if ($userResult->num_rows === 0) {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "User not found");
+            }
+    
+            if ($movieResult->num_rows === 0) {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Movie not found");
+            }
+    
+            // Remove from watchlist
+            $deleteQuery = "
+                DELETE FROM watchlist
+                WHERE user_id = (
+                    SELECT id
+                    FROM users
+                    WHERE username = '$username'
+                )
+                AND movie_id = $movie_id;
+            ";
+    
+            $this->mysqli->query($deleteQuery);
+    
+            if ($this->mysqli->affected_rows > 0) {
+                $this->mysqli->close();
+                return array("status" => "success", "message" => "Movie removed from watchlist");
+            } else {
+                $this->mysqli->close();
+                return array("status" => "error", "message" => "Failed to remove movie from watchlist");
+            }
+        } catch (Exception $e) {
+            $this->mysqli->close();
+            return array("status" => "error", "message" => "Query failed: " . $e->getMessage());
+        }
+    }
+    
 
 }

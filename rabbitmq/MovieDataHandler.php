@@ -38,6 +38,57 @@ class MovieDataHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    public function getMovieDetailsPersonal($movie_id, $username)
+    {
+        try {
+            $movie_id = $this->mysqli->real_escape_string($movie_id);
+            $username = $this->mysqli->real_escape_string($username);
+
+            // Query to check if movie_id exists in user's watchlist
+            $watchlistQuery = "
+                SELECT COUNT(*) AS inWatchlist
+                FROM users u
+                JOIN watchlist w ON u.id = w.user_id
+                WHERE u.username = '$username' AND w.movie_id = $movie_id
+            ";
+
+            // Query to fetch movie details
+            $movieQuery = "
+                SELECT m.*, IFNULL(w.user_id, 0) AS inWatchlist
+                FROM movies m
+                LEFT JOIN (
+                    SELECT user_id, movie_id
+                    FROM users u
+                    JOIN watchlist w ON u.id = w.user_id
+                    WHERE u.username = '$username'
+                ) w ON m.movie_id = w.movie_id
+                WHERE m.movie_id = $movie_id
+            ";
+
+            $watchlistResult = $this->mysqli->query($watchlistQuery);
+            $movieResult = $this->mysqli->query($movieQuery);
+
+            if (!$watchlistResult || !$movieResult) {
+                throw new Exception("Error executing query: " . $this->mysqli->error);
+            }
+
+            $inWatchlistData = $watchlistResult->fetch_assoc();
+            $movieData = $movieResult->fetch_assoc();
+
+            // Determine inWatchlist value based on the result of the watchlist query
+            $inWatchlist = ($inWatchlistData['inWatchlist'] > 0) ? true : false;
+
+            $this->mysqli->close();
+
+            // Add inWatchlist status to the movie data
+            $movieData['inWatchlist'] = $inWatchlist;
+
+            return ['status' => 'success', 'movie' => $movieData];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
     
 
     public function getUserReview($username, $movie_id)
