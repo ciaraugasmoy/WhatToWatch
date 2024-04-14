@@ -21,40 +21,74 @@ class MovieDataHandler
 
     public function getMovieDetails($movie_id)
     {
-        $movie_id = $this->mysqli->real_escape_string($movie_id);
-        $query = "SELECT * FROM movies WHERE movie_id = $movie_id";
-        $result = $this->mysqli->query($query);
-        if (!$result) {
-            echo "Error executing query: " . $this->mysqli->error;
-            return ['status' => 'error', 'message' => 'Error executing query'];
+        try {
+            $movie_id = $this->mysqli->real_escape_string($movie_id);
+            $query = "SELECT * FROM movies WHERE movie_id = $movie_id";
+            $result = $this->mysqli->query($query);
+    
+            if (!$result) {
+                throw new Exception("Error executing query: " . $this->mysqli->error);
+            }
+    
+            $movieData = $result->fetch_assoc();
+            $this->mysqli->close();
+    
+            return ['status' => 'success', 'message' => 'Movie data found', 'movie' => $movieData];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        $movieData = $result->fetch_assoc();
-        $this->mysqli->close();
-        return ['status' => 'success', 'message' => 'Movie data found', 'movie' => $movieData];
     }
+    
 
     public function getUserReview($username, $movie_id)
     {
-        $username = $this->mysqli->real_escape_string($username);
-        $movie_id = $this->mysqli->real_escape_string($movie_id);
+        try {
+            // Sanitize inputs and prepare SQL statements
+            $username = $this->mysqli->real_escape_string($username);
+            $movie_id = $this->mysqli->real_escape_string($movie_id);
     
-        $userQuery = "SELECT id FROM users WHERE username = '$username'";
-        $userResult = $this->mysqli->query($userQuery);
-        $userData = $userResult->fetch_assoc();
-        $user_id = $userData['id'];
+            // Retrieve user ID based on username
+            $userQuery = "SELECT id FROM users WHERE username = ?";
+            $stmt = $this->mysqli->prepare($userQuery);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $userResult = $stmt->get_result();
     
-        $query = "SELECT * FROM movie_reviews WHERE user_id = $user_id AND movie_id = $movie_id";
-        $result = $this->mysqli->query($query);
+            if (!$userResult) {
+                throw new Exception('Error finding user');
+            }
     
-        if (!$result) {
-            return ['status' => 'error', 'message' => $this->mysqli->error];
+            $userData = $userResult->fetch_assoc();
+    
+            if (!$userData) {
+                throw new Exception('User not found');
+            }
+    
+            $user_id = $userData['id'];
+    
+            // Retrieve review data based on user ID and movie ID
+            $query = "SELECT * FROM movie_reviews WHERE user_id = ? AND movie_id = ?";
+            $stmt = $this->mysqli->prepare($query);
+            $stmt->bind_param("ii", $user_id, $movie_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            if (!$result) {
+                throw new Exception('Error fetching review data: ' . $this->mysqli->error);
+            }
+    
+            if ($result->num_rows == 0) {
+                throw new Exception('Movie not reviewed by user');
+            }
+
+            $reviewData = $result->fetch_assoc();
+    
+            return ['status' => 'success', 'user_review_data' => $reviewData];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        if ($result->num_rows == 0) {
-            return ['status' => 'error', 'message' => 'Movie not reviewed by user'];
-        }
-        $reviewData = $result->fetch_assoc();
-        return ['status' => 'success', 'user_review_data' => $reviewData];
     }
+    
 
     public function postUserReview($username, $movie_id, $rating, $review)
     {
