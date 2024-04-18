@@ -54,7 +54,7 @@ echo "
 
 # Enable SSL module and the site
 sudo a2enmod ssl
-sudo a2ensite 000-default.conf #Should already be activated, just a precaution
+sudo a2ensite what2watch.com.conf #Should already be activated, just a precaution
 
 # To make sure domain is hosted locally - CHANGE TO APACHE VM IP
 echo "
