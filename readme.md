@@ -19,6 +19,7 @@ sudo apt install php php-curl -y
 cd frontend/html/
 composer install
 sudo apt install composer
+mkdir /var/www/what2watch
 ./sync_apache.sh
 ```
 **Firewalls**
