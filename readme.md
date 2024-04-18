@@ -21,6 +21,7 @@ composer install
 sudo apt install composer
 mkdir /var/www/what2watch
 ./sync_apache.sh
+./ssl_apache.sh
 ```
 **Firewalls**
 ```
