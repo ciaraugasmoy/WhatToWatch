@@ -50,7 +50,7 @@ echo "
         SSLCertificateKeyFile /etc/ssl/private/server.localhost.key
         SSLCertificateFile /etc/ssl/certs/server.localhost.crt
 </VirtualHost>
-" > /etc/apache2/sites-available/000-default.conf
+" > /etc/apache2/sites-available/what2watch.com.conf
 
 # Enable SSL module and the site
 sudo a2enmod ssl
