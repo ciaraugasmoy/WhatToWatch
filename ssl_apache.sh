@@ -18,7 +18,7 @@ echo "
         
         ServerName www.what2watch.com
         ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
+        DocumentRoot /var/www/what2watch
         Redirect permanent / https://www.what2watch.com
 
         # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
