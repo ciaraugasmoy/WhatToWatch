@@ -41,7 +41,7 @@ echo "
 <VirtualHost www.what2watch.com:443>
         ServerName www.what2watch.com
         ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
+        DocumentRoot /var/www/what2watch
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
