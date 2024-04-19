@@ -13,8 +13,8 @@ DB_NAME="what2watch"
 # Precautionary, should be done already
 apt-get update
 apt install openssh-server
-ufw allow from $REPLICA_IP to any port 3306
-ufw allow from $REPLICA_IP to any port 22
+ufw allow from $SOURCE_IP to any port 3306
+ufw allow from $SOURCE_IP to any port 22
 
 mysql -u root -p -e "DROP DATABASE IF EXISTS $DB_NAME;"
 mysql -u root -p -e "CREATE DATABASE $DB_NAME;"
