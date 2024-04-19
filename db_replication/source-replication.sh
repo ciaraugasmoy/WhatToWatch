@@ -112,7 +112,6 @@ mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE TABLE replication_testing (
 mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "INSERT INTO replication_testing VALUES 
     ('row 1'),
     ('row 2');"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "exit;"
 
 # Exporting of what2watch db
 mysqldump -u $MYSQL_USER -p$MYSQL_PASSWORD $DB_NAME > $DB_NAME.sql

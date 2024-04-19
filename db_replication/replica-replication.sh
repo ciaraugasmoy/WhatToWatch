@@ -16,9 +16,9 @@ apt install openssh-server
 ufw allow from $SOURCE_IP to any port 3306
 ufw allow from $SOURCE_IP to any port 22
 
+# Importing source db
 mysql -u root -p -e "DROP DATABASE IF EXISTS $DB_NAME;"
 mysql -u root -p -e "CREATE DATABASE $DB_NAME;"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "exit;"
 mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $DB_NAME < /tmp/$DB_NAME.sql
 
 # Updating replica MySQL conf file
