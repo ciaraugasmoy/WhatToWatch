@@ -12,5 +12,6 @@ Make sure the files are executable and are run as sudo
 ```sudo ./replica-replication.sh```
 __________________________________________________
 
-
-
+Check to make sure replication works. Insert values to the newly created replication_testing table on the source vm and see that the change is visible on the replica vm. If not, see what the error is with
+```SHOW REPLICA STATUS\G;``` 
+on the replica vm

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # VM credentials - REPLACE
-REPLICA_VM_NAME="The user you have on your vm"
 SOURCE_IP="127.0.0.1"
-REPLICA_IP="127.0.0.1"
+LOG_FILE="mysql-bin.12345"
+LOG_POS=1234
 
 # MySQL credentials
 MYSQL_USER="what2watchadmin"
@@ -16,7 +16,12 @@ apt install openssh-server
 ufw allow from $REPLICA_IP to any port 3306
 ufw allow from $REPLICA_IP to any port 22
 
-# Updating source MySQL conf file
+mysql -u root -p -e "DROP DATABASE IF EXISTS $DB_NAME;"
+mysql -u root -p -e "CREATE DATABASE $DB_NAME;"
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "exit;"
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD $DB_NAME < /tmp/$DB_NAME.sql
+
+# Updating replica MySQL conf file
 echo "
 #
 # The MySQL database server configuration file.
@@ -48,7 +53,7 @@ user		= mysql
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
-bind-address		= $SOURCE_IP
+bind-address		= 127.0.0.1
 mysqlx-bind-address	= 127.0.0.1
 #
 # * Fine Tuning
@@ -90,30 +95,22 @@ log_error = /var/log/mysql/error.log
 # The following can be used as easy to replay backup logs or for replication.
 # note: if you are setting up a replication slave, see README.Debian about
 #       other settings you may need to change.
-server-id	= 1
+server-id	= 2
 log_bin		= /var/log/mysql/mysql-bin.log
 # binlog_expire_logs_seconds	= 2592000
 max_binlog_size   = 100M
 binlog_do_db	= what2watch
 # binlog_ignore_db	= include_database_name
+relay-log   =   /var/log/mysql/mysql-relay-bin.log
 " > /etc/mysql/mysql.conf.d/mysqld.cnf
+rm /var/lib/mysql/auto.cnf
 systemctl restart mysql
 
-# Setting up replication user
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE USER 'replica_user'@'$REPLICA_IP' IDENTIFIED WITH mysql_native_password BY 'replica_password';"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT SLAVE ON *.* TO 'replica_user'@'$REPLICA_IP';"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
-
-# Creating table to later be tested
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "USE $DB_NAME;"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE TABLE replication_testing (
-    test_col varchar(64)
-);"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "INSERT INTO replication_testing VALUES 
-    ('row 1'),
-    ('row 2');"
-mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "exit;"
-
-# Exporting of what2watch db
-mysqldump -u $MYSQL_USER -p$MYSQL_PASSWORD $DB_NAME > $DB_NAME.sql
-scp $DB_NAME.sql $REPLICA_VM_NAME@$REPLICA_IP:/tmp/
+# Configuring replication
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "CHANGE REPLICATION SOURCE TO 
+SOURCE_HOST='$SOURCE_IP',
+SOURCE_USER='replica_user',
+SOURCE_PASSWORD='replica_password',
+SOURCE_LOG_FILE='$LOG_FILE',
+SOURCE_LOG_POS=$LOG_POS;"
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -e "START REPLICA;"
