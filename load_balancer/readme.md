@@ -14,6 +14,7 @@ curl -s https://install.zerotier.com | sudo bash
 
 # Join ZeroTier Network
 Join network
+
 # Setup firewall
 ```
 sudo ufw --force enable

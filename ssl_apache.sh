@@ -7,7 +7,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ser
 
 # Update web server configuration file for HTTPS
 echo "
-<VirtualHost www.what2watch.com:80>
+<VirtualHost *:80>
         # The ServerName directive sets the request scheme, hostname and port that
         # the server uses to identify itself. This is used when creating
         # redirection URLs. In the context of virtual hosts, the ServerName
@@ -38,7 +38,7 @@ echo "
         #Include conf-available/serve-cgi-bin.conf
 </VirtualHost>
 
-<VirtualHost www.what2watch.com:443>
+<VirtualHost *:443>
         ServerName www.what2watch.com
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/what2watch
