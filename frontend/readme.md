@@ -5,6 +5,8 @@ sudo apt install php -y
 sudo apt-get install php-curl
 sudo apt install composer -y
 chmod +x client_rpc.php
+sudo ufw allow http
+sudo ufw allow https
 ```
 
 Currently supported requests are:
