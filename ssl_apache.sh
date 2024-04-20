@@ -50,11 +50,11 @@ echo "
         SSLCertificateKeyFile /etc/ssl/private/server.localhost.key
         SSLCertificateFile /etc/ssl/certs/server.localhost.crt
 </VirtualHost>
-" > /etc/apache2/sites-available/what2watch.com.conf
+" > /etc/apache2/sites-available/what2watch.conf
 
 # Enable SSL module and the site
 sudo a2enmod ssl
-sudo a2ensite what2watch.com.conf #Should already be activated, just a precaution
+sudo a2ensite what2watch.conf #Should already be activated, just a precaution
 
 # To make sure domain is hosted locally - CHANGE TO APACHE VM IP
 echo "
