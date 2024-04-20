@@ -36,6 +36,12 @@ sudo cp -r nginx.conf /etc/nginx/nginx.conf
 ```
 sudo chown -R root:root /etc/nginx
 ```
+# Create certs
+```
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/server.localhost.key -out /etc/ssl/certs/server.localhost.crt
+sudo openssl dhparam -out /etc/ssl/dhparam.pem 2048
+```
+
 # Restart NGINX
 ```
 sudo systemctl restart nginx
