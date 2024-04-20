@@ -54,6 +54,7 @@ echo "
 
 # Enable SSL module and the site
 sudo a2enmod ssl
+sudo rm /etc/apache2/sites-enabled/* #removing any site that is already enabled (including previous what2watch)
 sudo a2ensite what2watch.conf #Should already be activated, just a precaution
 
 # To make sure domain is hosted locally - CHANGE TO APACHE VM IP
