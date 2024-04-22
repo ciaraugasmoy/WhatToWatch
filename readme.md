@@ -19,7 +19,7 @@ sudo apt install php php-curl -y
 cd frontend/html/
 composer install
 sudo apt install composer
-./sync_apache.sh
+sudo ./sync_apache.sh
 ```
 **Firewalls**
 ```
