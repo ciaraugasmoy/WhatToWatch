@@ -112,6 +112,12 @@ function HANDLE_MESSAGE($request)
         case "get_thread":
             $threadHandler = new ThreadHandler();
             return $threadHandler->getThread($request['thread_id']);
+        case "get_vote":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->getVote($request['username'],$request['thread_id']);
+        case "set_vote":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->setVote($request['username'],$request['thread_id'],$request['vote']);
         
         }
 

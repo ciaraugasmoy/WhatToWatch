@@ -239,8 +239,112 @@ class ThreadHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+//upvote downvote handler
+    public function getVote($username, $thread_id)
+    {
+        try {
+            // Construct the SQL query to get the vote for the given user and thread
+            $sql = "SELECT vote_type FROM thread_votes 
+                    WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                    AND thread_id = ?";
 
+            // Prepare the statement
+            $stmt = $this->mysqli->prepare($sql);
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare statement: ' . $this->mysqli->error);
+            }
 
+            // Bind parameters and execute the statement
+            $stmt->bind_param('si', $username, $thread_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute statement: ' . $stmt->error);
+            }
+
+            // Get the result
+            $result = $stmt->get_result();
+            if (!$result) {
+                throw new Exception('Failed to get result set: ' . $this->mysqli->error);
+            }
+
+            // Fetch the vote type
+            $vote = $result->fetch_assoc();
+
+            // Close statement
+            $stmt->close();
+
+            // Determine the vote status
+            if (!$vote) {
+                return ['status' => 'success', 'vote' => 'unset']; // No vote found
+            } else {
+                return ['status' => 'success', 'vote' => $vote['vote_type']]; // Return 'upvote' or 'downvote'
+            }
+
+        } catch (Exception $e) {
+            // Handle exceptions
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function setVote($username, $thread_id, $vote)
+    {
+        try {
+            // Validate the vote value
+            if (!in_array($vote, ['upvote', 'downvote', 'unset'])) {
+                throw new Exception('Invalid vote type');
+            }
+    
+            // Begin transaction for atomic operation
+            $this->mysqli->begin_transaction();
+    
+            // Delete existing vote if $vote is 'unset'
+            if ($vote === 'unset') {
+                $deleteSql = "DELETE FROM thread_votes 
+                              WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                              AND thread_id = ?";
+                
+                $deleteStmt = $this->mysqli->prepare($deleteSql);
+                if (!$deleteStmt) {
+                    throw new Exception('Failed to prepare delete statement: ' . $this->mysqli->error);
+                }
+    
+                $deleteStmt->bind_param('si', $username, $thread_id);
+                if (!$deleteStmt->execute()) {
+                    throw new Exception('Failed to delete vote: ' . $deleteStmt->error);
+                }
+    
+                $deleteStmt->close();
+            } else {
+                // Insert or update vote
+                $insertUpdateSql = "INSERT INTO thread_votes (thread_id, user_id, vote_type) 
+                                    VALUES (?, (SELECT id FROM users WHERE username = ?), ?)
+                                    ON DUPLICATE KEY UPDATE vote_type = VALUES(vote_type)";
+    
+                $insertUpdateStmt = $this->mysqli->prepare($insertUpdateSql);
+                if (!$insertUpdateStmt) {
+                    throw new Exception('Failed to prepare insert/update statement: ' . $this->mysqli->error);
+                }
+    
+                $insertUpdateStmt->bind_param('iss', $thread_id, $username, $vote);
+                if (!$insertUpdateStmt->execute()) {
+                    throw new Exception('Failed to set vote: ' . $insertUpdateStmt->error);
+                }
+    
+                $insertUpdateStmt->close();
+            }
+    
+            // Commit transaction
+            $this->mysqli->commit();
+    
+            return ['status' => 'success'];
+    
+        } catch (Exception $e) {
+            // Rollback transaction on error
+            $this->mysqli->rollback();
+    
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+    
 }    
 
 
