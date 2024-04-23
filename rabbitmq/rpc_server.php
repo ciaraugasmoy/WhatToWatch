@@ -60,6 +60,15 @@ function HANDLE_MESSAGE($request)
         case "delete_friend":
             $userDataHandler= new UserDataHandler();
             return $userDataHandler->deleteFriend($request['username'],$request['friend_username']);
+        case "add_to_watchlist":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->addToWatchlist($request['username'], $request['movie_id']);
+        case "remove_from_watchlist":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->removeFromWatchlist($request['username'], $request['movie_id']);
+        case "get_watchlist":
+            $userDataHandler= new UserDataHandler();
+            return $userDataHandler->getWatchlist($request['username']);
         case "discover_movie":
             $searchHandler = new SearchHandler();
             return $searchHandler->performSearch($request['query'], $request['page'], $request['adult_bool']);
@@ -69,6 +78,9 @@ function HANDLE_MESSAGE($request)
         case "get_movie_details":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getMovieDetails($request['movie_id']);
+        case "get_movie_details_personal":
+            $movieDataHandler = new MovieDataHandler();
+            return $movieDataHandler->getMovieDetailsPersonal($request['movie_id'],$request['username']);
         case "get_user_review":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getUserReview($request['username'],$request['movie_id']);

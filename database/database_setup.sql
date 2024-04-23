@@ -100,3 +100,13 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (thread_id) REFERENCES threads(id)
 );
+
+CREATE TABLE IF NOT EXISTS watchlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    movie_id INT NOT NULL,
+    added_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user_movie (user_id, movie_id), -- Ensure each movie is added to a user's watchlist only once
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
+);

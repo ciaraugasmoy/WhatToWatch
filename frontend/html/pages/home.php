@@ -35,8 +35,9 @@ main{
 }
 </style>
     <h2>Home</h2>
-    <a class='getrecs' href='recommendation_results.php'>Get Recommendations</a>
     <?php include '../partials/search_movie.php'; ?>
+    <a class='getrecs' href='recommendation_results.php'>Get Recommendations</a>
+    <a class='getrecs' href='watchlist.php'>See my watchlist</a>
 </main>
 </body>
 </html>
