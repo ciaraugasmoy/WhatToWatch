@@ -110,3 +110,22 @@ CREATE TABLE IF NOT EXISTS watchlist (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(movie_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS thread_votes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    thread_id INT NOT NULL,
+    user_id INT NOT NULL,
+    vote_type ENUM('upvote', 'downvote') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS subscription (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    thread_id INT NOT NULL,
+    UNIQUE KEY unique_user_thread (user_id, thread_id), -- Ensure each user can subscribe to a thread only once
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE
+);
