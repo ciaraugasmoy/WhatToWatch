@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS thread_votes (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS subscription (
+CREATE TABLE IF NOT EXISTS subscriptions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     thread_id INT NOT NULL,
