@@ -117,8 +117,13 @@ function HANDLE_MESSAGE($request)
             return $threadHandler->getVote($request['username'],$request['thread_id']);
         case "set_vote":
             $threadHandler = new ThreadHandler();
-            return $threadHandler->setVote($request['username'],$request['thread_id'],$request['vote']);
-        
+        return $threadHandler->setVote($request['username'],$request['thread_id'],$request['vote']);
+        case "subscribe":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->subscribe($request['username'],$request['thread_id']);
+        case "unsubscribe":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->unsubscribe($request['username'],$request['thread_id']);
         }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
