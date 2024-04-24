@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class ThreadHandler
 {
     private $mysqli; 
@@ -233,12 +236,82 @@ class ThreadHandler
             
             // Close statement
             $stmt->close();
-            
+            $this->mailSubscribers($thread_id);
             return ['status' => 'success', 'message' => 'Comment posted successfully'];
         } catch (Exception $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    private function mailSubscribers($thread_id)
+    {
+    // Retrieve subscribers for the given thread_id
+    $subscribersQuery = "SELECT u.email, t.title 
+                         FROM subscriptions s
+                         JOIN users u ON s.user_id = u.id
+                         JOIN threads t ON s.thread_id = t.id
+                         WHERE s.thread_id = ?";
+    
+    $stmtSubscribers = $this->mysqli->prepare($subscribersQuery);
+    if (!$stmtSubscribers) {
+        throw new Exception('Failed to prepare subscribers statement: ' . $this->mysqli->error);
+    }
+    
+    $stmtSubscribers->bind_param('i', $thread_id);
+    if (!$stmtSubscribers->execute()) {
+        throw new Exception('Failed to execute subscribers statement: ' . $stmtSubscribers->error);
+    }
+    
+    $subscribersResult = $stmtSubscribers->get_result();
+    if (!$subscribersResult || $subscribersResult->num_rows === 0) {
+        $stmtSubscribers->close();
+        return; // No subscribers found for this thread
+    }
+    
+    // Iterate through subscribers and send email notifications
+    while ($subscriber = $subscribersResult->fetch_assoc()) {
+        $email = $subscriber['email'];
+        $postTitle = $subscriber['title'];
+        $this->mailSubscriber($email, $postTitle);
+    }
+    
+    $stmtSubscribers->close();
+}
+
+private function mailSubscriber($email, $postTitle)
+{
+    // Read SMTP settings from email_credentials.ini
+    $config = parse_ini_file('email_credentials.ini');
+
+    // Initialize PHPMailer
+    $mail = new PHPMailer(true);
+
+    try {
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host = $config['host'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $config['username'];
+        $mail->Password = $config['password'];
+        $mail->SMTPSecure = $config['smtp_secure'];
+        $mail->Port = $config['port'];
+
+        // Set sender and recipient
+        $mail->setFrom($config['username'], 'What2Watch.com'); // Sender's email and name
+        $mail->addAddress('ccu3@njit.edu'); // Recipient's email
+        
+        // Email content
+        $mail->isHTML(true); // Set email format to plain text
+        $mail->Subject = 'New Comments on ' . $postTitle; // Subject line
+        $mail->Body = 'Hello, A new comment has been posted on the thread: ' . $postTitle . '. Login at www.what2watch.com to see what they said :)';
+
+        // Send the email
+        $mail->send();
+        echo "Email sent successfully";
+    } catch (Exception $e) {
+        echo "Failed to send email. Error: {$mail->ErrorInfo}";
+    }
+}
+
 //upvote downvote handler
     public function getVote($username, $thread_id)
     {
