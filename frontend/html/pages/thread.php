@@ -21,10 +21,10 @@
                 })
                 .then(threadData => {
                     var threadContainer = document.getElementById('thread-container');
-                    threadContainer.innerHTML = ''; // Clear existing thread content
+                    //threadContainer.innerHTML = ''; // Clear existing thread content
                     var threadDiv = document.createElement('div');
                     threadDiv.classList.add('thread');
-                    threadDiv.innerHTML = '<p>' + threadData.thread.title + '</p>' +
+                    threadDiv.innerHTML = '<div>' + threadData.thread.title + ' <div id="vote"> <i class="arrow up"> </i> <i class="arrow down"> </i> </div> </div>' +
                         '<p>' + threadData.thread.body + '</p>' +
                         '<p>' + threadData.thread.posted_date + '</p>' +
                         '<p>' + threadData.thread.username + '</p>';
@@ -234,8 +234,45 @@ textarea{
   transition:300ms;
   padding:12px;
 }
+
+.arrow {
+  border: solid grey;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  justify-self:center;
+}
+.arrow:hover{
+	border: solid red;
+    border-width: 0 3px 3px 0;
+}
+.arrow.active{
+	border: solid red;
+    border-width: 0 3px 3px 0;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+#vote{
+ padding:10px 5px;
+ display:grid;
+ width:30px;
+ background-color:cyan;
+ gap:5px;
+ border-radius:5px;
+ float:right;
+}
 </style>
-<div id="thread-container"></div>
+
+<div id="thread-container">
+</div>
 <div id="comment-box">
     <form onsubmit="event.preventDefault(); postComment();">
         <textarea id="comment-body" name="body" placeholder="Write your comment here..." required></textarea>
