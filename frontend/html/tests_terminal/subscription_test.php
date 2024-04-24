@@ -42,4 +42,23 @@ $responseSubscribeAgain = $client->call($requestSubscribeAgain);
 var_dump($responseSubscribeAgain);
 echo PHP_EOL;
 
+$requestSubscribeC = [
+    'type' => 'subscribe',
+    'username' => 'ciara_subscribe',
+    'thread_id' => 9,
+];
+
+$responseSubscribeC = $client->call($requestSubscribeC);
+var_dump($responseSubscribeC);
+echo PHP_EOL;
+
+$requestSubscribeD = [
+    'type' => 'subscribe',
+    'username' => 'ciara_subscribe_2',
+    'thread_id' => 9,
+];
+
+$responseSubscribeD = $client->call($requestSubscribeD);
+var_dump($responseSubscribeD);
+echo PHP_EOL;
 ?>

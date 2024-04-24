@@ -297,7 +297,7 @@ private function mailSubscriber($email, $postTitle)
 
         // Set sender and recipient
         $mail->setFrom($config['username'], 'What2Watch.com'); // Sender's email and name
-        $mail->addAddress('ccu3@njit.edu'); // Recipient's email
+        $mail->addAddress($email); // Recipient's email
         
         // Email content
         $mail->isHTML(true); // Set email format to plain text
