@@ -8,6 +8,42 @@
     <script src="../js/template.js"></script>
     <script src="../js/globalscript.js"></script>
     <script>
+    function vote(action) {
+        var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+        var upvoteIcon = document.querySelector('.arrow.up');
+        var downvoteIcon = document.querySelector('.arrow.down');
+        var isUpvoteActive = upvoteIcon.classList.contains('active');
+        var isDownvoteActive = downvoteIcon.classList.contains('active');
+
+        if (action === 'upvote' && isUpvoteActive) {action = 'unset';
+        }else if(action ==='downvote' &&isDownvoteActive){action = 'unset';}
+        fetch(`../requests/alter_vote.php?thread_id=${encodeURIComponent(threadId)}&vote=${action}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    // Update vote UI based on action
+                    if (action === 'upvote') {
+                        upvoteIcon.classList.add('active');
+                        downvoteIcon.classList.remove('active');
+                    } else if (action === 'downvote') {
+                        upvoteIcon.classList.remove('active');
+                        downvoteIcon.classList.add('active');
+                    } else if (action === 'unset' && isUpvoteActive) {
+                        upvoteIcon.classList.remove('active');
+                    }
+                    else if (action === 'unset' && isDownvoteActive) {
+                        downvoteIcon.classList.remove('active');
+                    }
+                } else {
+                    console.error('Failed to set vote:', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error setting vote:', error);
+            });
+    }
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // Function to load thread via AJAX
         function loadThread() {
@@ -29,6 +65,8 @@
                         '<p>' + threadData.thread.posted_date + '</p>' +
                         '<p>' + threadData.thread.username + '</p>';
                     threadContainer.appendChild(threadDiv);
+                    document.querySelector('.arrow.up').addEventListener('click', () => vote('upvote'));
+                    document.querySelector('.arrow.down').addEventListener('click', () => vote('downvote'));
                 })
                 .catch(error => {
                     console.error('Error loading thread:', error.message);
@@ -280,5 +318,7 @@ textarea{
     </form>
 </div>
 <div id="comments-container"></div>
+
+
 </body>
 </html>
