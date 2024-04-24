@@ -284,7 +284,6 @@ class ThreadHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
     public function setVote($username, $thread_id, $vote)
     {
         try {
@@ -296,12 +295,11 @@ class ThreadHandler
             // Begin transaction for atomic operation
             $this->mysqli->begin_transaction();
     
-            // Delete existing vote if $vote is 'unset'
             if ($vote === 'unset') {
+                // Delete existing vote if $vote is 'unset'
                 $deleteSql = "DELETE FROM thread_votes 
                               WHERE user_id = (SELECT id FROM users WHERE username = ?)
                               AND thread_id = ?";
-                
                 $deleteStmt = $this->mysqli->prepare($deleteSql);
                 if (!$deleteStmt) {
                     throw new Exception('Failed to prepare delete statement: ' . $this->mysqli->error);
@@ -344,6 +342,7 @@ class ThreadHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+          
     
 }    
 

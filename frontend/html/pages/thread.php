@@ -8,6 +8,33 @@
     <script src="../js/template.js"></script>
     <script src="../js/globalscript.js"></script>
     <script>
+    function checkVoteStatus() {
+            var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+            fetch('../requests/get_vote.php?thread_id=' + encodeURIComponent(threadId))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to get vote status');
+                    }
+                    return response.json();
+                })
+                .then(voteData => {
+                    // Check the vote status and update icons accordingly
+                    var upvoteIcon = document.querySelector('.arrow.up');
+                    var downvoteIcon = document.querySelector('.arrow.down');
+
+                    if (voteData.status === 'success') {
+                        console.log(voteData.vote);
+                        if (voteData.vote === 'upvote') {
+                            upvoteIcon.classList.add('active');
+                        }else if (voteData.vote === 'downvote') {
+                            downvoteIcon.classList.add('active');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting vote status:', error.message);
+                });
+        }
     function vote(action) {
         var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
         var upvoteIcon = document.querySelector('.arrow.up');
@@ -67,6 +94,7 @@
                     threadContainer.appendChild(threadDiv);
                     document.querySelector('.arrow.up').addEventListener('click', () => vote('upvote'));
                     document.querySelector('.arrow.down').addEventListener('click', () => vote('downvote'));
+                    checkVoteStatus();
                 })
                 .catch(error => {
                     console.error('Error loading thread:', error.message);
