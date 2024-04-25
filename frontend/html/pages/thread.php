@@ -359,11 +359,11 @@ textarea{
   justify-self:center;
 }
 .arrow:hover{
-	border: solid red;
+	border: solid aquamarine;
     border-width: 0 3px 3px 0;
 }
 .arrow.active{
-	border: solid red;
+	border: solid aquamarine;
     border-width: 0 3px 3px 0;
 }
 
@@ -380,7 +380,7 @@ textarea{
  padding:10px 5px;
  display:grid;
  width:30px;
- background-color:cyan;
+ background-color:#01404a90;
  gap:5px;
  border-radius:5px;
  float:right;
