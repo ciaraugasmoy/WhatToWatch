@@ -27,6 +27,7 @@ h1{
     }
 } 
 #results .movie{
+    display: grid;
     border: 2px #00000000 solid;
     grid-template-rows: 40px auto auto;
     width:300px;
@@ -73,6 +74,24 @@ form button:hover{
     text-decoration: none;
     color: #0df;
 }
+
+button{
+    height:40px;
+    padding: 10px;
+    background-color: #01404a90;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+    border-radius:30px;
+    justify-self:center;
+    align-self:end;
+    margin:5px;
+}
+    button:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+
 </style>
 <h1>Your Watchlist</h1>
 <section id='results'>
@@ -94,7 +113,6 @@ $request['username'] = $username;
 $response = $client->call($request);
 
 foreach ($response['movies'] as $movie){
-    $wlbutton='../partials/remove_from_watchlist_button.php';
     $title = $movie['title'];
     $overview = $movie['overview'];
     $src= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
@@ -107,60 +125,53 @@ foreach ($response['movies'] as $movie){
     .'<div>'
     .'<img class="movieimg" src="'.$src.'">'
     .'<p>'.$overview.'</p>'
-    .'<button class="removeFromWatchlistBtn" data-movie-id="'.$id.'">Remove from Watchlist</button>'
     .'</div>'
+    .'<button class="watchlistbtn" data-status="add_to_watchlist" data-movie-id="'.$id.'">Remove from Watchlist</button>'
     .'</div>';
 }
 ?>
 
-
 </section>
 <script>
-// Select all elements with the class 'removeFromWatchlistBtn'
-const buttons = document.querySelectorAll('.removeFromWatchlistBtn');
+const buttons = document.querySelectorAll('.watchlistbtn');
 
-// Loop through each button to attach the click event listener
+
 buttons.forEach(button => {
     button.addEventListener('click', function() {
         const movieId = this.getAttribute('data-movie-id');
-        const url = `../requests/remove_from_watchlist.php?movie_id=${encodeURIComponent(movieId)}`;
+        const watchlistStatus = this.getAttribute('data-status');
+
+        let newStatus;
+        if (watchlistStatus === 'add_to_watchlist') {
+            newStatus = 'remove_from_watchlist';
+        } else if (watchlistStatus === 'remove_from_watchlist') {
+            newStatus = 'add_to_watchlist';
+        }
+
+        const url = `../requests/toggle_watchlist.php?movie_id=${encodeURIComponent(movieId)}&watchlist_status=${encodeURIComponent(newStatus)}`;
 
         fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); 
-        })
-        .then(data => {
-            console.log(data); 
-            if (data.status === 'success') {
-                alert('Item removed from watchlist!');
-                window.location.reload();
-            } else {
-                alert('Failed to remove item from watchlist.');
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data here if needed
+                console.log(data);
+                // Update the button's data-status attribute based on the new status
+                this.setAttribute('data-status', newStatus);
+                // Optionally update the button text or styling based on the new status
+                this.textContent = newStatus === 'add_to_watchlist' ? 'Remove from Watchlist': 'Add to Watchlist' ;
+            })
+            .catch(error => {
+                console.log('Fetch error');
+            });
     });
 });
 
 </script>
-<!-- Form to navigate to the previous or next page -->
-<div class="formgroup">
-<form action="movie_results.php" method="GET">
-    <input type="hidden" name="query" value="<?php echo htmlspecialchars($query); ?>">
-    <input type="hidden" name="page" value="<?php echo max(1, $page - 1); ?>"> <!-- Decrease page number -->
-    <button type="submit" <?php echo ($page <= 1) ? 'disabled' : ''; ?>>Back</button>
-</form>
-
-<form action="movie_results.php" method="GET">
-    <input type="hidden" name="query" value="<?php echo htmlspecialchars($query); ?>">
-    <input type="hidden" name="page" value="<?php echo $page + 1; ?>"> <!-- Increase page number -->
-    <button type="submit">Next</button>
-</form>
 </div>
 </body>
 </html>

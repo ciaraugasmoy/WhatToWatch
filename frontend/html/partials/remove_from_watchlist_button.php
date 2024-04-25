@@ -1,3 +1,17 @@
+<style scoped>
+    button{
+    padding: 10px;
+    background-color: #01404a90;
+    color:aquamarine;
+    border: none;
+    transition:300ms;
+  border-radius:30px;
+}
+    button:hover{
+    background-color: #01404a;
+    transition:300ms;
+}
+</style>
 <button id="removeFromWatchlistBtn">Remove from Watchlist</button>
 <script>
     // JavaScript code to handle button click
