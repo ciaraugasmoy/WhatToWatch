@@ -26,8 +26,9 @@
                              '<div class="title-bar">'
                                 +'<h4>' + thread.title + '</h4>' 
                                 +'<p>'+thread.username+ '</p>'
-                                +'</div>'
+                              +'</div>'
                                 +'<p>' + thread.body + '</p>'
+                                +'<p> ↑ ' + thread.upvotes + '<br>↓ '+ thread.downvotes +'</p>'
                                 +'<a class="see-more-link" href="thread.php?thread_id=' + thread.id + '">' + 'See More' + '</a>';
                             threadsContainer.appendChild(threadDiv);
                         });
@@ -114,7 +115,6 @@ input:hover{
       <select name="sort" id="sort">
       <option value="recent">recent</option>
       <option value="best">best</option>
-      <option value="hot">hot</option>
       <option value="controversial">controversial</option>
     </select>
     <input type="submit" value="GO">
