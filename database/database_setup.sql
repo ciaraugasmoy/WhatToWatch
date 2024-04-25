@@ -129,3 +129,51 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE
 );
+-- Add controversial_score column to the threads table
+ALTER TABLE threads
+ADD COLUMN controversial_score FLOAT DEFAULT 0.0;
+-- Create a trigger that updates the controversial_score of the specific thread
+-- when votes are inserted, updated, or deleted in the thread_votes table
+
+DELIMITER $$
+
+CREATE TRIGGER update_specific_thread_controversial_score
+AFTER INSERT ON thread_votes
+FOR EACH ROW
+BEGIN
+    DECLARE upvotes INT;
+    DECLARE downvotes INT;
+    DECLARE total_votes INT;
+    DECLARE thread_id INT;
+
+    -- Get the thread_id of the affected thread
+    SET thread_id = NEW.thread_id;
+
+    -- Calculate the total upvotes and downvotes for the specific thread
+    SELECT
+        COALESCE(SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE 0 END), 0),
+        COALESCE(SUM(CASE WHEN vote_type = 'downvote' THEN 1 ELSE 0 END), 0),
+        COUNT(*) AS total_votes
+    INTO
+        upvotes,
+        downvotes,
+        total_votes
+    FROM
+        thread_votes
+    WHERE
+        thread_id = thread_id; -- Use the thread_id from NEW
+
+    -- Calculate controversial score using Wilson score interval
+    SET @n = total_votes;
+    SET @z = 1.96; -- Z-score for 95% confidence (standard for Wilson score interval)
+
+    SET @p = upvotes / total_votes;
+    SET @controversial_score = (@p + @z * @z / (2 * @n) - @z * SQRT((@p * (1 - @p) + @z * @z / (4 * @n)) / @n)) / (1 + @z * @z / @n);
+
+    -- Update the controversial_score of the specific thread
+    UPDATE threads
+    SET controversial_score = @controversial_score
+    WHERE id = thread_id; -- Update the thread with the specific thread_id
+END$$
+
+DELIMITER ;

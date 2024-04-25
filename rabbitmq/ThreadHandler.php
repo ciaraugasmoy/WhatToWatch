@@ -94,7 +94,44 @@ class ThreadHandler
     
 
 
-    public function getRecentThreads($offset, $limit, $query)
+    public function getRecentThreads($offset, $limit, $query, $sort)
+    {
+        try {
+            switch ($sort) {
+                case 'best':
+                    return $this->getThreadsByBest($offset, $limit, $query);
+                case 'recent':
+                    return $this->getThreadsByRecent($offset, $limit, $query);
+                case 'controversial':
+                    return $this->getThreadsByControversial($offset, $limit, $query);
+                default:
+                    throw new Exception('Invalid sort parameter');
+            }
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+    
+    private function getThreadsByBest($offset, $limit, $query)
+    {
+        $orderByClause = "ORDER BY upvotes DESC, posted_date DESC";
+        return $this->getThreads($offset, $limit, $query, $orderByClause);
+    }
+    
+    private function getThreadsByRecent($offset, $limit, $query)
+    {
+        $orderByClause = "ORDER BY posted_date DESC";
+        return $this->getThreads($offset, $limit, $query, $orderByClause);
+    }
+
+    private function getThreadsByControversial($offset, $limit, $query)
+    {
+        $orderByClause = "ORDER BY controversial_score DESC";
+        return $this->getThreads($offset, $limit, $query, $orderByClause);
+    }
+
+    
+    private function getThreads($offset, $limit, $query, $orderByClause)
     {
         try {
             $queryCondition = "";
@@ -104,12 +141,17 @@ class ThreadHandler
                 $queryCondition = " AND MATCH (title, body) AGAINST ('$escapedQuery')";
             }
     
-            // Construct the SQL query to get recent threads with optional search condition
-            $sql = "SELECT threads.*, users.username 
+            // Construct the SQL query to get recent threads with optional search condition and sorting
+            $sql = "SELECT threads.*, users.username, 
+                    COALESCE(SUM(CASE WHEN thread_votes.vote_type = 'upvote' THEN 1 ELSE 0 END), 0) AS upvotes,
+                    COALESCE(SUM(CASE WHEN thread_votes.vote_type = 'downvote' THEN 1 ELSE 0 END), 0) AS downvotes
                     FROM threads 
                     LEFT JOIN users ON threads.user_id = users.id
+                    LEFT JOIN thread_votes ON threads.id = thread_votes.thread_id
                     WHERE 1=1 $queryCondition 
-                    ORDER BY posted_date DESC LIMIT ?, ?";
+                    GROUP BY threads.id
+                    $orderByClause
+                    LIMIT ?, ?";
     
             // Prepare the statement
             $stmt = $this->mysqli->prepare($sql);
@@ -145,6 +187,9 @@ class ThreadHandler
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    
+    
+    
     
     
     public function getComments($thread_id)

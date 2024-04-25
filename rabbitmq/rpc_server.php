@@ -105,7 +105,7 @@ function HANDLE_MESSAGE($request)
             return $commentHandler->getComments($request['thread_id']);
         case "get_recent_threads":
             $threadHandler = new ThreadHandler();
-            return $threadHandler->getRecentThreads($request['offset'], $request['limit'], $request['query']);
+            return $threadHandler->getRecentThreads($request['offset'], $request['limit'], $request['query'],$request['sort']);
         case "post_thread":
             $threadHandler = new ThreadHandler();
             return $threadHandler->postThread($request['username'], $request['title'], $request['body'], $request['movie_id']);
