@@ -13,7 +13,7 @@
             var offset = document.getElementsByClassName('thread').length; // Calculate offset based on already loaded posts
             var limit = 5; // Number of posts to load
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '../requests/load_posts.php?offset=' + offset + '&limit=' + limit, true);
+            xhr.open('GET', '../requests/load_posts.php?offset=' + offset + '&limit=' + limit +'&sort='+'<?php $sort = isset($_GET['sort']) ?$_GET['sort'] :'recent'; echo $sort ?>', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var response = JSON.parse(xhr.responseText);
@@ -88,26 +88,50 @@ h2,h3{
     background-color: #01404a;
     transition:300ms;
 }
-button{
+button, input, option, select{
     padding: 10px;
     background-color: #000;
     color:aquamarine;
     border: none;
     transition:300ms;
 }
-button:hover{
+button:hover, input, option, select{
     background-color: #01404a;
     transition:300ms;
+}
+input:hover{
+  background-color: #01404a99;
+   transition:300ms;
 }
 </style>
 <body>
     <h2>Explore</h2>
     <h3>Latest Discussions</h3>
+
+
     <div id="threads-container">
+    <form action="explore.php" method="get">
+      <select name="sort" id="sort">
+      <option value="recent">recent</option>
+      <option value="best">best</option>
+      <option value="hot">hot</option>
+      <option value="controversial">controversial</option>
+    </select>
+    <input type="submit" value="GO">
+  </form>
     </div>
     <!-- Button to load more posts -->
     <button onclick="loadMorePosts()">See More</button>
     <script>
+  var selectElement = document.getElementById('sort');
+  for (var i = 0; i < selectElement.options.length; i++) {
+      var option = selectElement.options[i];
+      if (option.value === '<?php $sort = isset($_GET['sort']) ?$_GET['sort'] :'recent'; echo $sort ?>') {
+          option.selected = true;
+          break;
+      }
+  }
+
         loadMorePosts();
     </script>
 </body>

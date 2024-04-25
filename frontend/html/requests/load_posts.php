@@ -10,13 +10,15 @@ $client = new RPCClient();
 // Get offset and limit from the GET parameters
 $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 5;
+$sort = isset($_GET['sort']) ?$_GET['sort'] :'recent' ;
 
 // Construct a request to retrieve posts with the given offset and limit
 $request = array(
     'type' => 'get_recent_threads',
     'offset' => $offset,
     'limit' => $limit,
-    'query' => '' // You might need to add a search query here if needed
+    'query' => '',
+    'sort' => $sort,
 );
 
 // Make a call to your RPC server to retrieve the posts
