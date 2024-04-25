@@ -82,7 +82,7 @@
         .then(data => {
             if (data.status === 'success') {
                 var subscribeButton = document.getElementById('subscribe');
-                subscribeButton.textContent = data.subscribed ? 'Unsubscribe' : 'Subscribe';
+                data.subscribed=='true'?subscribeButton.textContent ='unsubscribe': subscribeButton.textContent ='subscribe' ;
                 console.log(data.status);
             } else {
                 console.error('Failed to get subscribe status');
@@ -91,7 +91,33 @@
         .catch(error => {
             console.error('Error getting subscribe status rpc:',error);
         });
+    }
+    function toggleSubscribe() {
+    var subscribeButton = document.getElementById('subscribe');
+    var action= subscribeButton.textContent;
+    subscribeButton.textContent == 'subscribe'? subscribeButton.textContent = 'unsubscribe' : subscribeButton.textContent ='subscribe';
+    var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+    fetch(`../requests/subscribe.php?thread_id=${encodeURIComponent(threadId)}&subscribe_status=${action}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to toggle subscription');
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.status === 'success') {
+             console.log('werking');  
+                
+            } else {
+                console.error('Failed to toggle subscription:', result.message);
+                subscribeButton.textContent = action === 'subscribe' ? 'unsubscribe' : 'subscribe';
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling subscription:', error);
+        });
 }
+
 
     document.addEventListener("DOMContentLoaded", function() {
         // Function to load thread via AJAX
@@ -113,7 +139,7 @@
                         '<p>' + threadData.thread.body + '</p>' +
                         '<p>' + threadData.thread.posted_date + '</p>' +
                         '<p>' + threadData.thread.username + '</p>'+
-                        '<p><button id="subscribe">subscribe</button></p>';
+                        '<p><button id="subscribe" onclick="toggleSubscribe()">subscribe</button></p>';
                     threadContainer.appendChild(threadDiv);
                     document.querySelector('.arrow.up').addEventListener('click', () => vote('upvote'));
                     document.querySelector('.arrow.down').addEventListener('click', () => vote('downvote'));
