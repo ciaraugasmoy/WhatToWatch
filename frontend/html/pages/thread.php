@@ -8,6 +8,117 @@
     <script src="../js/template.js"></script>
     <script src="../js/globalscript.js"></script>
     <script>
+    function checkVoteStatus() {
+            var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+            fetch('../requests/get_vote.php?thread_id=' + encodeURIComponent(threadId))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to get vote status');
+                    }
+                    return response.json();
+                })
+                .then(voteData => {
+                    // Check the vote status and update icons accordingly
+                    var upvoteIcon = document.querySelector('.arrow.up');
+                    var downvoteIcon = document.querySelector('.arrow.down');
+
+                    if (voteData.status === 'success') {
+                        console.log(voteData.vote);
+                        if (voteData.vote === 'upvote') {
+                            upvoteIcon.classList.add('active');
+                        }else if (voteData.vote === 'downvote') {
+                            downvoteIcon.classList.add('active');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting vote status:', error.message);
+                });
+        }
+    function vote(action) {
+        var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+        var upvoteIcon = document.querySelector('.arrow.up');
+        var downvoteIcon = document.querySelector('.arrow.down');
+        var isUpvoteActive = upvoteIcon.classList.contains('active');
+        var isDownvoteActive = downvoteIcon.classList.contains('active');
+
+        if (action === 'upvote' && isUpvoteActive) {action = 'unset';
+        }else if(action ==='downvote' &&isDownvoteActive){action = 'unset';}
+        fetch(`../requests/alter_vote.php?thread_id=${encodeURIComponent(threadId)}&vote=${action}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    // Update vote UI based on action
+                    if (action === 'upvote') {
+                        upvoteIcon.classList.add('active');
+                        downvoteIcon.classList.remove('active');
+                    } else if (action === 'downvote') {
+                        upvoteIcon.classList.remove('active');
+                        downvoteIcon.classList.add('active');
+                    } else if (action === 'unset' && isUpvoteActive) {
+                        upvoteIcon.classList.remove('active');
+                    }
+                    else if (action === 'unset' && isDownvoteActive) {
+                        downvoteIcon.classList.remove('active');
+                    }
+                } else {
+                    console.error('Failed to set vote:', result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error setting vote:', error);
+            });
+    }
+
+    function checkSubscribeStatus() {
+    var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+    fetch(`../requests/subscribe_status.php?thread_id=${encodeURIComponent(threadId)}`)
+        .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to get vote status');
+                    }
+                    return response.json();
+                })
+        .then(data => {
+            if (data.status === 'success') {
+                var subscribeButton = document.getElementById('subscribe');
+                data.subscribed=='true'?subscribeButton.textContent ='unsubscribe': subscribeButton.textContent ='subscribe' ;
+                console.log(data.status);
+            } else {
+                console.error('Failed to get subscribe status');
+            }
+        })
+        .catch(error => {
+            console.error('Error getting subscribe status rpc:',error);
+        });
+    }
+    function toggleSubscribe() {
+    var subscribeButton = document.getElementById('subscribe');
+    var action= subscribeButton.textContent;
+    subscribeButton.textContent == 'subscribe'? subscribeButton.textContent = 'unsubscribe' : subscribeButton.textContent ='subscribe';
+    var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+    fetch(`../requests/subscribe.php?thread_id=${encodeURIComponent(threadId)}&subscribe_status=${action}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to toggle subscription');
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.status === 'success') {
+             console.log('werking');  
+                
+            } else {
+                console.error('Failed to toggle subscription:', result.message);
+                subscribeButton.textContent = action === 'subscribe' ? 'unsubscribe' : 'subscribe';
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling subscription:', error);
+        });
+}
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // Function to load thread via AJAX
         function loadThread() {
@@ -21,14 +132,19 @@
                 })
                 .then(threadData => {
                     var threadContainer = document.getElementById('thread-container');
-                    threadContainer.innerHTML = ''; // Clear existing thread content
+                    //threadContainer.innerHTML = ''; // Clear existing thread content
                     var threadDiv = document.createElement('div');
                     threadDiv.classList.add('thread');
-                    threadDiv.innerHTML = '<p>' + threadData.thread.title + '</p>' +
+                    threadDiv.innerHTML = '<div>' + threadData.thread.title + ' <div id="vote"> <i class="arrow up"> </i> <i class="arrow down"> </i> </div> </div>' +
                         '<p>' + threadData.thread.body + '</p>' +
                         '<p>' + threadData.thread.posted_date + '</p>' +
-                        '<p>' + threadData.thread.username + '</p>';
+                        '<p>' + threadData.thread.username + '</p>'+
+                        '<p><button id="subscribe" onclick="toggleSubscribe()">subscribe</button></p>';
                     threadContainer.appendChild(threadDiv);
+                    document.querySelector('.arrow.up').addEventListener('click', () => vote('upvote'));
+                    document.querySelector('.arrow.down').addEventListener('click', () => vote('downvote'));
+                    checkVoteStatus();
+                    checkSubscribeStatus();
                 })
                 .catch(error => {
                     console.error('Error loading thread:', error.message);
@@ -234,8 +350,45 @@ textarea{
   transition:300ms;
   padding:12px;
 }
+
+.arrow {
+  border: solid grey;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  justify-self:center;
+}
+.arrow:hover{
+	border: solid aquamarine;
+    border-width: 0 3px 3px 0;
+}
+.arrow.active{
+	border: solid aquamarine;
+    border-width: 0 3px 3px 0;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+#vote{
+ padding:10px 5px;
+ display:grid;
+ width:30px;
+ background-color:#01404a90;
+ gap:5px;
+ border-radius:5px;
+ float:right;
+}
 </style>
-<div id="thread-container"></div>
+
+<div id="thread-container">
+</div>
 <div id="comment-box">
     <form onsubmit="event.preventDefault(); postComment();">
         <textarea id="comment-body" name="body" placeholder="Write your comment here..." required></textarea>
@@ -243,5 +396,7 @@ textarea{
     </form>
 </div>
 <div id="comments-container"></div>
+
+
 </body>
 </html>

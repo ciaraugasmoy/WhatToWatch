@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class ThreadHandler
 {
     private $mysqli; 
@@ -233,14 +236,329 @@ class ThreadHandler
             
             // Close statement
             $stmt->close();
-            
+            $this->mailSubscribers($thread_id);
             return ['status' => 'success', 'message' => 'Comment posted successfully'];
         } catch (Exception $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    private function mailSubscribers($thread_id)
+    {
+    // Retrieve subscribers for the given thread_id
+    $subscribersQuery = "SELECT u.email, t.title 
+                         FROM subscriptions s
+                         JOIN users u ON s.user_id = u.id
+                         JOIN threads t ON s.thread_id = t.id
+                         WHERE s.thread_id = ?";
+    
+    $stmtSubscribers = $this->mysqli->prepare($subscribersQuery);
+    if (!$stmtSubscribers) {
+        throw new Exception('Failed to prepare subscribers statement: ' . $this->mysqli->error);
+    }
+    
+    $stmtSubscribers->bind_param('i', $thread_id);
+    if (!$stmtSubscribers->execute()) {
+        throw new Exception('Failed to execute subscribers statement: ' . $stmtSubscribers->error);
+    }
+    
+    $subscribersResult = $stmtSubscribers->get_result();
+    if (!$subscribersResult || $subscribersResult->num_rows === 0) {
+        $stmtSubscribers->close();
+        return; // No subscribers found for this thread
+    }
+    
+    // Iterate through subscribers and send email notifications
+    while ($subscriber = $subscribersResult->fetch_assoc()) {
+        $email = $subscriber['email'];
+        $postTitle = $subscriber['title'];
+        $this->mailSubscriber($email, $postTitle);
+    }
+    
+    $stmtSubscribers->close();
+}
 
+private function mailSubscriber($email, $postTitle)
+{
+    // Read SMTP settings from email_credentials.ini
+    $config = parse_ini_file('email_credentials.ini');
 
+    // Initialize PHPMailer
+    $mail = new PHPMailer(true);
+
+    try {
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host = $config['host'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $config['username'];
+        $mail->Password = $config['password'];
+        $mail->SMTPSecure = $config['smtp_secure'];
+        $mail->Port = $config['port'];
+
+        // Set sender and recipient
+        $mail->setFrom($config['username'], 'What2Watch.com'); // Sender's email and name
+        $mail->addAddress($email); // Recipient's email
+        
+        // Email content
+        $mail->isHTML(true); // Set email format to plain text
+        $mail->Subject = 'New Comments on ' . $postTitle; // Subject line
+        $mail->Body = 'Hello, A new comment has been posted on the thread: ' . $postTitle . '. Login at www.what2watch.com to see what they said :)';
+
+        // Send the email
+        $mail->send();
+        echo "Email sent successfully";
+    } catch (Exception $e) {
+        echo "Failed to send email. Error: {$mail->ErrorInfo}";
+    }
+}
+
+//upvote downvote handler
+    public function getVote($username, $thread_id)
+    {
+        try {
+            // Construct the SQL query to get the vote for the given user and thread
+            $sql = "SELECT vote_type FROM thread_votes 
+                    WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                    AND thread_id = ?";
+
+            // Prepare the statement
+            $stmt = $this->mysqli->prepare($sql);
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare statement: ' . $this->mysqli->error);
+            }
+
+            // Bind parameters and execute the statement
+            $stmt->bind_param('si', $username, $thread_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute statement: ' . $stmt->error);
+            }
+
+            // Get the result
+            $result = $stmt->get_result();
+            if (!$result) {
+                throw new Exception('Failed to get result set: ' . $this->mysqli->error);
+            }
+
+            // Fetch the vote type
+            $vote = $result->fetch_assoc();
+
+            // Close statement
+            $stmt->close();
+
+            // Determine the vote status
+            if (!$vote) {
+                return ['status' => 'success', 'vote' => 'unset']; // No vote found
+            } else {
+                return ['status' => 'success', 'vote' => $vote['vote_type']]; // Return 'upvote' or 'downvote'
+            }
+
+        } catch (Exception $e) {
+            // Handle exceptions
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+    public function setVote($username, $thread_id, $vote)
+    {
+        try {
+            // Validate the vote value
+            if (!in_array($vote, ['upvote', 'downvote', 'unset'])) {
+                throw new Exception('Invalid vote type');
+            }
+    
+            // Begin transaction for atomic operation
+            $this->mysqli->begin_transaction();
+    
+            if ($vote === 'unset') {
+                // Delete existing vote if $vote is 'unset'
+                $deleteSql = "DELETE FROM thread_votes 
+                              WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                              AND thread_id = ?";
+                $deleteStmt = $this->mysqli->prepare($deleteSql);
+                if (!$deleteStmt) {
+                    throw new Exception('Failed to prepare delete statement: ' . $this->mysqli->error);
+                }
+    
+                $deleteStmt->bind_param('si', $username, $thread_id);
+                if (!$deleteStmt->execute()) {
+                    throw new Exception('Failed to delete vote: ' . $deleteStmt->error);
+                }
+    
+                $deleteStmt->close();
+            } else {
+                // Insert or update vote
+                $insertUpdateSql = "INSERT INTO thread_votes (thread_id, user_id, vote_type) 
+                                    VALUES (?, (SELECT id FROM users WHERE username = ?), ?)
+                                    ON DUPLICATE KEY UPDATE vote_type = VALUES(vote_type)";
+    
+                $insertUpdateStmt = $this->mysqli->prepare($insertUpdateSql);
+                if (!$insertUpdateStmt) {
+                    throw new Exception('Failed to prepare insert/update statement: ' . $this->mysqli->error);
+                }
+    
+                $insertUpdateStmt->bind_param('iss', $thread_id, $username, $vote);
+                if (!$insertUpdateStmt->execute()) {
+                    throw new Exception('Failed to set vote: ' . $insertUpdateStmt->error);
+                }
+    
+                $insertUpdateStmt->close();
+            }
+    
+            // Commit transaction
+            $this->mysqli->commit();
+    
+            return ['status' => 'success'];
+    
+        } catch (Exception $e) {
+            // Rollback transaction on error
+            $this->mysqli->rollback();
+    
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+ // subscription services
+ public function subscribe($username, $thread_id)
+{
+    try {
+        // Begin transaction for atomic operation
+        $this->mysqli->begin_transaction();
+
+        // Check if the user is already subscribed to the thread
+        $checkSubscriptionSql = "SELECT COUNT(*) as count FROM subscriptions 
+                                 WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                                 AND thread_id = ?";
+        $checkSubscriptionStmt = $this->mysqli->prepare($checkSubscriptionSql);
+        if (!$checkSubscriptionStmt) {
+            throw new Exception('Failed to prepare select statement: ' . $this->mysqli->error);
+        }
+
+        $checkSubscriptionStmt->bind_param('si', $username, $thread_id);
+        if (!$checkSubscriptionStmt->execute()) {
+            throw new Exception('Failed to check existing subscription: ' . $checkSubscriptionStmt->error);
+        }
+
+        $subscriptionResult = $checkSubscriptionStmt->get_result()->fetch_assoc();
+        $checkSubscriptionStmt->close();
+
+        if ($subscriptionResult['count'] > 0) {
+            throw new Exception('User is already subscribed to this thread');
+        }
+
+        // Insert new subscription
+        $insertSubscriptionSql = "INSERT INTO subscriptions (user_id, thread_id) 
+                                  VALUES ((SELECT id FROM users WHERE username = ?), ?)";
+        $insertSubscriptionStmt = $this->mysqli->prepare($insertSubscriptionSql);
+        if (!$insertSubscriptionStmt) {
+            throw new Exception('Failed to prepare insert statement: ' . $this->mysqli->error);
+        }
+
+        $insertSubscriptionStmt->bind_param('si', $username, $thread_id);
+        if (!$insertSubscriptionStmt->execute()) {
+            throw new Exception('Failed to subscribe user to thread: ' . $insertSubscriptionStmt->error);
+        }
+
+        $insertSubscriptionStmt->close();
+
+        // Commit transaction
+        $this->mysqli->commit();
+
+        return ['status' => 'success'];
+
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $this->mysqli->rollback();
+
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+public function unsubscribe($username, $thread_id)
+{
+    try {
+        // Begin transaction for atomic operation
+        $this->mysqli->begin_transaction();
+
+        // Check if the user is subscribed to the thread
+        $checkSubscriptionSql = "SELECT id FROM subscriptions 
+                                 WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                                 AND thread_id = ?";
+        $checkSubscriptionStmt = $this->mysqli->prepare($checkSubscriptionSql);
+        if (!$checkSubscriptionStmt) {
+            throw new Exception('Failed to prepare select statement: ' . $this->mysqli->error);
+        }
+
+        $checkSubscriptionStmt->bind_param('si', $username, $thread_id);
+        if (!$checkSubscriptionStmt->execute()) {
+            throw new Exception('Failed to check existing subscription: ' . $checkSubscriptionStmt->error);
+        }
+
+        $subscriptionResult = $checkSubscriptionStmt->get_result()->fetch_assoc();
+        $checkSubscriptionStmt->close();
+
+        if (!$subscriptionResult) {
+            throw new Exception('User is not subscribed to this thread');
+        }
+
+        $subscriptionId = $subscriptionResult['id'];
+
+        // Delete the subscription record
+        $deleteSubscriptionSql = "DELETE FROM subscriptions WHERE id = ?";
+        $deleteSubscriptionStmt = $this->mysqli->prepare($deleteSubscriptionSql);
+        if (!$deleteSubscriptionStmt) {
+            throw new Exception('Failed to prepare delete statement: ' . $this->mysqli->error);
+        }
+
+        $deleteSubscriptionStmt->bind_param('i', $subscriptionId);
+        if (!$deleteSubscriptionStmt->execute()) {
+            throw new Exception('Failed to unsubscribe user from thread: ' . $deleteSubscriptionStmt->error);
+        }
+
+        $deleteSubscriptionStmt->close();
+
+        // Commit transaction
+        $this->mysqli->commit();
+
+        return ['status' => 'success'];
+
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $this->mysqli->rollback();
+
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+public function subscribeStatus($username, $thread_id)
+{
+    try {
+        // Prepare SQL to check if the user is subscribed to the thread
+        $checkSubscriptionSql = "SELECT COUNT(*) as count FROM subscriptions 
+                                 WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                                 AND thread_id = ?";
+        $checkSubscriptionStmt = $this->mysqli->prepare($checkSubscriptionSql);
+        if (!$checkSubscriptionStmt) {
+            throw new Exception('Failed to prepare select statement: ' . $this->mysqli->error);
+        }
+
+        // Bind parameters and execute the query
+        $checkSubscriptionStmt->bind_param('si', $username, $thread_id);
+        if (!$checkSubscriptionStmt->execute()) {
+            throw new Exception('Failed to check existing subscription: ' . $checkSubscriptionStmt->error);
+        }
+
+        // Fetch the result
+        $subscriptionResult = $checkSubscriptionStmt->get_result()->fetch_assoc();
+        $checkSubscriptionStmt->close();
+
+        // Check if the user is subscribed
+        $subscriptionResult['count'] > 0 ? $isSubscribed = 'true':$isSubscribed ='false';
+        return ['status' => 'success', 'subscribed' => $isSubscribed];
+
+    } catch (Exception $e) {
+        // Handle exceptions and return error status
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
+    
 }    
 
 

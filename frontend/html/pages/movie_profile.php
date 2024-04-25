@@ -171,7 +171,10 @@ $request =[
 ];
 $response = $client->call($request);
 $movie = $response['movie'];
-if($movie['inWatchlist']?$wlbutton='../partials/remove_from_watchlist_button.php':$wlbutton='../partials/add_to_watchlist_button.php');
+if ($movie['inWatchlist']?
+$wlbutton= '<button class="watchlistbtn" data-status="add_to_watchlist" data-movie-id="'.$movie['movie_id'].'">Remove from Watchlist</button>'
+:$wlbutton= '<button class="watchlistbtn" data-status="remove_from_watchlist" data-movie-id="'.$movie['movie_id'].'">Add to Watchlist</button>'
+);
 
     $backdrop_url= 'https://image.tmdb.org/t/p/original/'.$movie['backdrop_path'];
     $poster_url= 'https://image.tmdb.org/t/p/original/'.$movie['poster_path'];
@@ -185,8 +188,8 @@ if($movie['inWatchlist']?$wlbutton='../partials/remove_from_watchlist_button.php
     .'<h3>'.'Your Providers'.'</h3>'
     .'<div class="providers">'.$user_providers_list.'</div>'
     .'<h3>'.'Other Providers'.'</h3>'
-    .'<div class="providers">'.$general_providers_list.'</div>';
-    include($wlbutton);
+    .'<div class="providers">'.$general_providers_list.'</div>'
+    .$wlbutton;
     echo '</section>';
 
     if($reviewed){
@@ -205,6 +208,7 @@ if($movie['inWatchlist']?$wlbutton='../partials/remove_from_watchlist_button.php
         include '../partials/reviewform.php';
     }
     include '../partials/movie_reviews.php';
+    include('../partials/toggle_watchlist_button.php');
    
 ?>
 

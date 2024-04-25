@@ -23,3 +23,13 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (thread_id) REFERENCES threads(id)
 );
+
+CREATE TABLE IF NOT EXISTS thread_votes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    thread_id INT NOT NULL,
+    user_id INT NOT NULL,
+    vote_type ENUM('upvote', 'downvote') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
