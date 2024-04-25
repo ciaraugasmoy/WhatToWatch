@@ -526,6 +526,37 @@ public function unsubscribe($username, $thread_id)
         return ['status' => 'error', 'message' => $e->getMessage()];
     }
 }
+public function subscribeStatus($username, $thread_id)
+{
+    try {
+        // Prepare SQL to check if the user is subscribed to the thread
+        $checkSubscriptionSql = "SELECT COUNT(*) as count FROM subscriptions 
+                                 WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                                 AND thread_id = ?";
+        $checkSubscriptionStmt = $this->mysqli->prepare($checkSubscriptionSql);
+        if (!$checkSubscriptionStmt) {
+            throw new Exception('Failed to prepare select statement: ' . $this->mysqli->error);
+        }
+
+        // Bind parameters and execute the query
+        $checkSubscriptionStmt->bind_param('si', $username, $thread_id);
+        if (!$checkSubscriptionStmt->execute()) {
+            throw new Exception('Failed to check existing subscription: ' . $checkSubscriptionStmt->error);
+        }
+
+        // Fetch the result
+        $subscriptionResult = $checkSubscriptionStmt->get_result()->fetch_assoc();
+        $checkSubscriptionStmt->close();
+
+        // Check if the user is subscribed
+        $subscriptionResult['count'] > 0 ? $isSubscribed = 'true':$isSubscribed ='false';
+        return ['status' => 'success', 'subscribed' => $isSubscribed];
+
+    } catch (Exception $e) {
+        // Handle exceptions and return error status
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
 
     
 }    

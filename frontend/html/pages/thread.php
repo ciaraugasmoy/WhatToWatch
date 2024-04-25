@@ -70,6 +70,28 @@
             });
     }
 
+    function checkSubscribeStatus() {
+    var threadId = <?php echo json_encode($_GET['thread_id']); ?>;
+    fetch(`../requests/subscribe_status.php?thread_id=${encodeURIComponent(threadId)}`)
+        .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to get vote status');
+                    }
+                    return response.json();
+                })
+        .then(data => {
+            if (data.status === 'success') {
+                var subscribeButton = document.getElementById('subscribe');
+                subscribeButton.textContent = data.subscribed ? 'Unsubscribe' : 'Subscribe';
+                console.log(data.status);
+            } else {
+                console.error('Failed to get subscribe status');
+            }
+        })
+        .catch(error => {
+            console.error('Error getting subscribe status rpc:',error);
+        });
+}
 
     document.addEventListener("DOMContentLoaded", function() {
         // Function to load thread via AJAX
@@ -90,11 +112,13 @@
                     threadDiv.innerHTML = '<div>' + threadData.thread.title + ' <div id="vote"> <i class="arrow up"> </i> <i class="arrow down"> </i> </div> </div>' +
                         '<p>' + threadData.thread.body + '</p>' +
                         '<p>' + threadData.thread.posted_date + '</p>' +
-                        '<p>' + threadData.thread.username + '</p>';
+                        '<p>' + threadData.thread.username + '</p>'+
+                        '<p><button id="subscribe">subscribe</button></p>';
                     threadContainer.appendChild(threadDiv);
                     document.querySelector('.arrow.up').addEventListener('click', () => vote('upvote'));
                     document.querySelector('.arrow.down').addEventListener('click', () => vote('downvote'));
                     checkVoteStatus();
+                    checkSubscribeStatus();
                 })
                 .catch(error => {
                     console.error('Error loading thread:', error.message);

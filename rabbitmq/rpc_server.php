@@ -118,6 +118,9 @@ function HANDLE_MESSAGE($request)
         case "set_vote":
             $threadHandler = new ThreadHandler();
         return $threadHandler->setVote($request['username'],$request['thread_id'],$request['vote']);
+        case "subscribe_status":
+            $threadHandler = new ThreadHandler();
+            return $threadHandler->subscribeStatus($request['username'],$request['thread_id']);
         case "subscribe":
             $threadHandler = new ThreadHandler();
             return $threadHandler->subscribe($request['username'],$request['thread_id']);
