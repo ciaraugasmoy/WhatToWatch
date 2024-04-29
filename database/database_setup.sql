@@ -129,6 +129,21 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (thread_id) REFERENCES threads(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS user_2fa (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE TABLE IF NOT EXISTS temporary_keys (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    purpose VARCHAR(50) NOT NULL,
+    expiration DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Add controversial_score column to the threads table
 ALTER TABLE threads
 ADD COLUMN controversial_score FLOAT DEFAULT 0.0;

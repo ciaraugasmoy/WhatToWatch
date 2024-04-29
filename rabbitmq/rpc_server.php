@@ -30,6 +30,9 @@ function HANDLE_MESSAGE($request)
         case "login":
             $userHandler = new UserHandler();
             return $userHandler->doLogin($request['username'], $request['password']);
+        case "2fa":
+            $userHandler = new UserHandler();
+            return $userHandler->read2fa($request['username'], $request['code']);
         case "signup":
             $userHandler = new UserHandler();
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
@@ -75,6 +78,9 @@ function HANDLE_MESSAGE($request)
         case "get_top_rated":
             $searchHandler = new SearchHandler();
             return $searchHandler->topRatedSearch($request['page']);
+        case "get_similar":
+            $searchHandler = new SearchHandler();
+            return $searchHandler->getSimilar($request['page'], $request['username']);
         case "get_movie_details":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getMovieDetails($request['movie_id']);
@@ -127,6 +133,10 @@ function HANDLE_MESSAGE($request)
         case "unsubscribe":
             $threadHandler = new ThreadHandler();
             return $threadHandler->unsubscribe($request['username'],$request['thread_id']);
+        //ai request
+        case "ai_recommendation":
+            $searchHandler = new SearchHandler();
+            return $searchHandler->aiSearch($request['page'],$request['message']);
         }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");
