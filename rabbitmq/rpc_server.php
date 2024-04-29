@@ -75,6 +75,9 @@ function HANDLE_MESSAGE($request)
         case "get_top_rated":
             $searchHandler = new SearchHandler();
             return $searchHandler->topRatedSearch($request['page']);
+        case "get_similar":
+            $searchHandler = new SearchHandler();
+            return $searchHandler->getSimilar($request['page'], $request['username']);
         case "get_movie_details":
             $movieDataHandler = new MovieDataHandler();
             return $movieDataHandler->getMovieDetails($request['movie_id']);
