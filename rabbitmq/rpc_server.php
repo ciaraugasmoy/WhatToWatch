@@ -130,6 +130,10 @@ function HANDLE_MESSAGE($request)
         case "unsubscribe":
             $threadHandler = new ThreadHandler();
             return $threadHandler->unsubscribe($request['username'],$request['thread_id']);
+        //ai request
+        case "ai_recommendation":
+            $searchHandler = new SearchHandler();
+            return $searchHandler->aiSearch($request['page'],$request['message']);
         }
 
     return array("status" => "error", "message" => "Server received request and processed but no case");

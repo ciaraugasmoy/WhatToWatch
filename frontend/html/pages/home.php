@@ -38,6 +38,7 @@ main{
     <?php include '../partials/search_movie.php'; ?>
     <a class='getrecs' href='recommendation_results.php'>See Trending</a>
     <a class='getrecs' href='recommendation_results_alt.php'>Get Recommendations</a>
+    <a class='getrecs' href='recommendation_ai.php'>Advanced Recommendations</a>
     <a class='getrecs' href='watchlist.php'>See my watchlist</a>
 </main>
 </body>
