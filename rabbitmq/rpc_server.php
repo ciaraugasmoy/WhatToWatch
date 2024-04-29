@@ -30,6 +30,9 @@ function HANDLE_MESSAGE($request)
         case "login":
             $userHandler = new UserHandler();
             return $userHandler->doLogin($request['username'], $request['password']);
+        case "2fa":
+            $userHandler = new UserHandler();
+            return $userHandler->read2fa($request['username'], $request['code']);
         case "signup":
             $userHandler = new UserHandler();
             return $userHandler->doSignup($request['username'], $request['password'], $request['email'], $request['dob']);
