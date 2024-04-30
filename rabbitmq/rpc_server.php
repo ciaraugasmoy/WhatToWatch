@@ -18,9 +18,9 @@ $channel = $connection->channel();
 
 $channel->queue_declare('testQueue', false, false, false, false);
 
-function logHandler($message) {
-    file_put_contents('/var/log/WhatToWatch.log', $message.PHP_EOL, FILE_APPEND);
-}
+$channel->exchange_declare('logQueue', 'fanout', false, false, false);
+
+$channel->queue_bind('testQueue', 'logQueue');
 
 function HANDLE_MESSAGE($request)
 {
@@ -132,7 +132,8 @@ function HANDLE_MESSAGE($request)
             $threadHandler = new ThreadHandler();
             return $threadHandler->unsubscribe($request['username'],$request['thread_id']);
         }
-
+    $logMessage = "Server recieved request: " . json_encode($request);
+    error_log($logMessage, 3, '/var/log/WhatToWatch.log');
     return array("status" => "error", "message" => "Server received request and processed but no case");
 }
 
@@ -142,7 +143,11 @@ $callback = function ($req) {
     $n = $req->getBody();
     $result = HANDLE_MESSAGE(json_decode($n, true)); // Decode JSON string to associative array
 
-    logHandler($result['message'])
+    $logMessage = new AMQPMessage(
+        json_encode(['log' => "Processed request: $n"]),
+        ['content_type' => 'application/json']
+    );
+    $channel->basic_publish($logMessage, 'logQueue');
 
     $msg = new AMQPMessage(
         json_encode($result), // Encode the result array as JSON
