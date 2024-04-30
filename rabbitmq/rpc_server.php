@@ -18,6 +18,10 @@ $channel = $connection->channel();
 
 $channel->queue_declare('testQueue', false, false, false, false);
 
+function logHandler($message) {
+    file_put_contents('/var/log/WhatToWatch.log', $message.PHP_EOL, FILE_APPEND);
+}
+
 function HANDLE_MESSAGE($request)
 {
     echo "received request" . PHP_EOL;
@@ -137,6 +141,8 @@ echo " [x] Awaiting RPC requests\n";
 $callback = function ($req) {
     $n = $req->getBody();
     $result = HANDLE_MESSAGE(json_decode($n, true)); // Decode JSON string to associative array
+
+    logHandler($result['message'])
 
     $msg = new AMQPMessage(
         json_encode($result), // Encode the result array as JSON
