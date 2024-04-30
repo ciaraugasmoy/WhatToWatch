@@ -22,6 +22,10 @@ $channel->exchange_declare('logQueue', 'fanout', false, false, false);
 
 $channel->queue_bind('testQueue', 'logQueue');
 
+if (!file_exists('/var/logs/WhatToWatch.log')) {
+    touch('/var/logs/WhatToWatch.log');
+};
+
 function HANDLE_MESSAGE($request)
 {
     echo "received request" . PHP_EOL;
