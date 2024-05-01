@@ -5,3 +5,5 @@
 **/*.ini
 !*.ini.sample
 !**/*.ini.sample
+/logging/logs/WhatToWatch.log
+/logging/.env

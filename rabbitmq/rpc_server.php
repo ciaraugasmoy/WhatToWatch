@@ -138,7 +138,6 @@ function HANDLE_MESSAGE($request)
             $searchHandler = new SearchHandler();
             return $searchHandler->aiSearch($request['page'],$request['message']);
         }
-
     return array("status" => "error", "message" => "Server received request and processed but no case");
 }
 
