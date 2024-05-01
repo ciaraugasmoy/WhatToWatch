@@ -1,5 +1,6 @@
 # What2Watch Repo
-
+OS FOR ALL VMS: Ubuntu 22.04.3 LTS
+Necessary software and instructions below.
 there is a readme in each folder for each server respectively with additional information if any problems are encountered
 
 ## Setting Up Database
