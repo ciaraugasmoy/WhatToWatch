@@ -18,14 +18,6 @@ $channel = $connection->channel();
 
 $channel->queue_declare('testQueue', false, false, false, false);
 
-$channel->exchange_declare('logQueue', 'fanout', false, false, false);
-
-$channel->queue_bind('testQueue', 'logQueue');
-
-if (!file_exists('/var/logs/WhatToWatch.log')) {
-    touch('/var/logs/WhatToWatch.log');
-};
-
 function HANDLE_MESSAGE($request)
 {
     echo "received request" . PHP_EOL;
@@ -136,8 +128,6 @@ function HANDLE_MESSAGE($request)
             $threadHandler = new ThreadHandler();
             return $threadHandler->unsubscribe($request['username'],$request['thread_id']);
         }
-    $logMessage = "Server recieved request: " . json_encode($request);
-    error_log($logMessage, 3, '/var/log/WhatToWatch.log');
     return array("status" => "error", "message" => "Server received request and processed but no case");
 }
 
@@ -146,12 +136,6 @@ echo " [x] Awaiting RPC requests\n";
 $callback = function ($req) {
     $n = $req->getBody();
     $result = HANDLE_MESSAGE(json_decode($n, true)); // Decode JSON string to associative array
-
-    $logMessage = new AMQPMessage(
-        json_encode(['log' => "Processed request: $n"]),
-        ['content_type' => 'application/json']
-    );
-    $channel->basic_publish($logMessage, 'logQueue');
 
     $msg = new AMQPMessage(
         json_encode($result), // Encode the result array as JSON
