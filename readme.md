@@ -4,13 +4,13 @@ there is a readme in each folder for each server respectively with additional in
 
 ## Setting Up Database
 Please adjust user credentials in [user_setup](database/user_setup.sql) if necessary
+in /database/
 ```
 sudo mysql< database_setup.sql
 sudo mysql <user_setup.sql
-cd test_data_scripts
-./generate_users.sh
+./test_data_scripts/generate_users.sh
 ```
-in rabbitmq/api
+in /rabbitmq/api
 ```
 ./watchProviderHandler.php
 ```
@@ -38,13 +38,17 @@ sudo apt install php
 sudo apt install composer
 sudo apt install php php-curl php-mysql -y
 ```
-then *subject to change
+then
 ```
 sudo rabbitmqctl add_vhost brokerHost
 sudo rabbitmqctl add_user mqadmin mqadminpass
 sudo rabbitmqctl set_user_tags mqadmin administrator
 sudo rabbitmqctl set_permissions -p brokerHost mqadmin ".*" ".*" ".*"
 sudo rabbitmqctl delete_user guest
+```
+to ensure the program is run on startup 
+```
+./rabbitmq/add_systemd.sh
 ```
 
 **Firewalls**
@@ -63,6 +67,7 @@ sudo apt install php php-curl -y
 cd frontend/html/
 composer install
 sudo apt install composer
+sudo ./ssl_apache.sh
 sudo ./sync_apache.sh
 ```
 **Firewalls**
