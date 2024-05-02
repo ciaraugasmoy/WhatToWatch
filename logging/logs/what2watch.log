@@ -1,0 +1,52 @@
+2024-05-02T00:03:17.829150Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.22.04.1).
+2024-05-02T00:03:19.613135Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.22.04.1)  (Ubuntu).
+2024-05-02T00:03:21.423095Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.22.04.1) starting as process 28687
+2024-05-02T00:03:21.455909Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-02T00:03:22.247531Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-02T00:03:22.793997Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-02T00:03:22.794031Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-02T00:03:22.852013Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the connection metadata repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START REPLICA; see the 'START REPLICA Syntax' in the MySQL Manual for more information.
+2024-05-02T00:03:22.864088Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '127.0.0.1' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-02T00:03:22.864751Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.22.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-02T00:03:24.185713Z 5 [System] [MY-014001] [Repl] Replica receiver thread for channel '': connected to source 'replica_user@172.27.55.1:3306' with server_uuid=4ce40ce1-f525-11ee-9625-080027b113d1, server_id=1. Starting replication from file 'mysql-bin.000030', position '157'.
+2024-05-02T00:03:23.153301Z 9 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-02T00:12:40.770840Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.22.04.1).
+2024-05-02T00:12:42.619434Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.22.04.1)  (Ubuntu).
+2024-05-02T00:12:43.829183Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.22.04.1) starting as process 30199
+2024-05-02T00:12:43.854347Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-02T00:12:44.469916Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-02T00:12:45.485894Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-02T00:12:45.485953Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-02T00:12:45.568989Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the connection metadata repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START REPLICA; see the 'START REPLICA Syntax' in the MySQL Manual for more information.
+2024-05-02T00:12:45.587837Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '127.0.0.1' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-02T00:12:45.587920Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.22.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-02T00:12:46.993664Z 5 [System] [MY-014001] [Repl] Replica receiver thread for channel '': connected to source 'replica_user@172.27.55.1:3306' with server_uuid=4ce40ce1-f525-11ee-9625-080027b113d1, server_id=1. Starting replication from file 'mysql-bin.000030', position '157'.
+2024-05-02T00:12:45.938647Z 10 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-02T00:40:22.038782Z 11 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
+2024-05-02T00:40:18.434798Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.22.04.1).
+2024-05-02T00:40:19.499798Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.22.04.1)  (Ubuntu).
+2024-05-02T00:40:20.210847Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.22.04.1) starting as process 32395
+2024-05-02T00:40:20.221221Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-02T00:40:20.705754Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-02T00:40:21.194028Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-02T00:40:21.194086Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-02T00:40:21.431306Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the connection metadata repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START REPLICA; see the 'START REPLICA Syntax' in the MySQL Manual for more information.
+2024-05-02T00:40:21.447133Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '127.0.0.1' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-02T00:40:21.447864Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.22.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-02T00:40:23.578961Z 5 [System] [MY-014001] [Repl] Replica receiver thread for channel '': connected to source 'replica_user@172.27.55.1:3306' with server_uuid=4ce40ce1-f525-11ee-9625-080027b113d1, server_id=1. Starting replication from file 'mysql-bin.000030', position '157'.
+2024-05-02T00:40:52.492582Z 0 [System] [MY-013172] [Server] Received SHUTDOWN from user <via user signal>. Shutting down mysqld (Version: 8.0.36-0ubuntu0.22.04.1).
+2024-05-02T00:41:01.844465Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.36-0ubuntu0.22.04.1)  (Ubuntu).
+2024-05-02T00:41:03.266620Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.36-0ubuntu0.22.04.1) starting as process 87247
+2024-05-02T00:41:03.346232Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2024-05-02T00:41:04.237758Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2024-05-02T00:41:04.780940Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2024-05-02T00:41:04.780990Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2024-05-02T00:41:04.810634Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '127.0.0.1' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2024-05-02T00:41:04.810842Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.36-0ubuntu0.22.04.1'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  (Ubuntu).
+2024-05-02T00:41:00.584527Z 5 [System] [MY-010558] [Repl] Replica for channel '': received end packet from server due to dump thread being killed on source. Dump threads are killed for example during source shutdown, explicitly by a user, or when the source receives a binlog send request from a duplicate server UUID <636b46c9-fd15-11ee-8872-080027b113d1> : Error 
+2024-05-02T00:41:00.590282Z 5 [Warning] [MY-010897] [Repl] Storing MySQL user name or password information in the connection metadata repository is not secure and is therefore not recommended. Please consider using the USER and PASSWORD connection options for START REPLICA; see the 'START REPLICA Syntax' in the MySQL Manual for more information.
+2024-05-02T00:41:00.713457Z 5 [ERROR] [MY-010584] [Repl] Replica I/O for channel '': Error reconnecting to source 'replica_user@172.27.55.1:3306'. This was attempt 1/86400, with a delay of 60 seconds between attempts. Message: Can't connect to MySQL server on '172.27.55.1:3306' (111), Error_code: MY-002003
+2024-05-02T00:42:01.211587Z 5 [System] [MY-010592] [Repl] Replica for channel '': connected to source 'replica_user@172.27.55.1:3306',replication resumed in log 'mysql-bin.000030' at position 157
+2024-05-02T00:42:01.945366Z 5 [System] [MY-014001] [Repl] Replica receiver thread for channel '': connected to source 'replica_user@172.27.55.1:3306' with server_uuid=4ce40ce1-f525-11ee-9625-080027b113d1, server_id=1. Starting replication from file 'mysql-bin.000030', position '157'.
+2024-05-02T00:42:00.927793Z 8 [Warning] [MY-010055] [Server] IP address '172.27.129.66' could not be resolved: Name or service not known
+2024-05-02T00:42:01.019462Z 8 [Warning] [MY-013360] [Server] Plugin mysql_native_password reported: ''mysql_native_password' is deprecated and will be removed in a future release. Please use caching_sha2_password instead'
